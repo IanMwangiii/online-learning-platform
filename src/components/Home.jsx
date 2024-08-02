@@ -4,17 +4,15 @@ function Home() {
     <div className='home-page'>
       <div>
         <h1 className='home-text'>
-          <ul>
-            <li>GET TO</li>
-            <li>LEARN WITH</li>
-            <li>US AND</li>
-            <li>ACQUIRE NEW</li>
-            <li>SKILLS</li>
+          <ul className='intro-page'>
+            <li className='intro-text'>
+              get to learn with us and be prepared for the modern world
+            </li>
             <div className='home-button'>
               <button className='explore-button'>EXPLORE COURSES</button>
               <button className='join-button'>JOIN US</button>
             </div>
-          </ul>
+            </ul>
         </h1>
       </div>
     </div>

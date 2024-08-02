@@ -18,8 +18,8 @@ function Navbar() {
               <li className="nav-item"><a href="#notfication"><IoMdNotificationsOutline />
               </a></li>
               <li className="nav-item"><a href="#login" className='login-link'>Login</a></li>
+              <li className="nav-item"><a href="#calender"><FcSettings /></a></li>
               <li className="nav-item"><a href="#user"><FcBusinessman /></a></li>
-              <li className="nav-item"><a href="#setting"><FcSettings /></a></li>
             </ul>
           </div>
         </div>
