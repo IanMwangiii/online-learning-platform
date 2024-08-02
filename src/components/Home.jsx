@@ -9,7 +9,7 @@ function Home() {
               get to learn with us and be prepared for the modern world
             </li>
             <div className='home-button'>
-              <button className='explore-button'>EXPLORE COURSES</button>
+              <button className='explores-button'>EXPLORE COURSES</button>
               <button className='join-button'>JOIN US</button>
             </div>
             </ul>

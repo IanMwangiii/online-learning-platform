@@ -34,7 +34,7 @@
   display: flex;
   gap: 20px;
 }
-.explore-button,.join-button{
+.explores-button,.join-button{
   padding: 10px ;
   font-size: 20px;
   cursor: pointer;
@@ -48,7 +48,12 @@
   padding: 10PX 15PX;
   border-bottom: 2px solid #e5e7e9; 
 }
-
+.explore-button{
+  border: none;
+  background-color: #b5b6b7;
+  border-radius: 5px;
+  padding: 5px 5px;
+}
 .navbar-container {
   display: flex;
   align-items: center;
