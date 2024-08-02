@@ -1,6 +1,6 @@
 import React from 'react';
 import { FcBusinessman, FcSettings, FcSearch } from 'react-icons/fc';
-
+import { IoMdNotificationsOutline } from "react-icons/io";
 function Navbar() {
   return (
     <div>
@@ -13,12 +13,13 @@ function Navbar() {
           </div>
           <div className="nav-links">
             <ul className="nav-list">
-              <li className="nav-item"><a href="home">Home</a></li>
+              <li className="nav-item"><a href="#home">Home</a></li>
               <li className="nav-item"><a href="#online-degrees">Online degrees</a></li>
-              <li className="nav-item"><a href="Find-career">Find Your new career</a></li>
-              <li className="nav-item"><a href="login">Login</a></li>
-              <li className="nav-item"><a href="user"><FcBusinessman /></a></li>
-              <li className="nav-item"><a href="setting"><FcSettings /></a></li>
+              <li className="nav-item"><a href="#notfication"><IoMdNotificationsOutline />
+              </a></li>
+              <li className="nav-item"><a href="#login" className='login-link'>Login</a></li>
+              <li className="nav-item"><a href="#user"><FcBusinessman /></a></li>
+              <li className="nav-item"><a href="#setting"><FcSettings /></a></li>
             </ul>
           </div>
         </div>

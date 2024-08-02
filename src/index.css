@@ -25,7 +25,7 @@
 
 .navbar {
   background-color: #edeeef; 
-  padding: 10px 20px;
+  padding: 10PX 15PX;
   border-bottom: 2px solid #e5e7e9; 
 }
 
@@ -36,7 +36,7 @@
 }
 
 .explore-button {
-  background-color: #dcdcdc; 
+  background-color: #ffffff; 
   color: #060606; 
   border: none;
   padding: 10px 20px;
@@ -55,16 +55,18 @@
 .search-input {
   width: 100%;
   padding: 10px;
-  border: 1px solid #0056b3; 
+  border: 0px solid #0056b3; 
   border-radius: 10px 0 0 10px;
   outline: none;
+  height: 10px;
 }
 
 .search-button {
   background-color: #0056b3; 
   border: none;
   padding: 10px;
-  border-radius: 0 5px 5px 0; 
+  border-radius: 0 10px 10px 0; 
+  height: 30px;
 }
 
 .nav-links {
@@ -85,7 +87,7 @@
 
 .nav-item a {
   text-decoration: none;
-  color: #fff; 
+  color: #b3afaf; 
   font-weight: bold;
 }
 
