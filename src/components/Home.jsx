@@ -1,8 +1,9 @@
 import React from 'react'
+import LessonCard from './LessonCard'
 function Home() {
   return (
     <div className='home-page'>
-      <div>
+      {/* <div>
         <h1 className='home-text'>
           <ul className='intro-page'>
             <li className='intro-text'>
@@ -14,7 +15,8 @@ function Home() {
             </div>
             </ul>
         </h1>
-      </div>
+      </div> */}
+      <LessonCard/>
     </div>
   )
 }
