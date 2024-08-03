@@ -109,3 +109,39 @@
   text-decoration: underline;
 }
 
+.lesson-card {
+  margin: 20px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.lesson-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.lesson-description {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.lesson-button {
+  display: inline-block;
+  padding: 10px 20px;
+  font-size: 1rem;
+  color: #fff;
+  background-color: #1976d2;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+}
+
+.lesson-button:hover {
+  background-color: #155a9a;
+}

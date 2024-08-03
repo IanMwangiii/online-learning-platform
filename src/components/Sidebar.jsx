@@ -20,6 +20,10 @@ function Sidebar() {
                 <a href="lessons">Lessons</a>
             </li>
         </ul>
+        <div className='sidebar-buttons'>
+            <button className='sidebar-btn'>Logout</button>
+            <button className='sidebar-btn'>Help</button>
+        </div>
     </div>
   )
 }
