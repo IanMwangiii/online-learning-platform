@@ -9,13 +9,10 @@ from app_config import DevelopmentConfig
 
 app = Flask(__name__)
 
-# Load configuration
 app.config.from_object(DevelopmentConfig)
 
-# Initialize database
 db.init_app(app)
 
-# Initialize other Flask extensions
 migrate = Migrate(app, db)
 api = Api(app)
 CORS(app)
