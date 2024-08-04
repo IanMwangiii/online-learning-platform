@@ -1,18 +1,19 @@
-from . import db
+from .config import db
 
-class Lesson(db.Model):
-    tablename = 'lessons'
+class Discussion(db.Model):
+    tablename = 'discussions'
 
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=False)
-    video_url = db.Column(db.String(255))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
-    # Relationship
-    course = db.relationship('Course', back_populates='lessons')
+    # Relationships
+    user = db.relationship('User', back_populates='discussions')
+    course = db.relationship('Course', back_populates='discussions')
 
     def repr(self):
-        return f'<Lesson {self.topic}>'
+        return f'<Discussion {self.topic}>'
