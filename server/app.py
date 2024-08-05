@@ -54,41 +54,6 @@ class UserResource(Resource):
             return {'message': 'User deleted successfully'}
         return {'message': 'User not found'}, 404
 
-# CRUD for Post
-class PostResource(Resource):
-    def get(self, post_id=None):
-        if post_id:
-            post = Post.query.get(post_id)
-            if post:
-                return jsonify(post)
-            return {'message': 'Post not found'}, 404
-        posts = Post.query.all()
-        return jsonify(posts)
-
-    def post(self):
-        data = request.get_json()
-        new_post = Post(title=data['title'], content=data['content'], user_id=data['user_id'])
-        db.session.add(new_post)
-        db.session.commit()
-        return {'message': 'Post created successfully'}, 201
-
-    def patch(self, post_id):
-        post = Post.query.get(post_id)
-        if post:
-            data = request.get_json()
-            post.title = data.get('title', post.title)
-            post.content = data.get('content', post.content)
-            db.session.commit()
-            return {'message': 'Post updated successfully'}
-        return {'message': 'Post not found'}, 404
-
-    def delete(self, post_id):
-        post = Post.query.get(post_id)
-        if post:
-            db.session.delete(post)
-            db.session.commit()
-            return {'message': 'Post deleted successfully'}
-        return {'message': 'Post not found'}, 404
 
 # CRUD for Discussion
 class DiscussionResource(Resource):
@@ -190,11 +155,10 @@ class CourseResource(Resource):
 
 # Register routes with API
 api.add_resource(UserResource, '/users', '/users/<int:user_id>')
-api.add_resource(PostResource, '/posts', '/posts/<int:post_id>')
 api.add_resource(DiscussionResource, '/discussions', '/discussions/<int:discussion_id>')
 api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
 api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:enrollment_id>')
 api.add_resource(CourseResource, '/courses', '/courses/<int:course_id>')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5555)
