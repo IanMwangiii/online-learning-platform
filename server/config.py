@@ -9,6 +9,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEBUG = False
     TESTING = False
+    CORS_HEADERS = 'Content-Type'
 
 class DevelopmentConfig(Config):
     """Development environment configuration."""
@@ -26,3 +27,17 @@ class ProductionConfig(Config):
     """Production environment configuration."""
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///prod_database.db')
     ENV = 'production'
+    DEBUG = False
+
+config = {
+    'development': DevelopmentConfig,
+    'testing': TestingConfig,
+    'production': ProductionConfig,
+    'default': DevelopmentConfig
+}
+
+def get_config(env=None):
+    """Returns the appropriate configuration based on the environment."""
+    if env is None:
+        env = os.getenv('FLASK_ENV', 'default')
+    return config.get(env, Config)
