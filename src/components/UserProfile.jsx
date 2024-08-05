@@ -1,76 +1,81 @@
 import React, { useState, useEffect } from 'react';
-import { Box, TextField, Button, Typography, Snackbar } from '@mui/material';
+import { Box, TextField, Button, Typography, IconButton, InputAdornment, Snackbar } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 function UserProfile() {
-  const [userData, setUserData] = useState({
-    username: '',
-    email: '',
-    phone: '',
-    role: ''
-  });
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [passwordVisible, setPasswordVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch user data from backend
-    const fetchUserData = async () => {
+    // Fetch user profile data from backend
+    // Uncomment and replace with your API endpoint
+    /*
+    const fetchUserProfile = async () => {
       const endpoint = 'http://127.0.0.1:5000/user-profile';
-      const token = localStorage.getItem('access_token');
-      
       try {
         const response = await fetch(endpoint, {
+          method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
-          },
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+          }
         });
 
         if (response.ok) {
-          const data = await response.json();
-          setUserData({
-            username: data.username,
-            email: data.email,
-            phone: data.phone,
-            role: data.role
+          const result = await response.json();
+          setFormData({
+            email: result.email,
+            // Add other fields as needed
           });
         } else {
-          setErrorMessage('Failed to fetch user data.');
+          const errorResult = await response.json();
+          setErrorMessage(errorResult.error || 'Failed to fetch profile data.');
         }
       } catch (error) {
         setErrorMessage('Error: ' + error.message);
       }
     };
 
-    fetchUserData();
+    fetchUserProfile();
+    */
   }, []);
 
   const handleInputChange = (e) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSave = async () => {
-    const endpoint = 'http://127.0.0.1:5000/update-profile';
-    const token = localStorage.getItem('access_token');
-    
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const endpoint = 'http://127.0.0.1:5000/user-profile'; // Update with your backend endpoint
+    const body = JSON.stringify({ email: formData.email, password: formData.password });
+
     try {
       const response = await fetch(endpoint, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`
         },
-        body: JSON.stringify(userData),
+        body: body,
       });
 
       if (response.ok) {
         setSuccessMessage('Profile updated successfully!');
+        // Optionally, redirect or refresh the page
       } else {
-        setErrorMessage('Failed to update profile.');
+        const errorResult = await response.json();
+        setErrorMessage(errorResult.error || 'Profile update failed.');
       }
     } catch (error) {
       setErrorMessage('Error: ' + error.message);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setPasswordVisible(!passwordVisible);
   };
 
   const handleSnackbarClose = () => {
@@ -80,48 +85,41 @@ function UserProfile() {
 
   return (
     <div>
-      <Box sx={{ padding: 4, width: '100%', maxWidth: '600px', margin: 'auto', bgcolor: 'background.paper', borderRadius: '8px' }}>
+      <Box sx={{ padding: 4, width: '100%', maxWidth: '400px', margin: 'auto', bgcolor: 'background.paper', borderRadius: '8px' }}>
         <Typography variant="h5" gutterBottom>User Profile</Typography>
-        <TextField 
-          label="Username" 
-          variant="outlined" 
-          fullWidth 
-          margin="normal" 
-          name="username" 
-          value={userData.username} 
-          onChange={handleInputChange} 
-        />
-        <TextField 
-          label="Email" 
-          variant="outlined" 
-          fullWidth 
-          margin="normal" 
-          name="email" 
-          value={userData.email} 
-          onChange={handleInputChange} 
-        />
-        <TextField 
-          label="Phone" 
-          variant="outlined" 
-          fullWidth 
-          margin="normal" 
-          name="phone" 
-          value={userData.phone} 
-          onChange={handleInputChange} 
-        />
-        <TextField 
-          label="Role" 
-          variant="outlined" 
-          fullWidth 
-          margin="normal" 
-          name="role" 
-          value={userData.role} 
-          onChange={handleInputChange} 
-          disabled
-        />
-        <Button onClick={handleSave} variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-          Save Changes
-        </Button>
+        <form onSubmit={handleSubmit}>
+          <TextField 
+            label="Email" 
+            variant="outlined" 
+            fullWidth 
+            margin="normal" 
+            name="email" 
+            value={formData.email} 
+            onChange={handleInputChange} 
+          />
+          <TextField 
+            label="Password" 
+            type={passwordVisible ? "text" : "password"} 
+            variant="outlined" 
+            fullWidth 
+            margin="normal" 
+            name="password" 
+            value={formData.password} 
+            onChange={handleInputChange} 
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility}>
+                    {passwordVisible ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
+          <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+            Update Profile
+          </Button>
+        </form>
         <Snackbar
           open={!!successMessage || !!errorMessage}
           autoHideDuration={6000}
