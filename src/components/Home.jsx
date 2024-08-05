@@ -1,24 +1,23 @@
-import React from 'react'
-import LessonCard from './LessonCard'
+import React from 'react';
+
 function Home() {
   return (
     <div className='home-page'>
-      {/* <div>
+      <div>
         <h1 className='home-text'>
           <ul className='intro-page'>
             <li className='intro-text'>
-              get to learn with us and be prepared for the modern world
+              Get to learn with us and be prepared for the modern world
             </li>
             <div className='home-button'>
-              <button className='explores-button'>EXPLORE COURSES</button>
+              <button className='explore-button'>EXPLORE COURSES</button>
               <button className='join-button'>JOIN US</button>
             </div>
-            </ul>
+          </ul>
         </h1>
-      </div> */}
-      <LessonCard/>
+      </div>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
