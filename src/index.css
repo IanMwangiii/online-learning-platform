@@ -2,8 +2,8 @@
   background-image: url('https://trifaz.com/wp-content/uploads/2021/02/613253.svg');
   background-size: cover;
   background-position: right;
-  /* display: flex; */
-  /* justify-content: center; */
+  display: flex;
+  justify-content: center;
   align-items: center;
   position: relative;
   height: 820px;
@@ -109,135 +109,382 @@
   text-decoration: underline;
 }
 
-.lesson-card {
-  margin: 20px;
+.footer {
+  background-color: #f6f9fb;
   padding: 20px;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
+  text-align: center;
+  border-top: 2px solid #e5e7e9;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  display: inline;
+  margin: 0 10px;
+}
+
+.footer-links a {
+  text-decoration: none;
+  color: #067cfb;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+.course-card {
+  border: 1px solid #e5e7e9;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin: 10px;
+}
+
+.course-title {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+}
+
+.course-description {
+  font-size: 1em;
+  margin-bottom: 20px;
+}
+
+.enroll-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #067cfb;
+  color: #ffffff;
+  border: none;
   border-radius: 5px;
+  cursor: pointer;
+}
+
+.enroll-button:hover {
+  background-color: #0056b3;
+}
+.lesson-card {
+  border: 1px solid #e5e7e9;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin: 10px;
 }
 
 .lesson-title {
-  font-size: 1.5rem;
-  font-weight: 500;
-  margin-bottom: 10px;
+  font-size: 1.2em;
+  margin-bottom: 5px;
 }
 
 .lesson-description {
-  font-size: 1rem;
+  font-size: 0.9em;
+}
+.video-player {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.video-player video {
+  width: 100%;
+  border-radius: 8px;
+}
+.discussion-thread {
+  border: 1px solid #e5e7e9;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+}
+
+.thread-title {
+  font-size: 1.5em;
   margin-bottom: 10px;
 }
 
-.lesson-button {
-  display: inline-block;
-  padding: 10px 20px;
-  font-size: 1rem;
-  color: #fff;
-  background-color: #1976d2;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  text-align: center;
-  text-decoration: none;
+.thread-content {
+  font-size: 1em;
+}
+.discussion-form {
+  background-color: #ffffff;
+  border: 1px solid #e5e7e9;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
 }
 
-.lesson-button:hover {
-  background-color: #155a9a;
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e5e7e9;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.form-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #067cfb;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form-button:hover {
+  background-color: #0056b3;
 }
 .user-profile {
   padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7e9;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.user-info {
+.user-profile-info {
   margin-bottom: 20px;
 }
 
-.admin-controls,
-.user-view {
-  margin-top: 20px;
+.user-profile-info h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
 }
 
-.manage-lessons, 
-.manage-courses {
-  margin-bottom: 20px;
+.user-profile-info p {
+  font-size: 1em;
 }
 
-.lesson-cards, 
-.course-cards {
+.edit-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #067cfb;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.edit-button:hover {
+  background-color: #0056b3;
+}
+.course-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+  margin: 20px;
 }
 
-.lesson-card, 
-.course-card {
-  border: 1px solid #ccc;
-  padding: 10px;
+.course-list-item {
   margin: 10px;
-  border-radius: 4px;
-  width: 200px;
+}
+.sidebar {
+  width: 250px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7e9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-button {
-  margin: 5px;
+.sidebar-link {
+  display: block;
+  padding: 10px;
+  text-decoration: none;
+  color: #067cfb;
+  font-size: 1em;
+  margin-bottom: 10px;
 }
-.user-profile {
+
+.sidebar-link:hover {
+  background-color: #f1f5f9;
+  border-radius: 5px;
+}
+.progress-tracker {
+  border: 1px solid #e5e7e9;
+  border-radius: 8px;
   padding: 20px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+}
+
+.progress-bar {
+  background-color: #e5e7e9;
+  border-radius: 5px;
+  height: 20px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.progress-bar-fill {
+  background-color: #067cfb;
+  height: 100%;
+  width: 50%; /* Adjust based on progress */
+  border-radius: 5px;
+}
+.enroll-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #067cfb;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.enroll-button:hover {
+  background-color: #0056b3;
+}
+.notification {
+  background-color: #f0f4f8;
+  border: 1px solid #e5e7e9;
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin: 10px 0;
+}
+
+.notification-success {
+  border-color: #d4edda;
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.notification-error {
+  border-color: #f8d7da;
+  background-color: #f8d7da;
+  color: #721c24;
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  padding: 10px;
+  border: 1px solid #e5e7e9;
+  border-radius: 5px;
+  outline: none;
+  flex-grow: 1;
+}
+
+.search-button {
+  background-color: #067cfb;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+}
+.breadcrumbs {
+  font-size: 0.9em;
+  margin: 20px 0;
+}
+
+.breadcrumbs a {
+  text-decoration: none;
+  color: #067cfb;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbs span {
+  margin: 0 5px;
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  width: 80%;
+  max-width: 500px;
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5em;
+  cursor: pointer;
 }
 
 .login-form {
-  max-width: 400px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .form-group {
   margin-bottom: 15px;
 }
 
-.error {
-  color: red;
-  font-size: 0.875em;
+.form-group label {
+  margin-bottom: 5px;
+  display: block;
 }
 
-.admin-controls {
-  margin-top: 20px;
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #e5e7e9;
+  border-radius: 5px;
 }
 
-.admin-controls h3 {
-  margin-bottom: 10px;
-}
-/* src/components/ManageLessons.css */
-.manage-lessons {
-  padding: 20px;
-}
-
-.manage-lessons .add-lesson {
-  margin-bottom: 20px;
+.submit-button {
+  padding: 10px 20px;
+  background-color: #067cfb;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-.manage-lessons input {
-  margin-right: 10px;
-  padding: 5px;
+.submit-button:hover {
+  background-color: #0056b3;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
 }
 
-.manage-lessons button {
-  padding: 5px 10px;
+.pagination-button {
+  background-color: #067cfb;
+  color: #ffffff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 5px;
 }
 
-/* src/components/ManageCourses.css */
-.manage-courses {
-  padding: 20px;
-}
-
-.manage-courses .add-course {
-  margin-bottom: 20px;
-}
-
-.manage-courses input {
-  margin-right: 10px;
-  padding: 5px;
-}
-
-.manage-courses button {
-  padding: 5px 10px;
+.pagination-button:hover {
+  background-color: #0056b3;
 }
