@@ -97,6 +97,7 @@
 
 .nav-item {
   margin: 0 10px;
+  
 }
 
 .nav-item a {
@@ -487,4 +488,41 @@
 
 .pagination-button:hover {
   background-color: #0056b3;
+}
+.course-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 300px; 
+  margin: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.course-card-image {
+  width: 100%;
+  height: 200px; 
+  overflow: hidden;
+}
+
+.course-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.course-card-content {
+  padding: 16px;
+}
+
+.course-card-title {
+  margin: 0 0 8px;
+  font-size: 18px;
+}
+
+.course-card-description {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
 }
