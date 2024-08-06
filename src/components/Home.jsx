@@ -1,7 +1,8 @@
 import React from 'react';
-
+import Footer from './Footer';
 function Home() {
   return (
+    <div>
     <div className='home-page'>
       <div>
         <h1 className='home-text'>
@@ -17,6 +18,8 @@ function Home() {
         </h1>
       </div>
     </div>
+    <Footer/>
+  </div>
   );
 }
 
