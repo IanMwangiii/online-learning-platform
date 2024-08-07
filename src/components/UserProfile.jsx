@@ -33,7 +33,8 @@ const UserProfile = () => {
           const data = await response.json();
           setUserData(data);
         } else {
-          setErrorMessage('Failed to fetch user data.');
+          const errorResult = await response.json();
+          setErrorMessage(errorResult.error || 'Failed to fetch user data.');
         }
       } catch (error) {
         setErrorMessage('Error: ' + error.message);

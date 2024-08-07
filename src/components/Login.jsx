@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Grid, Typography, TextField, Button, IconButton, Box, Snackbar, InputAdornment } from '@mui/material';
-import { ArrowBack as ArrowBackIcon, Visibility, VisibilityOff } from '@mui/icons-material';
+import { ArrowBack as ArrowBackIcon, FormatIndentDecreaseSharp, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaPhoneAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
@@ -8,7 +8,7 @@ import { MdEmail } from 'react-icons/md';
 const SignInOptions = ({ handleOpen }) => {
   return (
     <div>
-      <Typography variant="h5" style={{ marginBottom: '20px' }}>Let's log you in</Typography>
+      <Typography variant="h5" style={{ marginBottom: '20px' }}>get your account</Typography>
       <Grid container direction="column" spacing={2}>
         <Grid item>
           <div
@@ -43,7 +43,6 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -56,10 +55,10 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
     let body;
 
     if (signInWithEmail) {
-      endpoint = 'http://127.0.0.1:5000/login/email';
+      endpoint = 'http://localhost:5555/auth/login'; // Update this URL to match your backend route
       body = JSON.stringify({ email: formData.email, password: formData.password });
     } else if (signInWithPhone) {
-      endpoint = 'http://127.0.0.1:5000/login/phone';
+      endpoint = 'http://localhost:5555/auth/login'; // Update this URL to match your backend route
       body = JSON.stringify({ phone: formData.phone, password: formData.password });
     }
 
@@ -74,7 +73,6 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
 
       if (response.ok) {
         const result = await response.json();
-        console.log(result)
         localStorage.setItem('access_token', result.token);
         localStorage.setItem('role', result.role);
         localStorage.setItem('id', result.id);
@@ -84,7 +82,7 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
         }, 3000);
       } else {
         const errorResult = await response.json();
-        setError(errorResult.error || 'Login failed. Please check your credentials.');
+        setErrorMessage(errorResult.message || 'Login failed. Please check your credentials.');
       }
     } catch (error) {
       setErrorMessage('Error: ' + error.message);
@@ -108,7 +106,7 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
         <ArrowBackIcon />
       </IconButton>
       <h2>Log In</h2>
-      {error && <Typography color="error" style={{ marginBottom: '1rem' }}>{error}</Typography>}
+      {errorMessage && <Typography color="error" style={{ marginBottom: '1rem' }}>{errorMessage}</Typography>}
       {signInWithEmail && (
         <form onSubmit={handleSubmit}>
           <TextField label="Email" variant="outlined" fullWidth margin="normal" name="email" value={formData.email} onChange={handleInputChange} />
@@ -181,7 +179,6 @@ const Login = () => {
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
       <Grid item xs={12} sm={6}>
-        {/* Removed image */}
       </Grid>
       <Grid item xs={12} sm={6} container justifyContent="center" alignItems="center">
         {signInWithEmail || signInWithPhone ? (
@@ -192,7 +189,6 @@ const Login = () => {
           />
         ) : (
           <SignInOptions handleOpen={handleOpen} />
-          
         )}
       </Grid>
     </Grid>

@@ -17,7 +17,7 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = 'http://127.0.0.1:5000/signup';
+    const endpoint = 'http://127.0.0.1:5000/signup'; // Update this URL to match your backend route
     const body = JSON.stringify({ email: formData.email, phone: formData.phone, password: formData.password });
 
     try {
@@ -63,6 +63,14 @@ const SignUp = () => {
           <Typography variant="h4" style={{ marginBottom: '1rem' }}>Sign Up</Typography>
           {error && <Typography color="error" style={{ marginBottom: '1rem' }}>{error}</Typography>}
           <form onSubmit={handleSubmit}>
+            <TextField
+            label="username"
+            variant='outlined'
+            fullWidth margin='normal'
+            name='Username'
+            value={formData.email}
+            onChange={handleInputChange}
+            />
             <TextField
               label="Email"
               variant="outlined"
