@@ -1,3 +1,6 @@
+.body{
+  padding-top: 60px;
+}
 .home-page{
   background-image: url('https://trifaz.com/wp-content/uploads/2021/02/613253.svg');
   background-size: cover;
@@ -45,20 +48,21 @@
 }
 .navbar {
   background-color: #edeeef; 
-  padding: 10PX 15PX;
+  padding: 10px 15px;
   border-bottom: 2px solid #e5e7e9; 
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000; /* Ensure it stays above other content */
 }
-.explore-button{
-  border: none;
-  background-color: #b5b6b7;
-  border-radius: 5px;
-  padding: 5px 5px;
-}
+
 .navbar-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
+
 .search-container {
   display: flex;
   align-items: center;
@@ -93,11 +97,11 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  
 }
 
 .nav-item {
   margin: 0 10px;
-  
 }
 
 .nav-item a {
@@ -110,6 +114,7 @@
   text-decoration: underline;
 }
 
+
 .footer {
   background-color: #f6f9fb;
   padding: 20px;
@@ -117,25 +122,6 @@
   border-top: 2px solid #e5e7e9;
 }
 
-.footer-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer-links li {
-  display: inline;
-  margin: 0 10px;
-}
-
-.footer-links a {
-  text-decoration: none;
-  color: #067cfb;
-}
-
-.footer-links a:hover {
-  text-decoration: underline;
-}
 .course-card {
   border: 1px solid #e5e7e9;
   border-radius: 8px;
@@ -365,130 +351,7 @@
   background-color: #f8d7da;
   color: #721c24;
 }
-.search-bar {
-  display: flex;
-  align-items: center;
-}
 
-.search-input {
-  padding: 10px;
-  border: 1px solid #e5e7e9;
-  border-radius: 5px;
-  outline: none;
-  flex-grow: 1;
-}
-
-.search-button {
-  background-color: #067cfb;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  color: #ffffff;
-  cursor: pointer;
-}
-
-.search-button:hover {
-  background-color: #0056b3;
-}
-.breadcrumbs {
-  font-size: 0.9em;
-  margin: 20px 0;
-}
-
-.breadcrumbs a {
-  text-decoration: none;
-  color: #067cfb;
-}
-
-.breadcrumbs a:hover {
-  text-decoration: underline;
-}
-
-.breadcrumbs span {
-  margin: 0 5px;
-}
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 20px;
-  width: 80%;
-  max-width: 500px;
-  position: relative;
-}
-
-.modal-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 1.5em;
-  cursor: pointer;
-}
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-group label {
-  margin-bottom: 5px;
-  display: block;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #e5e7e9;
-  border-radius: 5px;
-}
-
-.submit-button {
-  padding: 10px 20px;
-  background-color: #067cfb;
-  color: #ffffff;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.submit-button:hover {
-  background-color: #0056b3;
-}
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin: 20px 0;
-}
-
-.pagination-button {
-  background-color: #067cfb;
-  color: #ffffff;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin: 0 5px;
-}
-
-.pagination-button:hover {
-  background-color: #0056b3;
-}
 .course-card {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -525,4 +388,47 @@
   margin: 0;
   font-size: 14px;
   color: #555;
+}
+
+.footer {
+  background-color: #f8f9fa;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.footer-contents {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer-text {
+  margin-bottom: 20px;
+  list-style-type: none;
+}
+
+.footer-text-list {
+  display: flex;
+  justify-content: center;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-text-list li {
+  margin: 0 10px;
+}
+
+.collaborators {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.collaborators img {
+  height: 50px;
+  width: auto;
+}
+.navbar-container{
+  list-style-type: none;
 }
