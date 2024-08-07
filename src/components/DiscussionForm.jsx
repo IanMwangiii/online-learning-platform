@@ -1,34 +1,37 @@
 import React, { useState } from 'react';
+import { Box, TextField, Button } from '@mui/material';
 
-function DiscussionForm({ onSubmit }) {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
+const DiscussionForm = ({ onAddDiscussion }) => {
+  const [comment, setComment] = useState('');
+  const [user, setUser] = useState(''); // Assuming you manage user information elsewhere
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSubmit({ title, content });
-    setTitle('');
-    setContent('');
+    const newDiscussion = {
+      user,
+      comment,
+      date: new Date().toLocaleString(),
+    };
+    onAddDiscussion(newDiscussion);
+    setComment('');
   };
 
   return (
-    <form className="discussion-form" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Title"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+      <TextField
+        label="Comment"
+        variant="outlined"
+        fullWidth
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
         required
+        multiline
+        rows={4}
+        sx={{ mb: 2 }}
       />
-      <textarea
-        placeholder="Your message"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        required
-      />
-      <button type="submit">Post</button>
-    </form>
+      <Button type="submit" variant="contained" color="primary">Post Comment</Button>
+    </Box>
   );
-}
+};
 
 export default DiscussionForm;

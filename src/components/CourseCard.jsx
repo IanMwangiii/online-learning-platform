@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Typography, Card, CardMedia, CardContent, CardActions, Button, Rating, Collapse } from '@mui/material';
-import LessonCard from './LessonCard'; // Import LessonCard
+import LessonCard from './LessonCard';
 
 const CourseCard = ({ id, title, description, imageUrl, price, rating, instructor, instructorImage, lessons = [] }) => {
   const [enrolled, setEnrolled] = useState(false);
@@ -49,4 +49,3 @@ const CourseCard = ({ id, title, description, imageUrl, price, rating, instructo
 };
 
 export default CourseCard;
-

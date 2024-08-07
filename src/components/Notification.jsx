@@ -1,11 +1,14 @@
 import React from 'react';
+import { Snackbar, Alert } from '@mui/material';
 
-function Notification({ message, type }) {
+const Notification = ({ open, message, severity, onClose }) => {
   return (
-    <div className={`notification ${type}`}>
-      <p>{message}</p>
-    </div>
+    <Snackbar open={open} autoHideDuration={6000} onClose={onClose}>
+      <Alert onClose={onClose} severity={severity} sx={{ width: '100%' }}>
+        {message}
+      </Alert>
+    </Snackbar>
   );
-}
+};
 
 export default Notification;

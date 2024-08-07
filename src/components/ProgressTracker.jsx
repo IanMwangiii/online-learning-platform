@@ -1,17 +1,18 @@
 import React from 'react';
+import { Box, Typography, LinearProgress } from '@mui/material';
 
-function ProgressTracker({ completed, total }) {
-  const percentage = (completed / total) * 100;
-
+const ProgressTracker = ({ progress }) => {
   return (
-    <div className="progress-tracker">
-      <h4>Course Progress</h4>
-      <div className="progress-bar">
-        <div className="progress-fill" style={{ width: `${percentage}%` }}></div>
-      </div>
-      <p>{completed} of {total} lessons completed</p>
-    </div>
+    <Box sx={{ mt: 4 }}>
+      <Typography variant="h6" gutterBottom>
+        Course Progress
+      </Typography>
+      <LinearProgress variant="determinate" value={progress} />
+      <Typography variant="body2" color="textSecondary">
+        {progress}% completed
+      </Typography>
+    </Box>
   );
-}
+};
 
 export default ProgressTracker;

@@ -8,10 +8,10 @@ function Navbar() {
     <nav className="navbar">
       <div className="navbar-container">
         <li className="nav-item"><Link to="/dashboard">Dashboard</Link></li>
-        {/* <div className="search-container">
+        <div className="search-container">
           <input type="text" className="search-input" placeholder="Search..." />
           <button className="search-button"><FcSearch /></button>
-        </div> */}
+        </div>
         <div className="nav-links">
           <ul className="nav-list">
             <li className="nav-item"><Link to="/">Home</Link></li>
