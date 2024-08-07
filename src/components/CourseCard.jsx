@@ -1,8 +1,14 @@
-// components/CourseCard.jsx
-import React from 'react';
-import { Box, Typography, Card, CardMedia, CardContent, CardActions, Button, Rating } from '@mui/material';
+import React, { useState } from 'react';
+import { Box, Typography, Card, CardMedia, CardContent, CardActions, Button, Rating, Collapse } from '@mui/material';
+import LessonCard from './LessonCard';
 
-const CourseCard = ({ title, description, imageUrl, price, rating, instructor }) => {
+const CourseCard = ({ id, title, description, imageUrl, price, rating, instructor, instructorImage, lessons = [] }) => {
+  const [enrolled, setEnrolled] = useState(false);
+
+  const handleEnroll = () => {
+    setEnrolled(true);
+  };
+
   return (
     <Card>
       <CardMedia
@@ -20,9 +26,23 @@ const CourseCard = ({ title, description, imageUrl, price, rating, instructor })
           <Rating value={rating} readOnly size="small" />
         </Box>
         <Typography variant="body2" color="text.secondary">Instructor: {instructor}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+          <img src={instructorImage} alt="Instructor" style={{ width: 50, height: 50, borderRadius: '50%' }} />
+        </Box>
       </CardContent>
       <CardActions>
-        <Button size="small" color="primary">Enroll</Button>
+        {!enrolled ? (
+          <Button size="small" color="primary" onClick={handleEnroll}>Enroll</Button>
+        ) : (
+          <Collapse in={enrolled}>
+            <Box sx={{ padding: 2 }}>
+              <Typography variant="h6">Lessons:</Typography>
+              {lessons.map(lesson => (
+                <LessonCard key={lesson.id} {...lesson} />
+              ))}
+            </Box>
+          </Collapse>
+        )}
       </CardActions>
     </Card>
   );

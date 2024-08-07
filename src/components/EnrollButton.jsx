@@ -1,11 +1,17 @@
 import React from 'react';
+import { Button } from '@mui/material';
 
-function EnrollButton({ isEnrolled, onEnroll }) {
+const EnrollButton = ({ isEnrolled, onEnroll }) => {
   return (
-    <button className="enroll-button" onClick={onEnroll}>
-      {isEnrolled ? 'Already Enrolled' : 'Enroll'}
-    </button>
+    <Button
+      variant="contained"
+      color="primary"
+      disabled={isEnrolled}
+      onClick={onEnroll}
+    >
+      {isEnrolled ? 'Enrolled' : 'Enroll'}
+    </Button>
   );
-}
+};
 
 export default EnrollButton;

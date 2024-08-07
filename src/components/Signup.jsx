@@ -4,11 +4,10 @@ import { ArrowBack as ArrowBackIcon, Visibility, VisibilityOff } from '@mui/icon
 import { Link, useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({ email: '', phone: '', password: '' });
+  const [formData, setFormData] = useState({ username: '', email: '', phone: '', password: '' });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -17,8 +16,13 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = 'http://127.0.0.1:5000/signup'; // Update this URL to match your backend route
-    const body = JSON.stringify({ email: formData.email, phone: formData.phone, password: formData.password });
+    const endpoint = 'http://127.0.0.1:5000/auth/signup'; // Update this URL to match your backend route
+    const body = JSON.stringify({
+      username: formData.username,
+      email: formData.email,
+      phone: formData.phone,
+      password: formData.password
+    });
 
     try {
       const response = await fetch(endpoint, {
@@ -30,14 +34,13 @@ const SignUp = () => {
       });
 
       if (response.ok) {
-        const result = await response.json();
         setSuccessMessage('User signed up successfully!');
         setTimeout(() => {
           navigate('/login', { replace: true });
         }, 3000);
       } else {
         const errorResult = await response.json();
-        setError(errorResult.error || 'Signup failed. Please check your details.');
+        setErrorMessage(errorResult.message || 'Signup failed. Please check your details.');
       }
     } catch (error) {
       setErrorMessage('Error: ' + error.message);
@@ -61,15 +64,16 @@ const SignUp = () => {
             <ArrowBackIcon />
           </IconButton>
           <Typography variant="h4" style={{ marginBottom: '1rem' }}>Sign Up</Typography>
-          {error && <Typography color="error" style={{ marginBottom: '1rem' }}>{error}</Typography>}
+          {errorMessage && <Typography color="error" style={{ marginBottom: '1rem' }}>{errorMessage}</Typography>}
           <form onSubmit={handleSubmit}>
             <TextField
-            label="username"
-            variant='outlined'
-            fullWidth margin='normal'
-            name='Username'
-            value={formData.email}
-            onChange={handleInputChange}
+              label="Username"
+              variant='outlined'
+              fullWidth
+              margin='normal'
+              name='username'
+              value={formData.username}
+              onChange={handleInputChange}
             />
             <TextField
               label="Email"

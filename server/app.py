@@ -27,6 +27,7 @@ class User(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
+            'username': self.username,
             'name': self.name,
             'email': self.email
         }
@@ -63,7 +64,7 @@ class UserAuthResource(Resource):
         data = request.get_json()
         if action == "signup":
             hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-            new_user = User(name=data['name'], email=data['email'], password=hashed_password)
+            new_user = User(username=data['username'], name=data['name'], email=data['email'], password=hashed_password)
             db.session.add(new_user)
             db.session.commit()
             return {'message': 'User signed up successfully'}, 201
@@ -73,19 +74,29 @@ class UserAuthResource(Resource):
                 return {'message': 'Login successful', 'user_id': user.id}, 200
             return {'message': 'Invalid email or password'}, 401
 
-class UserResource(Resource):
-    def get(self, user_id=None):
-        if user_id:
-            user = User.query.get(user_id)
-            if user:
-                return jsonify(user.to_dict())
-            return {'message': 'User not found'}, 404
-        users = User.query.all()
-        return jsonify([user.to_dict() for user in users])
+class UserProfileResource(Resource):
+    def get(self, user_id):
+        user = User.query.get(user_id)
+        if user:
+            return jsonify(user.to_dict())
+        return {'message': 'User not found'}, 404
+
+    def put(self, user_id):
+        data = request.get_json()
+        user = User.query.get(user_id)
+        if user:
+            user.username = data.get('username', user.username)
+            user.name = data.get('name', user.name)
+            user.email = data.get('email', user.email)
+            db.session.commit()
+            return {'message': 'User profile updated successfully'}
+        return {'message': 'User not found'}, 404
+
 
 # Register routes with API
 api.add_resource(UserAuthResource, '/auth/<string:action>')
-api.add_resource(UserResource, '/users', '/users/<int:user_id>')
+api.add_resource(UserProfileResource, '/user/<int:user_id>')
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5555)
