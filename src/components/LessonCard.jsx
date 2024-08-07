@@ -1,12 +1,22 @@
-import React from 'react';
 
-function LessonCard({ title, description }) {
+import React from 'react';
+import { Box, Typography, Card, CardContent } from '@mui/material';
+import VideoPlayer from './VideoPlayer';
+
+const LessonCard = ({ title, description, videoUrl }) => {
   return (
-    <div className="lesson-card">
-      <h3 className="lesson-title">{title}</h3>
-      <p className="lesson-description">{description}</p>
-    </div>
+    <Card sx={{ maxWidth: 345 }}>
+      <CardContent>
+        <Typography variant="h6" component="div" gutterBottom>
+          {title}
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {description}
+        </Typography>
+        <VideoPlayer videoUrl={videoUrl} title={title} />
+      </CardContent>
+    </Card>
   );
-}
+};
 
 export default LessonCard;

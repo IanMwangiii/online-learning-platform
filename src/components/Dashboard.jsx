@@ -40,7 +40,7 @@ const Dashboard = () => {
               <ListItemIcon><HomeIcon /></ListItemIcon>
               <ListItemText primary="Home" />
             </ListItem>
-            <ListItem button component={Link} to="/courses">
+            <ListItem button component={Link} to="/Courses">
               <ListItemIcon><SchoolIcon /></ListItemIcon>
               <ListItemText primary="Courses" />
             </ListItem>
@@ -52,7 +52,7 @@ const Dashboard = () => {
         <Typography variant="h4" gutterBottom>
           Welcome to the Dashboard
         </Typography>
-        <Button variant="contained" color="primary" component={Link} to="/courses">
+        <Button variant="contained" color="primary" component={Link} to="/ourses">
           Courses
         </Button>
       </Box>

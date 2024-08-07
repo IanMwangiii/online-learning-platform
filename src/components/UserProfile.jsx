@@ -66,6 +66,7 @@ const UserProfile = () => {
           <Typography variant="h4">User Profile</Typography>
           {userData ? (
             <div>
+              <Typography variant="h6">Username: {userData.username}</Typography>
               <Typography variant="h6">Name: {userData.name}</Typography>
               <Typography variant="h6">Email: {userData.email}</Typography>
               <Typography variant="h6">Phone: {userData.phone}</Typography>
