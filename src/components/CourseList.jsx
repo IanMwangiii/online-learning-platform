@@ -1,6 +1,7 @@
-import React from 'react';
-import CourseCard from './CourseCard';
+import React, { useState } from 'react';
 import { Box } from '@mui/material';
+import CourseCard from './CourseCard';
+import Pagination from './Pagination';
 
 const courses = [
   {
@@ -16,7 +17,7 @@ const courses = [
       { id: 1, title: 'Introduction to React', description: 'An overview of React and its core concepts.', videoUrl: 'https://www.youtube.com/embed/abc123' },
       { id: 2, title: 'Components and Props', description: 'Learn about React components and props.', videoUrl: 'https://www.youtube.com/embed/abc123' },
       { id: 3, title: 'State Management', description: 'Understanding state management in React.', videoUrl: 'https://www.youtube.com/embed/abc123' },
-    ]
+    ],
   },
   {
     id: 2,
@@ -30,16 +31,27 @@ const courses = [
     lessons: [
       { id: 1, title: 'JavaScript Basics', description: 'Introduction to JavaScript.', videoUrl: 'https://www.youtube.com/embed/abc123' },
       { id: 2, title: 'Advanced JavaScript', description: 'Deep dive into JavaScript features.', videoUrl: 'https://www.youtube.com/embed/abc123' },
-    ]
+    ],
   },
 ];
 
 const CourseList = () => {
+  const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = 5; // Example total pages
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    // Fetch new page data here
+  };
+
   return (
-    <Box className="row-card-course" sx={{ display: 'flex', flexWrap: 'wrap' }}>
-      {courses.map((course) => (
-        <CourseCard key={course.id} {...course} />
-      ))}
+    <Box sx={{ padding: 2 }}>
+      <Box className="row-card-course" sx={{ display: 'flex', flexWrap: 'wrap' }}>
+        {courses.map((course) => (
+          <CourseCard key={course.id} {...course} />
+        ))}
+      </Box>
+      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
     </Box>
   );
 };

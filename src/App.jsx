@@ -8,6 +8,8 @@ import CoursePage from './components/CoursePage';
 import Login from './components/Login';
 import SignUp from './components/Signup';
 import UserProfile from './components/UserProfile';
+import PaymentPage from './components/PaymentPage';
+import DiscussionsPage from './components/DiscussionsPage';
 function App() {
   return (
     <Router>
@@ -20,6 +22,8 @@ function App() {
         <Route path="/course/:id" element={<CoursePage />} />
         <Route path="user-profile" element={<UserProfile/>}/>
         <Route path='dashboard' element={<Dashboard/>}/>
+        <Route path='/payment' element={<PaymentPage/>}/>
+        <Route path="/discussions" element={<DiscussionsPage />} />
       </Routes>
     </Router>
   );

@@ -20,7 +20,6 @@ const CoursePage = () => {
       <Typography variant="h4" gutterBottom>Course Details</Typography>
       <Typography variant="h6">Course ID: {id}</Typography>
       {/* Display course content, lessons, and videos here */}
-      
       {/* Integrate DiscussionThread component */}
       <DiscussionThread discussions={dummyDiscussions} />
     </Box>

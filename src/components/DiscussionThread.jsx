@@ -1,18 +1,13 @@
+// DiscussionThread.js
 import React, { useState } from 'react';
 import { Box, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
 import DiscussionForm from './DiscussionForm';
 
-const DiscussionThread = ({ discussions = [] }) => {
+const DiscussionThread = ({ discussions, onAddDiscussion }) => {
   const [showForm, setShowForm] = useState(false);
 
   const handleShowForm = () => {
     setShowForm(!showForm);
-  };
-
-  const handleAddDiscussion = (newDiscussion) => {
-    // Assuming discussions are managed in the parent component
-    discussions.push(newDiscussion);
-    setShowForm(false);
   };
 
   return (
@@ -43,7 +38,7 @@ const DiscussionThread = ({ discussions = [] }) => {
       <Button variant="contained" color="primary" onClick={handleShowForm}>
         {showForm ? 'Cancel' : 'Add Comment'}
       </Button>
-      {showForm && <DiscussionForm onAddDiscussion={handleAddDiscussion} />}
+      {showForm && <DiscussionForm onAddDiscussion={onAddDiscussion} />}
     </Box>
   );
 };
