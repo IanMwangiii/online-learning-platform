@@ -1,4 +1,3 @@
-// DiscussionThread.js
 import React, { useState } from 'react';
 import { Box, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
 import DiscussionForm from './DiscussionForm';
@@ -6,13 +5,11 @@ import DiscussionForm from './DiscussionForm';
 const DiscussionThread = ({ discussions, onAddDiscussion }) => {
   const [showForm, setShowForm] = useState(false);
 
-  const handleShowForm = () => {
-    setShowForm(!showForm);
-  };
-
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h5">Discussion Thread</Typography>
+      <Typography variant="h5" gutterBottom>
+        Discussion Thread
+      </Typography>
       <List>
         {discussions.map((discussion, index) => (
           <ListItem key={index} alignItems="flex-start">
@@ -35,7 +32,7 @@ const DiscussionThread = ({ discussions, onAddDiscussion }) => {
           </ListItem>
         ))}
       </List>
-      <Button variant="contained" color="primary" onClick={handleShowForm}>
+      <Button variant="contained" color="primary" onClick={() => setShowForm(!showForm)}>
         {showForm ? 'Cancel' : 'Add Comment'}
       </Button>
       {showForm && <DiscussionForm onAddDiscussion={onAddDiscussion} />}

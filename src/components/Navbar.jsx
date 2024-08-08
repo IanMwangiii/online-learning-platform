@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom'; 
-import { FcBusinessman,  FcSearch } from 'react-icons/fc';
-import { IoMdNotificationsOutline } from "react-icons/io";
+import { FcBusinessman, FcSearch } from 'react-icons/fc';
+import { IoMdNotificationsOutline } from 'react-icons/io';
 
 function Navbar() {
   return (

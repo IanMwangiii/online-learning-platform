@@ -6,7 +6,7 @@ import DiscussionThread from './DiscussionThread';
 import Notification from './Notification';
 import Sidebar from './Sidebar';
 
-const dummyDiscussions = [/* your dummy data here */];
+const dummyDiscussions = [];
 
 const Dashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -38,7 +38,12 @@ const Dashboard = () => {
         <Sidebar onDiscussionClick={() => showNotification('Discussion clicked!', 'info')} />
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, padding: 3, marginTop: 8 }}>
-        <Notification open={notification.open} message={notification.message} severity={notification.severity} onClose={handleNotificationClose} />
+        <Notification
+          open={notification.open}
+          message={notification.message}
+          severity={notification.severity}
+          onClose={handleNotificationClose}
+        />
         <Typography variant="h4" gutterBottom>Welcome to the Dashboard</Typography>
         <CourseList />
         <DiscussionThread discussions={dummyDiscussions} />

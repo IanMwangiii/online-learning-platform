@@ -31,16 +31,14 @@ const CourseCard = ({ id, title, description, imageUrl, price, rating, instructo
       </CardContent>
       <CardActions>
         <EnrollButton isEnrolled={enrolled} onEnroll={handleEnroll} />
-        {enrolled && (
-          <Collapse in={enrolled}>
-            <Box sx={{ padding: 2 }}>
-              <Typography variant="h6">Lessons:</Typography>
-              {lessons.map((lesson) => (
-                <LessonCard key={lesson.id} {...lesson} />
-              ))}
-            </Box>
-          </Collapse>
-        )}
+        <Collapse in={enrolled}>
+          <Box sx={{ padding: 2 }}>
+            <Typography variant="h6">Lessons:</Typography>
+            {lessons.map((lesson) => (
+              <LessonCard key={lesson.id} {...lesson} />
+            ))}
+          </Box>
+        </Collapse>
       </CardActions>
     </Card>
   );

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Box, Typography } from '@mui/material';
 import DiscussionThread from './DiscussionThread';
@@ -12,7 +11,9 @@ const DiscussionsPage = () => {
 
   return (
     <Box sx={{ padding: 4 }}>
-      <Typography variant="h4" gutterBottom>Discussions</Typography>
+      <Typography variant="h4" gutterBottom>
+        Discussions
+      </Typography>
       <DiscussionThread discussions={discussions} onAddDiscussion={handleAddDiscussion} />
     </Box>
   );
