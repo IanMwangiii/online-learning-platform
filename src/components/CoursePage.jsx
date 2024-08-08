@@ -22,8 +22,6 @@ const CoursePage = () => {
     ],
   };
 
-  console.log('Course data:', course);
-
   return (
     <Box sx={{ padding: 4 }}>
       <Typography variant="h4" gutterBottom>{course.title}</Typography>

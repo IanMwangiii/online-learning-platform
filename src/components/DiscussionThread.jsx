@@ -7,9 +7,7 @@ const DiscussionThread = ({ discussions, onAddDiscussion }) => {
 
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h5" gutterBottom>
-        Discussion Thread
-      </Typography>
+      <Typography variant="h5" gutterBottom>Discussion Thread</Typography>
       <List>
         {discussions.map((discussion, index) => (
           <ListItem key={index} alignItems="flex-start">

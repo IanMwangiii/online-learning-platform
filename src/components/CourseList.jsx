@@ -46,7 +46,7 @@ const CourseList = () => {
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Box className="row-card-course" sx={{ display: 'flex', flexWrap: 'wrap' }}>
+      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
         {courses.map((course) => (
           <CourseCard key={course.id} {...course} />
         ))}
@@ -57,3 +57,4 @@ const CourseList = () => {
 };
 
 export default CourseList;
+
