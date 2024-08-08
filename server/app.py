@@ -5,7 +5,7 @@ from flask_restful import Api, Resource
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from models.models import db, User, Discussion, Lesson, Enrollment, Course
-from app_config import DevelopmentConfig
+from config import DevelopmentConfig
 
 app = Flask(__name__)
 

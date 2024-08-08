@@ -22,6 +22,7 @@ class User(db.Model):
     # Relationships
     courses = relationship('Course', secondary='enrollment', back_populates='users')
     discussions = relationship('Discussion', back_populates='user')
+    payments = relationship('Payment', back_populates='user', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<User {self.name}>'
@@ -41,6 +42,7 @@ class Course(db.Model):
     lessons = relationship('Lesson', back_populates='course', cascade='all, delete-orphan')
     discussions = relationship('Discussion', back_populates='course', cascade='all, delete-orphan')
     users = relationship('User', secondary='enrollment', back_populates='courses')
+    payments = relationship('Payment', back_populates='course', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<Course {self.title}>'
@@ -92,3 +94,20 @@ class Enrollment(db.Model):
 
     def __repr__(self):
         return f'<Enrollment User: {self.user_id}, Course: {self.course_id}>'
+
+# Payment Model
+class Payment(db.Model):
+    __tablename__ = 'payments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Float, nullable=False)
+    payment_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+
+    # Relationships
+    user = db.relationship('User', back_populates='payments')
+    course = db.relationship('Course', back_populates='payments')
+
+    def __repr__(self):
+        return f'<Payment {self.amount} by User {self.user_id} for Course {self.course_id}>'
