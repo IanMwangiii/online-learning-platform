@@ -4,8 +4,8 @@ from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from models.models import db, User, Discussion, Lesson, Enrollment, Course
-from app_config import DevelopmentConfig
+from models.models import db, User, Discussion, Lesson, Enrollment, Course, Payment
+from config import DevelopmentConfig
 
 app = Flask(__name__)
 
@@ -31,7 +31,13 @@ class UserResource(Resource):
 
     def post(self):
         data = request.get_json()
-        new_user = User(name=data['name'], email=data['email'])
+        new_user = User(
+            name=data['name'],
+            username=data['username'],
+            email=data['email'],
+            phone=data.get('phone'),
+            password=bcrypt.generate_password_hash(data['password']).decode('utf-8')
+        )
         db.session.add(new_user)
         db.session.commit()
         return {'message': 'User created successfully'}, 201
@@ -42,6 +48,8 @@ class UserResource(Resource):
             data = request.get_json()
             user.name = data.get('name', user.name)
             user.email = data.get('email', user.email)
+            user.username = data.get('username', user.username)
+            user.phone = data.get('phone', user.phone)
             db.session.commit()
             return {'message': 'User updated successfully'}
         return {'message': 'User not found'}, 404
@@ -68,7 +76,13 @@ class DiscussionResource(Resource):
 
     def post(self):
         data = request.get_json()
-        new_discussion = Discussion(topic=data['topic'], post_id=data['post_id'])
+        new_discussion = Discussion(
+            topic=data['topic'],
+            content=data['content'],
+            comment=data.get('comment'),
+            user_id=data['user_id'],
+            course_id=data['course_id']
+        )
         db.session.add(new_discussion)
         db.session.commit()
         return {'message': 'Discussion created successfully'}, 201
@@ -94,7 +108,12 @@ class LessonResource(Resource):
 
     def post(self):
         data = request.get_json()
-        new_lesson = Lesson(title=data['title'], content=data['content'])
+        new_lesson = Lesson(
+            topic=data['topic'],
+            content=data['content'],
+            video_url=data.get('video_url'),
+            course_id=data['course_id']
+        )
         db.session.add(new_lesson)
         db.session.commit()
         return {'message': 'Lesson created successfully'}, 201
@@ -112,7 +131,10 @@ class EnrollmentResource(Resource):
 
     def post(self):
         data = request.get_json()
-        new_enrollment = Enrollment(user_id=data['user_id'], course_id=data['course_id'])
+        new_enrollment = Enrollment(
+            user_id=data['user_id'],
+            course_id=data['course_id']
+        )
         db.session.add(new_enrollment)
         db.session.commit()
         return {'message': 'Enrollment created successfully'}, 201
@@ -148,10 +170,49 @@ class CourseResource(Resource):
 
     def post(self):
         data = request.get_json()
-        new_course = Course(title=data['title'], description=data['description'])
+        new_course = Course(
+            title=data['title'],
+            description=data['description'],
+            price=data['price'],
+            rating=data.get('rating'),
+            instructor_id=data['instructor_id']
+        )
         db.session.add(new_course)
         db.session.commit()
         return {'message': 'Course created successfully'}, 201
+
+# CRUD for Payment
+class PaymentResource(Resource):
+    def get(self, payment_id=None):
+        if payment_id:
+            payment = Payment.query.get(payment_id)
+            if payment:
+                return jsonify(payment)
+            return {'message': 'Payment not found'}, 404
+        payments = Payment.query.all()
+        return jsonify(payments)
+
+    def post(self):
+        data = request.get_json()
+        new_payment = Payment(
+            amount=data['amount'],
+            card_number=data['card_number'],
+            expiry_date=data['expiry_date'],
+            cvv=data['cvv'],
+            user_id=data['user_id'],
+            course_id=data['course_id']
+        )
+        db.session.add(new_payment)
+        db.session.commit()
+        return {'message': 'Payment created successfully'}, 201
+
+    def delete(self, payment_id):
+        payment = Payment.query.get(payment_id)
+        if payment:
+            db.session.delete(payment)
+            db.session.commit()
+            return {'message': 'Payment deleted successfully'}
+        return {'message': 'Payment not found'}, 404
 
 # Register routes with API
 api.add_resource(UserResource, '/users', '/users/<int:user_id>')
@@ -159,6 +220,7 @@ api.add_resource(DiscussionResource, '/discussions', '/discussions/<int:discussi
 api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
 api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:enrollment_id>')
 api.add_resource(CourseResource, '/courses', '/courses/<int:course_id>')
+api.add_resource(PaymentResource, '/payments', '/payments/<int:payment_id>')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5555)

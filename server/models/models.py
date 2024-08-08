@@ -14,7 +14,9 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(100), unique=True, nullable=False)  # New field
     email = db.Column(db.String(120), unique=True, nullable=False)
+    phone = db.Column(db.String(20), nullable=True)  # New field
     password = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
@@ -22,9 +24,10 @@ class User(db.Model):
     # Relationships
     courses = relationship('Course', secondary='enrollment', back_populates='users')
     discussions = relationship('Discussion', back_populates='user')
+    payments = relationship('Payment', back_populates='user', cascade='all, delete-orphan')
 
     def __repr__(self):
-        return f'<User {self.name}>'
+        return f'<User {self.username}>'
 
 # Course Model
 class Course(db.Model):
@@ -33,6 +36,8 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
+    price = db.Column(db.Float, nullable=False)  # New field
+    rating = db.Column(db.Float, nullable=True)  # New field
     instructor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
@@ -41,6 +46,7 @@ class Course(db.Model):
     lessons = relationship('Lesson', back_populates='course', cascade='all, delete-orphan')
     discussions = relationship('Discussion', back_populates='course', cascade='all, delete-orphan')
     users = relationship('User', secondary='enrollment', back_populates='courses')
+    payments = relationship('Payment', back_populates='course', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<Course {self.title}>'
@@ -70,6 +76,7 @@ class Discussion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=False)
+    comment = db.Column(db.Text, nullable=True)  # New field
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -92,3 +99,23 @@ class Enrollment(db.Model):
 
     def __repr__(self):
         return f'<Enrollment User: {self.user_id}, Course: {self.course_id}>'
+
+# Payment Model
+class Payment(db.Model):
+    __tablename__ = 'payments'
+
+    id = db.Column(db.Integer, primary_key=True)
+    amount = db.Column(db.Float, nullable=False)
+    payment_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+    card_number = db.Column(db.String(16), nullable=False)  # New field
+    expiry_date = db.Column(db.String(5), nullable=False)  # New field
+    cvv = db.Column(db.String(3), nullable=False)  # New field
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
+
+    # Relationships
+    user = db.relationship('User', back_populates='payments')
+    course = db.relationship('Course', back_populates='payments')
+
+    def __repr__(self):
+        return f'<Payment {self.amount} by User {self.user_id} for Course {self.course_id}>'

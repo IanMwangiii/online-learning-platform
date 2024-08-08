@@ -14,18 +14,21 @@ class Config:
 class DevelopmentConfig(Config):
     """Development environment configuration."""
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = os.getenv('DEV_DATABASE_URL', 'sqlite:///dev_database.db')
+    # Ensure the database name is 'app' in the development environment
+    SQLALCHEMY_DATABASE_URI = os.getenv('DEV_DATABASE_URL', 'sqlite:///app_dev.db')
     ENV = 'development'
 
 class TestingConfig(Config):
     """Testing environment configuration."""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URL', 'sqlite:///test_database.db')
+    # Ensure the database name is 'app' in the testing environment
+    SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URL', 'sqlite:///app_test.db')
     ENV = 'testing'
 
 class ProductionConfig(Config):
     """Production environment configuration."""
-    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///prod_database.db')
+    # Ensure the database name is 'app' in the production environment
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL', 'sqlite:///app.db')
     ENV = 'production'
     DEBUG = False
 
