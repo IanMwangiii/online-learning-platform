@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 
+# Load environment variables from a .env file if present
 load_dotenv()
 
 class Config:
@@ -12,7 +13,7 @@ class Config:
     CORS_HEADERS = 'Content-Type'
 
 class DevelopmentConfig(Config):
-    """Development  environment configuration."""
+    """Development environment configuration."""
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.getenv('DEV_DATABASE_URL', 'sqlite:///dev_database.db')
     ENV = 'development'
