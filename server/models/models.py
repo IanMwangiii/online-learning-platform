@@ -14,7 +14,9 @@ class User(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
+    username = db.Column(db.String(100), unique=True, nullable=False)  # New field
     email = db.Column(db.String(120), unique=True, nullable=False)
+    phone = db.Column(db.String(20), nullable=True)  # New field
     password = db.Column(db.String(128), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
@@ -25,7 +27,7 @@ class User(db.Model):
     payments = relationship('Payment', back_populates='user', cascade='all, delete-orphan')
 
     def __repr__(self):
-        return f'<User {self.name}>'
+        return f'<User {self.username}>'
 
 # Course Model
 class Course(db.Model):
@@ -34,6 +36,8 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
+    price = db.Column(db.Float, nullable=False)  # New field
+    rating = db.Column(db.Float, nullable=True)  # New field
     instructor_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
@@ -72,6 +76,7 @@ class Discussion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.Text, nullable=False)
     content = db.Column(db.Text, nullable=False)
+    comment = db.Column(db.Text, nullable=True)  # New field
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
@@ -102,6 +107,9 @@ class Payment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
     payment_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+    card_number = db.Column(db.String(16), nullable=False)  
+    expiry_date = db.Column(db.String(5), nullable=False)  
+    cvv = db.Column(db.String(3), nullable=False)  
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
