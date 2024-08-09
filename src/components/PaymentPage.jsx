@@ -24,13 +24,12 @@ const PaymentPage = ({ onPaymentSuccess }) => {
       return;
     }
 
-    // Here, you would normally process the payment.
-    // For simplicity, let's assume the payment is always successful.
     if (typeof onPaymentSuccess === 'function') {
-      onPaymentSuccess(); // This will call setIsEnrolled(true) in the parent component
+      onPaymentSuccess();
     } else {
       console.error('onPaymentSuccess is not a function');
     }
+    console.log('Navigating to /courses');
     navigate('/courses');
   };
 

@@ -4,7 +4,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CourseList from './CourseList';
 import DiscussionThread from './DiscussionThread';
 import Notification from './Notification';
-import Sidebar from './Sidebar';
+import Sidebar from './Sidebar'; // Assuming Sidebar is still part of the project
 
 const dummyDiscussions = [];
 
@@ -35,7 +35,7 @@ const Dashboard = () => {
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={drawerOpen}>
-        <Sidebar onDiscussionClick={() => showNotification('Discussion clicked!', 'info')} />
+        <Sidebar onClick={(path) => showNotification(`Navigating to ${path}`, 'info')} />
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, padding: 3, marginTop: 8 }}>
         <Notification

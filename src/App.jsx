@@ -23,8 +23,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/signup' element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/courses" element={<CourseList />} />
         <Route
           path="/course/:id"
@@ -37,11 +37,13 @@ function App() {
           }
         />
         <Route path="/user-profile" element={<UserProfile />} />
-        <Route path='/dashboard' element={<Dashboard />} />
-        <Route path='/payment' element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/payment" element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
         <Route path="/discussions" element={<DiscussionsPage />} />
       </Routes>
+      <CoursePage/>
     </Router>
+  
   );
 }
 

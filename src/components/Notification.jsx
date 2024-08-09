@@ -11,7 +11,7 @@ const Notification = ({ open, message, severity, onClose }) => {
     >
       <Alert
         onClose={onClose}
-        severity={severity}
+        severity={severity}  // 'success', 'error', 'info', 'warning'
         sx={{ width: '100%' }}
       >
         {message}
