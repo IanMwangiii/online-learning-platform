@@ -2,7 +2,7 @@
   padding-top: 60px;
 }
 .home-page{
-  background-image: url('https://trifaz.com/wp-content/uploads/2021/02/613253.svg');
+  /* background-image: url('https://trifaz.com/wp-content/uploads/2021/02/613253.svg');
   background-size: cover;
   background-position: right;
   display: flex;
@@ -11,40 +11,49 @@
   position: relative;
   height: 820px;
   width: 100%;
-  background-position: 50px;
-}
-.intro-page{
-  color: rgb(10, 10, 12);
-  /* padding-right: 940px;  */
-  list-style-type: none;
-  word-spacing: 10px;
+  background-position: 50px; */
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: #f6f9fb;
-  padding: 50px 0;
-  margin: 0;
+  justify-content: center;
+  height: 100vh;
+  background: url('https://trifaz.com/wp-content/uploads/2021/02/613253.svg') no-repeat center center;
+  background-size: cover;
+}
+.intro-page{
+  list-style: none;
+  padding: 0;
 }
 .intro-text{
-  font-size: 1.5em;
-  text-align: center;
+  font-size: 2rem;
   margin-bottom: 20px;
 }
 .home-text{
-  padding-bottom: 450px;
+  color: #fff;
+  text-align: center;
 }
 .home-button{
-  display: flex;
-  gap: 20px;
+  margin-top: 20px;
 }
 .explores-button,.join-button{
-  padding: 10px ;
-  font-size: 20px;
-  cursor: pointer;
+  background-color: #007bff;
+  color: white;
   border: none;
-  border-radius: 5px;
-  background-color: #067cfb;
-  color: #edeeef;
+  padding: 10px 20px;
+  margin: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.explores-button:hover, .join-button:hover {
+  background-color: #0056b3;
+}
+.join-button {
+  background-color: #28a745;
+}
+
+.join-button:hover {
+  background-color: #218838;
 }
 .navbar {
   background-color: #edeeef; 
@@ -54,54 +63,48 @@
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000; /* Ensure it stays above other content */
+  z-index: 1000; 
 }
 
 .navbar-container {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
 .search-container {
   display: flex;
   align-items: center;
-  flex-grow: 1;
-  margin: 0 20px;
 }
 
 .search-input {
-  width: 100%;
-  padding: 10px;
-  border: 0px solid #0056b3; 
-  border-radius: 10px 0 0 10px;
-  outline: none;
-  height: 10px;
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
 }
 
 .search-button {
-  background-color: #0056b3; 
+  background: none;
   border: none;
-  padding: 10px;
-  border-radius: 0 10px 10px 0; 
-  height: 30px;
+  cursor: pointer;
+  padding: 5px;
 }
 
 .nav-links {
   display: flex;
-  align-items: center;
 }
 
 .nav-list {
-  display: flex;
   list-style: none;
+  display: flex;
   padding: 0;
   margin: 0;
   
 }
 
 .nav-item {
-  margin: 0 10px;
+  margin-left: 20px;
 }
 
 .nav-item a {
@@ -113,7 +116,13 @@
 .nav-item a:hover {
   text-decoration: underline;
 }
+.login-link {
+  color: #007bff;
+}
 
+.login-link:hover {
+  text-decoration: underline;
+}
 
 .footer {
   background-color: #f6f9fb;
@@ -433,3 +442,6 @@
   list-style-type: none;
 }
 
+.MuiDrawer-paper {
+  border: 1px solid red; /* Just to visualize the Drawer boundary */
+}

@@ -2,22 +2,12 @@ import React, { useState } from 'react';
 import { Box, Typography, List, ListItem, ListItemText, Button } from '@mui/material';
 import DiscussionForm from './DiscussionForm';
 
-const DiscussionThread = ({ discussions = [] }) => {
+const DiscussionThread = ({ discussions, onAddDiscussion }) => {
   const [showForm, setShowForm] = useState(false);
-
-  const handleShowForm = () => {
-    setShowForm(!showForm);
-  };
-
-  const handleAddDiscussion = (newDiscussion) => {
-    // Assuming discussions are managed in the parent component
-    discussions.push(newDiscussion);
-    setShowForm(false);
-  };
 
   return (
     <Box sx={{ mt: 4 }}>
-      <Typography variant="h5">Discussion Thread</Typography>
+      <Typography variant="h5" gutterBottom>Discussion Thread</Typography>
       <List>
         {discussions.map((discussion, index) => (
           <ListItem key={index} alignItems="flex-start">
@@ -40,10 +30,10 @@ const DiscussionThread = ({ discussions = [] }) => {
           </ListItem>
         ))}
       </List>
-      <Button variant="contained" color="primary" onClick={handleShowForm}>
+      <Button variant="contained" color="primary" onClick={() => setShowForm(!showForm)}>
         {showForm ? 'Cancel' : 'Add Comment'}
       </Button>
-      {showForm && <DiscussionForm onAddDiscussion={handleAddDiscussion} />}
+      {showForm && <DiscussionForm onAddDiscussion={onAddDiscussion} />}
     </Box>
   );
 };

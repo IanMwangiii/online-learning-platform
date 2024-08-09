@@ -3,7 +3,7 @@ import { Box, TextField, Button } from '@mui/material';
 
 const DiscussionForm = ({ onAddDiscussion }) => {
   const [comment, setComment] = useState('');
-  const [user, setUser] = useState(''); // Assuming you manage user information elsewhere
+  const [user, setUser] = useState(''); // Manage user information elsewhere
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,7 +29,9 @@ const DiscussionForm = ({ onAddDiscussion }) => {
         rows={4}
         sx={{ mb: 2 }}
       />
-      <Button type="submit" variant="contained" color="primary">Post Comment</Button>
+      <Button type="submit" variant="contained" color="primary">
+        Post Comment
+      </Button>
     </Box>
   );
 };

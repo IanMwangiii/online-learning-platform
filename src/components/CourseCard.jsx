@@ -1,48 +1,44 @@
 import React, { useState } from 'react';
-import { Box, Typography, Card, CardMedia, CardContent, CardActions, Button, Rating, Collapse } from '@mui/material';
+import { Box, Typography, Card, CardMedia, CardContent, CardActions, Collapse, Rating } from '@mui/material';
 import LessonCard from './LessonCard';
+import EnrollButton from './EnrollButton';
+import { useNavigate } from 'react-router-dom';
 
-const CourseCard = ({ id, title, description, imageUrl, price, rating, instructor, instructorImage, lessons = [] }) => {
-  const [enrolled, setEnrolled] = useState(false);
+const CourseCard = ({ id, title, description, imageUrl, price, rating, instructor, instructorImage, lessons = [], isEnrolled: isEnrolledProp }) => {
+  const [enrolled, setEnrolled] = useState(isEnrolledProp);
+  const navigate = useNavigate();
 
   const handleEnroll = () => {
     setEnrolled(true);
+    navigate('/payment');
   };
 
   return (
-    <Card>
-      <CardMedia
-        component="img"
-        height="140"
-        image={imageUrl}
-        alt={title}
-      />
+    <Card sx={{ mb: 2 }}>
+      <CardMedia component="img" height="140" image={imageUrl} alt={title} />
       <CardContent>
-        <Typography variant="h6" component="div">{title}</Typography>
-        <Typography variant="body2" color="text.secondary">{description}</Typography>
-        <Typography variant="h6" component="div" color="text.primary">Price: {price}</Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Typography variant="body2" color="text.secondary">Rating:</Typography>
-          <Rating value={rating} readOnly size="small" />
+        <Typography variant="h6">{title}</Typography>
+        <Typography variant="body2" color="textSecondary">{description}</Typography>
+        <Typography variant="h6" color="textPrimary">Price: {price}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+          <Typography variant="body2" color="textSecondary">Rating:</Typography>
+          <Rating value={rating} readOnly size="small" sx={{ ml: 1 }} />
         </Box>
-        <Typography variant="body2" color="text.secondary">Instructor: {instructor}</Typography>
-        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+        <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>Instructor: {instructor}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
           <img src={instructorImage} alt="Instructor" style={{ width: 50, height: 50, borderRadius: '50%' }} />
         </Box>
       </CardContent>
       <CardActions>
-        {!enrolled ? (
-          <Button size="small" color="primary" onClick={handleEnroll}>Enroll</Button>
-        ) : (
-          <Collapse in={enrolled}>
-            <Box sx={{ padding: 2 }}>
-              <Typography variant="h6">Lessons:</Typography>
-              {lessons.map(lesson => (
-                <LessonCard key={lesson.id} {...lesson} />
-              ))}
-            </Box>
-          </Collapse>
-        )}
+        <EnrollButton isEnrolled={enrolled} onEnroll={handleEnroll} />
+        <Collapse in={enrolled}>
+          <Box sx={{ padding: 2 }}>
+            <Typography variant="h6">Lessons:</Typography>
+            {lessons.map((lesson) => (
+              <LessonCard key={lesson.id} {...lesson} />
+            ))}
+          </Box>
+        </Collapse>
       </CardActions>
     </Card>
   );

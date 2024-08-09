@@ -5,8 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
   const [userData, setUserData] = useState(null);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,10 +33,10 @@ const UserProfile = () => {
           setUserData(data);
         } else {
           const errorResult = await response.json();
-          setErrorMessage(errorResult.error || 'Failed to fetch user data.');
+          setMessage(errorResult.error || 'Failed to fetch user data.');
         }
       } catch (error) {
-        setErrorMessage('Error: ' + error.message);
+        setMessage('Error: ' + error.message);
       }
     };
 
@@ -52,8 +51,7 @@ const UserProfile = () => {
   };
 
   const handleSnackbarClose = () => {
-    setSuccessMessage('');
-    setErrorMessage('');
+    setMessage('');
   };
 
   return (
@@ -80,14 +78,14 @@ const UserProfile = () => {
         </Box>
       </Grid>
       <Snackbar
-        open={!!successMessage || !!errorMessage}
+        open={!!message}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message={successMessage || errorMessage}
+        message={message}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         ContentProps={{
           style: {
-            backgroundColor: successMessage ? '#4CAF50' : '#D32F2F', // Green for success, Red for error
+            backgroundColor: '#D32F2F', // Red for error messages
             color: 'white'
           },
         }}

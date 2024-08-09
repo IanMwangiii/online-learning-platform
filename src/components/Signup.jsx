@@ -16,13 +16,8 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = 'http://127.0.0.1:5000/auth/signup'; // Update this URL to match your backend route
-    const body = JSON.stringify({
-      username: formData.username,
-      email: formData.email,
-      phone: formData.phone,
-      password: formData.password
-    });
+    const endpoint = 'http://127.0.0.1:5000/auth/signup';
+    const body = JSON.stringify(formData);
 
     try {
       const response = await fetch(endpoint, {
@@ -74,6 +69,7 @@ const SignUp = () => {
               name='username'
               value={formData.username}
               onChange={handleInputChange}
+              required
             />
             <TextField
               label="Email"
@@ -83,6 +79,7 @@ const SignUp = () => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
+              required
             />
             <TextField
               label="Phone"
@@ -92,6 +89,7 @@ const SignUp = () => {
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
+              required
             />
             <TextField
               label="Password"
@@ -102,6 +100,7 @@ const SignUp = () => {
               name="password"
               value={formData.password}
               onChange={handleInputChange}
+              required
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -129,7 +128,7 @@ const SignUp = () => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         ContentProps={{
           style: {
-            backgroundColor: successMessage ? '#4CAF50' : '#D32F2F', // Green for success, Red for error
+            backgroundColor: successMessage ? '#4CAF50' : '#D32F2F',
             color: 'white'
           },
         }}

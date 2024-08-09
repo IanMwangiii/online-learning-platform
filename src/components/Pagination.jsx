@@ -1,21 +1,24 @@
 import React from 'react';
+import { Box, Button } from '@mui/material';
 
-function Pagination({ currentPage, totalPages, onPageChange }) {
+const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
 
   return (
-    <div className="pagination">
-      {pages.map(page => (
-        <button
+    <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
+      {pages.map((page) => (
+        <Button
           key={page}
-          className={`page-button ${page === currentPage ? 'active' : ''}`}
+          variant={page === currentPage ? 'contained' : 'outlined'}
+          color="primary"
           onClick={() => onPageChange(page)}
+          sx={{ mx: 0.5 }}
         >
           {page}
-        </button>
+        </Button>
       ))}
-    </div>
+    </Box>
   );
-}
+};
 
 export default Pagination;
