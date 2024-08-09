@@ -23,7 +23,7 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
     discussions = relationship('Discussion', back_populates='user')
-    payments = relationship('Payment', back_populates='user', cascade='all, delete-orphan')
+    payments = relationship('Payment', back_populates='user', foreign_keys='Payment.user_id', cascade='all, delete-orphan')
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -48,6 +48,7 @@ class User(db.Model):
         if not re.match(r'^[A-Za-z0-9]{1,10}$', username):
             abort(400, description="Username must be unique, contain no special symbols, and be a maximum of 10 characters")
 
+
 class Course(db.Model):
     __tablename__ = 'courses'
 
@@ -63,6 +64,7 @@ class Course(db.Model):
 
     def __repr__(self):
         return f'<Course {self.name}>'
+
 
 class Lesson(db.Model):
     __tablename__ = 'lessons'
@@ -80,6 +82,7 @@ class Lesson(db.Model):
     def __repr__(self):
         return f'<Lesson {self.topic}>'
 
+
 class Discussion(db.Model):
     __tablename__ = 'discussions'
 
@@ -96,6 +99,7 @@ class Discussion(db.Model):
     def __repr__(self):
         return f'<Discussion {self.topic}>'
 
+
 class Enrollment(db.Model):
     __tablename__ = 'enrollment'
 
@@ -105,6 +109,7 @@ class Enrollment(db.Model):
 
     def __repr__(self):
         return f'<Enrollment User: {self.name}, Course: {self.course_id}>'
+
 
 class Payment(db.Model):
     __tablename__ = 'payments'
@@ -122,7 +127,7 @@ class Payment(db.Model):
     phone_number = db.Column(db.String(10), nullable=True)
     mpesa_reference = db.Column(db.String(20), nullable=True)
 
-    user = db.relationship('User', back_populates='payments')
+    user = relationship('User', back_populates='payments', foreign_keys=[user_id])
     course = db.relationship('Course', back_populates='payments')
 
     def __repr__(self):
