@@ -41,7 +41,7 @@ function App() {
         <Route path="/payment" element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
         <Route path="/discussions" element={<DiscussionsPage />} />
       </Routes>
-      <CoursePage/>
+      {/* <CoursePage/> */}
     </Router>
   
   );
