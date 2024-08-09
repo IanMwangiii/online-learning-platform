@@ -11,7 +11,7 @@ metadata = MetaData(naming_convention={
 db = SQLAlchemy(metadata=metadata)
 
 class User(db.Model):
-    _tablename_ = 'users'
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -49,7 +49,7 @@ class User(db.Model):
             abort(400, description="Username must be unique, contain no special symbols, and be a maximum of 10 characters")
 
 class Course(db.Model):
-    _tablename_ = 'courses'
+    __tablename__ = 'courses'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
@@ -65,7 +65,7 @@ class Course(db.Model):
         return f'<Course {self.name}>'
 
 class Lesson(db.Model):
-    _tablename_ = 'lessons'
+    __tablename__ = 'lessons'
 
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.Text, nullable=False)
@@ -81,7 +81,7 @@ class Lesson(db.Model):
         return f'<Lesson {self.topic}>'
 
 class Discussion(db.Model):
-    _tablename_ = 'discussions'
+    __tablename__ = 'discussions'
 
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.Text, nullable=False)
@@ -97,7 +97,7 @@ class Discussion(db.Model):
         return f'<Discussion {self.topic}>'
 
 class Enrollment(db.Model):
-    _tablename_ = 'enrollment'
+    __tablename__ = 'enrollment'
 
     name = db.Column(db.String(100), db.ForeignKey('users.name'), primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), primary_key=True)
@@ -107,7 +107,7 @@ class Enrollment(db.Model):
         return f'<Enrollment User: {self.name}, Course: {self.course_id}>'
 
 class Payment(db.Model):
-    _tablename_ = 'payments'
+    __tablename__ = 'payments'
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
