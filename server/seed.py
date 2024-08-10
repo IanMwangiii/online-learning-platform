@@ -1,9 +1,9 @@
-from models import db, User, Course, Lesson, Enrollment, Payment, Discussion
 from app import app
+from models.models import db, User, Course, Lesson, Enrollment, Payment, Discussion
 
 with app.app_context():
     db.create_all()
-
+    
     # Create Users
     users = [
         User(name="Alice", username="alice123", email="alice@gmail.com", phone="0123456789", password=User.validate_password("Password123")),
