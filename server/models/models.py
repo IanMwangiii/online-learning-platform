@@ -11,7 +11,7 @@ metadata = MetaData(naming_convention={
 db = SQLAlchemy(metadata=metadata)
 
 class User(db.Model):
-    __tablename__ = 'users'
+    _tablename_ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -23,7 +23,7 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
     discussions = relationship('Discussion', back_populates='user')
-    payments = relationship('Payment', back_populates='user', cascade='all, delete-orphan')
+    payments = relationship('Payment', back_populates='user', foreign_keys='Payment.user_id', cascade='all, delete-orphan')
 
     def _repr_(self):
         return f'<User {self.username}>'
@@ -48,8 +48,9 @@ class User(db.Model):
         if not re.match(r'^[A-Za-z0-9]{1,10}$', username):
             abort(400, description="Username must be unique, contain no special symbols, and be a maximum of 10 characters")
 
+
 class Course(db.Model):
-    __tablename__ = 'courses'
+    _tablename_ = 'courses'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
@@ -64,8 +65,9 @@ class Course(db.Model):
     def _repr_(self):
         return f'<Course {self.name}>'
 
+
 class Lesson(db.Model):
-    __tablename__ = 'lessons'
+    _tablename_ = 'lessons'
 
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.Text, nullable=False)
@@ -80,8 +82,9 @@ class Lesson(db.Model):
     def _repr_(self):
         return f'<Lesson {self.topic}>'
 
+
 class Discussion(db.Model):
-    __tablename__ = 'discussions'
+    _tablename_ = 'discussions'
 
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.Text, nullable=False)
@@ -96,8 +99,9 @@ class Discussion(db.Model):
     def _repr_(self):
         return f'<Discussion {self.topic}>'
 
+
 class Enrollment(db.Model):
-    __tablename__ = 'enrollment'
+    _tablename_ = 'enrollment'
 
     name = db.Column(db.String(100), db.ForeignKey('users.name'), primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), primary_key=True)
@@ -106,8 +110,9 @@ class Enrollment(db.Model):
     def _repr_(self):
         return f'<Enrollment User: {self.name}, Course: {self.course_id}>'
 
+
 class Payment(db.Model):
-    __tablename__ = 'payments'
+    _tablename_ = 'payments'
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -122,7 +127,7 @@ class Payment(db.Model):
     phone_number = db.Column(db.String(10), nullable=True)
     mpesa_reference = db.Column(db.String(20), nullable=True)
 
-    user = db.relationship('User', back_populates='payments')
+    user = relationship('User', back_populates='payments', foreign_keys=[user_id])
     course = db.relationship('Course', back_populates='payments')
 
     def _repr_(self):
@@ -131,10 +136,10 @@ class Payment(db.Model):
     @staticmethod
     def validate_payment_method(method_of_payment, card_number=None, expiry_date=None, cvv=None, phone_number=None, mpesa_reference=None):
         if method_of_payment == "Card":
-         if not card_number or not expiry_date or not cvv:
-            abort(400, description="Card payment requires card number, expiry date, and CVV")
+            if not card_number or not expiry_date or not cvv:
+                abort(400, description="Card payment requires card number, expiry date, and CVV")
         elif method_of_payment == "Mpesa":
-          if not phone_number or len(phone_number) != 10 or not phone_number.isdigit():
-            abort(400, description="Mpesa payment requires a valid 10-digit phone number with no spaces")
-        if not re.match(r'^[A-Za-z0-9]{1,20}$', mpesa_reference):
-            abort(400, description="Mpesa payment requires a valid reference number")
+            if not phone_number or len(phone_number) != 10 or not phone_number.isdigit():
+                abort(400, description="Mpesa payment requires a valid 10-digit phone number with no spaces")
+            if not re.match(r'^[A-Z0-9]{1,20}$', mpesa_reference):
+                abort(400, description="Mpesa payment requires a valid reference number")
