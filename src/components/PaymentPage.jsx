@@ -10,6 +10,7 @@ const PaymentPage = ({ onPaymentSuccess }) => {
   const [cvv, setCvv] = useState('');
   const [mpesaNumber, setMpesaNumber] = useState('');
   const [errors, setErrors] = useState({});
+  const [courseId, setCourseId] = useState(1); // Assume courseId is passed or set dynamically
 
   const validateCardNumber = (number) => /^[0-9]{16}$/.test(number);
   const validateExpiryDate = (date) => /^(0[1-9]|1[0-2])\/\d{2}$/.test(date);
@@ -33,13 +34,10 @@ const PaymentPage = ({ onPaymentSuccess }) => {
     }
 
     if (typeof onPaymentSuccess === 'function') {
-      onPaymentSuccess();
-    } else {
-      console.error('onPaymentSuccess is not a function');
+      onPaymentSuccess(courseId);
     }
 
-    console.log('Navigating to /courses');
-    navigate('/courses');
+    navigate(`/course/${courseId}`);
   };
 
   return (

@@ -1,6 +1,6 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { useParams } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Box, Typography, Button } from '@mui/material';
+import { useParams, Navigate } from 'react-router-dom';
 import VideoPlayer from './VideoPlayer';
 import DiscussionThread from './DiscussionThread';
 import ProgressTracker from './ProgressTracker';
@@ -10,21 +10,34 @@ const dummyDiscussions = [
   { user: 'Bob', comment: 'I found the lessons very useful.', date: '2024-08-02 1:45 PM' },
 ];
 
-const dummyCompletedLessons = [
-  { id: 1, title: 'Introduction to React' }, // Example completed lesson
-];
-
-const CoursePage = () => {
+const CoursePage = ({ enrolledCourses }) => {
   const { id } = useParams();
+  const courseId = parseInt(id);
+
+  // Check if the user is enrolled in the course
+  if (!enrolledCourses.includes(courseId)) {
+    // Redirect to payment page if not enrolled
+    return <Navigate to="/payment" />;
+  }
 
   // Example course data
   const course = {
-    title: `Course ${id}`,
+    title: `Course ${courseId}`,
     description: 'This is a detailed description of the course.',
     lessons: [
-      { id: 1, title: 'Introduction to React', description: 'Introduction to the course', videoUrl: 'https://www.youtube.com/watch?v=cjWqQkct6EI' },
-      { id: 2, title: 'Advanced Topics', description: 'Advanced Topics', videoUrl: 'https://www.youtube.com/watch?v=cjWqQkct6EI' },
+      { id: 1, title: 'Introduction to React', description: 'Introduction to the course', videoUrl: 'https://www.youtube.com/embed/cjWqQkct6EI' },
+      { id: 2, title: 'Advanced Topics', description: 'Advanced Topics', videoUrl: 'https://www.youtube.com/embed/cjWqQkct6EI' },
     ],
+  };
+
+  // State for managing completed lessons
+  const [completedLessons, setCompletedLessons] = useState([]);
+
+  const markLessonAsDone = (lessonId) => {
+    const lesson = course.lessons.find(lesson => lesson.id === lessonId);
+    if (lesson && !completedLessons.find(l => l.id === lessonId)) {
+      setCompletedLessons([...completedLessons, lesson]);
+    }
   };
 
   return (
@@ -39,6 +52,15 @@ const CoursePage = () => {
             <Typography variant="h6">{lesson.title}</Typography>
             <Typography variant="body2" color="text.secondary">{lesson.description}</Typography>
             <VideoPlayer videoUrl={lesson.videoUrl} />
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => markLessonAsDone(lesson.id)}
+              disabled={!!completedLessons.find(l => l.id === lesson.id)}
+              sx={{ mt: 2 }}
+            >
+              {completedLessons.find(l => l.id === lesson.id) ? 'Completed' : 'Mark as Done'}
+            </Button>
           </Box>
         ))}
       </Box>
@@ -47,12 +69,12 @@ const CoursePage = () => {
         <Typography variant="h5" gutterBottom>Progress Tracker</Typography>
         <ProgressTracker
           lessons={course.lessons}
-          completedLessons={dummyCompletedLessons}
+          completedLessons={completedLessons}
         />
       </Box>
 
       <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom></Typography>
+        <Typography variant="h5" gutterBottom>Discussion Thread</Typography>
         <DiscussionThread discussions={dummyDiscussions} />
       </Box>
     </Box>
