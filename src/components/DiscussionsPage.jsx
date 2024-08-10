@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
-import DiscussionForm from './DiscussionForm';
+import { Box } from '@mui/material';
 import DiscussionThread from './DiscussionThread';
+import DiscussionForm from './DiscussionForm';
 
 const DiscussionsPage = () => {
   const [discussions, setDiscussions] = useState([]);
 
-  const handleAddDiscussion = (newDiscussion) => {
-    setDiscussions([newDiscussion, ...discussions]);
+  const handleAddDiscussion = (newComment) => {
+    const newDiscussion = {
+      user: 'Current User', // Replace with actual user
+      comment: newComment,
+      date: new Date().toLocaleString(),
+    };
+    setDiscussions([...discussions, newDiscussion]);
   };
 
   return (
-    <Box sx={{ padding: 4 }}>
-      <Typography variant="h4" gutterBottom>Discussions</Typography>
+    <Box sx={{ padding: 2 }}>
       <DiscussionForm onAddDiscussion={handleAddDiscussion} />
-      <DiscussionThread discussions={discussions} onAddDiscussion={handleAddDiscussion} />
+      <DiscussionThread discussions={discussions} />
     </Box>
   );
 };

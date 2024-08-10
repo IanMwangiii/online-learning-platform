@@ -5,11 +5,16 @@ import CourseList from './CourseList';
 import DiscussionThread from './DiscussionThread';
 import Notification from './Notification';
 import Sidebar from './Sidebar';
+import DiscussionForm from './DiscussionForm'; // Import the DiscussionForm component
 
-const dummyDiscussions = [];
+const dummyDiscussions = [
+  { user: 'Alice', comment: 'Great course!', date: '2024-08-01 10:30 AM' },
+  { user: 'Bob', comment: 'I found the lessons very useful.', date: '2024-08-02 1:45 PM' },
+];
 
 const Dashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [discussions, setDiscussions] = useState(dummyDiscussions);
   const [notification, setNotification] = useState({ open: false, message: '', severity: '' });
 
   const toggleDrawer = () => {
@@ -24,6 +29,15 @@ const Dashboard = () => {
     setNotification({ open: true, message, severity });
   };
 
+  const handleAddDiscussion = (newComment) => {
+    const newDiscussion = {
+      user: 'Current User', // Replace with actual user
+      comment: newComment,
+      date: new Date().toLocaleString(),
+    };
+    setDiscussions([...discussions, newDiscussion]);
+  };
+
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar position="fixed">
@@ -35,7 +49,7 @@ const Dashboard = () => {
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={drawerOpen}>
-        <Sidebar onDiscussionClick={() => showNotification('Discussion clicked!', 'info')} />
+        <Sidebar onClick={(path) => showNotification(`Navigating to ${path}`, 'info')} />
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, padding: 3, marginTop: 8 }}>
         <Notification
@@ -46,7 +60,8 @@ const Dashboard = () => {
         />
         <Typography variant="h4" gutterBottom>Welcome to the Dashboard</Typography>
         <CourseList />
-        <DiscussionThread discussions={dummyDiscussions} />
+        <DiscussionForm onAddDiscussion={handleAddDiscussion} />
+        <DiscussionThread discussions={discussions} />
       </Box>
     </Box>
   );

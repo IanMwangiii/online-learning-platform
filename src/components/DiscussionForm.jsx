@@ -1,36 +1,30 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button } from '@mui/material';
+import { TextField, Button, Box } from '@mui/material';
 
 const DiscussionForm = ({ onAddDiscussion }) => {
   const [comment, setComment] = useState('');
-  const [user, setUser] = useState(''); // Manage user information elsewhere
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newDiscussion = {
-      user,
-      comment,
-      date: new Date().toLocaleString(),
-    };
-    onAddDiscussion(newDiscussion);
-    setComment('');
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (comment.trim()) {
+      onAddDiscussion(comment);
+      setComment('');
+    }
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ mb: 2 }}>
       <TextField
-        label="Comment"
-        variant="outlined"
         fullWidth
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        required
         multiline
         rows={4}
-        sx={{ mb: 2 }}
+        variant="outlined"
+        label="Add a Comment"
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
       />
-      <Button type="submit" variant="contained" color="primary">
-        Post Comment
+      <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
+        Post
       </Button>
     </Box>
   );

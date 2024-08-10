@@ -12,10 +12,10 @@ import PaymentPage from './components/PaymentPage';
 import DiscussionsPage from './components/DiscussionsPage';
 
 function App() {
-  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
 
-  const handlePaymentSuccess = () => {
-    setIsEnrolled(true); // Set the user as enrolled after successful payment
+  const handlePaymentSuccess = (courseId) => {
+    setEnrolledCourses([...enrolledCourses, courseId]);
   };
 
   return (
@@ -23,22 +23,18 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/signup' element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/courses" element={<CourseList />} />
         <Route
           path="/course/:id"
           element={
-            isEnrolled ? (
-              <CoursePage />
-            ) : (
-              <PaymentPage onPaymentSuccess={handlePaymentSuccess} />
-            )
+            <CoursePage enrolledCourses={enrolledCourses} />
           }
         />
         <Route path="/user-profile" element={<UserProfile />} />
-        <Route path='/dashboard' element={<Dashboard />} />
-        <Route path='/payment' element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/payment" element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
         <Route path="/discussions" element={<DiscussionsPage />} />
       </Routes>
     </Router>

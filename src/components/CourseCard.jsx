@@ -4,8 +4,8 @@ import LessonCard from './LessonCard';
 import EnrollButton from './EnrollButton';
 import { useNavigate } from 'react-router-dom';
 
-const CourseCard = ({ id, title, description, imageUrl, price, rating, instructor, instructorImage, lessons = [], isEnrolled: isEnrolledProp }) => {
-  const [enrolled, setEnrolled] = useState(isEnrolledProp);
+const CourseCard = ({ id, title, description, imageUrl, price, rating, instructor, instructorImage, lessons = [], isEnrolled }) => {
+  const [enrolled, setEnrolled] = useState(isEnrolled);
   const navigate = useNavigate();
 
   const handleEnroll = () => {
