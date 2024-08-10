@@ -10,6 +10,7 @@ import SignUp from './components/Signup';
 import UserProfile from './components/UserProfile';
 import PaymentPage from './components/PaymentPage';
 import DiscussionsPage from './components/DiscussionsPage';
+import RatingStars from './components/RatingStars'; 
 
 function App() {
   const [isEnrolled, setIsEnrolled] = useState(false);
@@ -30,7 +31,9 @@ function App() {
           path="/course/:id"
           element={
             isEnrolled ? (
-              <CoursePage />
+              <CoursePage>
+                <RatingStars /> {/* Integrating RatingStars component */}
+              </CoursePage>
             ) : (
               <PaymentPage onPaymentSuccess={handlePaymentSuccess} />
             )

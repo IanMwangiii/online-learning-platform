@@ -4,13 +4,20 @@ import LessonCard from './LessonCard';
 import EnrollButton from './EnrollButton';
 import { useNavigate } from 'react-router-dom';
 
-const CourseCard = ({ id, title, description, imageUrl, price, rating, instructor, instructorImage, lessons = [], isEnrolled: isEnrolledProp }) => {
+const CourseCard = ({ id, title, description, imageUrl, price, rating: initialRating, instructor, instructorImage, lessons = [], isEnrolled: isEnrolledProp }) => {
   const [enrolled, setEnrolled] = useState(isEnrolledProp);
+  const [rating, setRating] = useState(initialRating);
   const navigate = useNavigate();
 
   const handleEnroll = () => {
     setEnrolled(true);
     navigate('/payment');
+  };
+
+  const handleRatingChange = (event, newValue) => {
+    setRating(newValue);
+    // Here, you would typically send the new rating to the backend to persist it
+    console.log(`New rating for course ${id}: ${newValue}`);
   };
 
   return (
@@ -22,7 +29,7 @@ const CourseCard = ({ id, title, description, imageUrl, price, rating, instructo
         <Typography variant="h6" color="textPrimary">Price: {price}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
           <Typography variant="body2" color="textSecondary">Rating:</Typography>
-          <Rating value={rating} readOnly size="small" sx={{ ml: 1 }} />
+          <Rating value={rating} onChange={handleRatingChange} size="small" sx={{ ml: 1 }} />
         </Box>
         <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>Instructor: {instructor}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>

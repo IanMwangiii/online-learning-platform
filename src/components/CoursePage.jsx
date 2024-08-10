@@ -3,6 +3,7 @@ import { Box, Typography } from '@mui/material';
 import { useParams } from 'react-router-dom';
 import VideoPlayer from './VideoPlayer';
 import DiscussionThread from './DiscussionThread';
+import RatingStars from './RatingStars'; 
 
 const dummyDiscussions = [
   { user: 'Alice', comment: 'Great course!', date: '2024-08-01 10:30 AM' },
@@ -26,6 +27,12 @@ const CoursePage = () => {
     <Box sx={{ padding: 4 }}>
       <Typography variant="h4" gutterBottom>{course.title}</Typography>
       <Typography variant="body1" gutterBottom>{course.description}</Typography>
+
+      {/* RatingStars Component */}
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="h6">Rate this course:</Typography>
+        <RatingStars />
+      </Box>
 
       <Box sx={{ mt: 4 }}>
         <Typography variant="h5" gutterBottom>Lessons</Typography>

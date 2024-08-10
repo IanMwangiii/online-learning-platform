@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography, Grid } from '@mui/material';
 import CourseCard from './CourseCard';
 import Pagination from './Pagination';
 
+// Use your existing course data
 const courses = [
   {
     id: 1,
     title: 'React Basics',
     description: 'Learn the basics of React.',
     imageUrl: 'https://assets.entrepreneur.com/content/3x2/2000/20141031174145-15-free-online-learning-sites.jpeg',
-    rating: 4,
     price: '₹1234.50',
+    rating: 4,
     instructor: 'John Doe',
     instructorImage: 'http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',
     lessons: [
@@ -46,15 +47,17 @@ const CourseList = () => {
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+      <Typography variant="h4" gutterBottom>Available Courses</Typography>
+      <Grid container spacing={2}>
         {courses.map((course) => (
-          <CourseCard key={course.id} {...course} />
+          <Grid item xs={12} sm={6} md={4} key={course.id}>
+            <CourseCard {...course} />
+          </Grid>
         ))}
-      </Box>
+      </Grid>
       <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
     </Box>
   );
 };
 
 export default CourseList;
-
