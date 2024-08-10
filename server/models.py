@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-from sqlalchemy import MetaData, CheckConstraint
+from sqlalchemy import MetaData
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from flask import abort
@@ -24,6 +24,17 @@ class User(db.Model):
 
     discussions = relationship('Discussion', back_populates='user')
     payments = relationship('Payment', back_populates='user', foreign_keys='Payment.user_id', cascade='all, delete-orphan')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'username': self.username,
+            'email': self.email,
+            'phone': self.phone,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+        }
 
     def __repr__(self):
         return f'<User {self.username}>'
@@ -62,6 +73,15 @@ class Course(db.Model):
     discussions = relationship('Discussion', back_populates='course', cascade='all, delete-orphan')
     payments = relationship('Payment', back_populates='course', cascade='all, delete-orphan')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'rating': self.rating,
+            'price': self.price,
+        }
+
     def __repr__(self):
         return f'<Course {self.name}>'
 
@@ -78,6 +98,17 @@ class Lesson(db.Model):
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
     course = db.relationship('Course', back_populates='lessons')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'topic': self.topic,
+            'content': self.content,
+            'video_url': self.video_url,
+            'course_id': self.course_id,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+        }
 
     def __repr__(self):
         return f'<Lesson {self.topic}>'
@@ -96,6 +127,16 @@ class Discussion(db.Model):
     user = db.relationship('User', back_populates='discussions')
     course = db.relationship('Course', back_populates='discussions')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'topic': self.topic,
+            'content': self.content,
+            'comment': self.comment,
+            'user_id': self.user_id,
+            'course_id': self.course_id,
+        }
+
     def __repr__(self):
         return f'<Discussion {self.topic}>'
 
@@ -106,6 +147,13 @@ class Enrollment(db.Model):
     name = db.Column(db.String(100), db.ForeignKey('users.name'), primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), primary_key=True)
     enrolled_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'course_id': self.course_id,
+            'enrolled_at': self.enrolled_at,
+        }
 
     def __repr__(self):
         return f'<Enrollment User: {self.name}, Course: {self.course_id}>'
@@ -129,6 +177,22 @@ class Payment(db.Model):
 
     user = relationship('User', back_populates='payments', foreign_keys=[user_id])
     course = db.relationship('Course', back_populates='payments')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'name': self.name,
+            'amount': self.amount,
+            'payment_date': self.payment_date,
+            'course_id': self.course_id,
+            'method_of_payment': self.method_of_payment,
+            'card_number': self.card_number,
+            'expiry_date': self.expiry_date,
+            'cvv': self.cvv,
+            'phone_number': self.phone_number,
+            'mpesa_reference': self.mpesa_reference,
+        }
 
     def __repr__(self):
         return f'<Payment {self.amount} by User {self.user_id} for Course {self.course_id}>'

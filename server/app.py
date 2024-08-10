@@ -20,7 +20,7 @@ class UserResource(Resource):
         if user_id:
             user = User.query.get(user_id)
             if user:
-                return jsonify(user)
+                return jsonify(user.to_dict())
             return {'message': 'User not found'}, 404
         users = User.query.all()
         return jsonify([user.to_dict() for user in users])
@@ -238,5 +238,5 @@ api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:enrollme
 api.add_resource(CourseResource, '/courses', '/courses/<int:course_id>')
 api.add_resource(PaymentResource, '/payments', '/payments/<int:payment_id>')
 
-if __name__ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True, port=5555)
