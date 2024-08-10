@@ -3,7 +3,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_bcrypt import Bcrypt
-from server.models.models import db, User, Discussion, Lesson, Enrollment, Course, Payment
+from models import db, User, Discussion, Lesson, Enrollment, Course, Payment
 from app_config import get_config
 
 app = Flask(__name__)
