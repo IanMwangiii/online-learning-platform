@@ -16,7 +16,14 @@ CORS(app)
 bcrypt = Bcrypt(app)
 
 class UserResource(Resource):
-    
+    def get(self, user_id=None):
+        if user_id:
+            user = User.query.get(user_id)
+            if user:
+                return jsonify(user.to_dict())
+            return {'message': 'User not found'}, 404
+        users = User.query.all()
+        return jsonify([user.to_dict() for user in users])
 
     def post(self):
         data = request.get_json()

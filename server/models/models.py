@@ -25,6 +25,18 @@ class User(db.Model):
     discussions = relationship('Discussion', back_populates='user')
     payments = relationship('Payment', back_populates='user', foreign_keys='Payment.user_id', cascade='all, delete-orphan')
 
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'username': self.username,
+            'email': self.email,
+            'phone': self.phone,
+            'password': self.password,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+        }
+
     def __repr__(self):
         return f'<User {self.username}>'
 
@@ -141,5 +153,5 @@ class Payment(db.Model):
         elif method_of_payment == "Mpesa":
             if not phone_number or len(phone_number) != 10 or not phone_number.isdigit():
                 abort(400, description="Mpesa payment requires a valid 10-digit phone number with no spaces")
-            if not re.match(r'^[A-Za-z0-9]{1,20}$', mpesa_reference):
+            if not re.match(r'^[A-Z0-9]{1,20}$', mpesa_reference):
                 abort(400, description="Mpesa payment requires a valid reference number")

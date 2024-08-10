@@ -40,3 +40,14 @@ def get_config(env=None):
     if env is None:
         env = os.getenv('FLASK_ENV', 'default')
     return config.get(env, Config)
+
+def clear_data():
+    """Delete all data from all tables."""
+    with app.app_context():
+        models = [User, Discussion, Lesson, Enrollment, Course] 
+        for model in models:
+            db.session.query(model).delete()
+            print(f"Cleared data from {model.__tablename__}")
+
+        db.session.commit()
+        print("All data cleared.")
