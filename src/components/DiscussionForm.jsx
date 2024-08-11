@@ -13,18 +13,17 @@ const DiscussionForm = ({ onAddDiscussion }) => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mb: 2 }}>
+    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
       <TextField
         fullWidth
-        multiline
-        rows={4}
+        label="Add a comment"
         variant="outlined"
-        label="Add a Comment"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
+        sx={{ mb: 2 }}
       />
-      <Button type="submit" variant="contained" color="primary" sx={{ mt: 2 }}>
-        Post
+      <Button type="submit" variant="contained" color="primary">
+        Post Comment
       </Button>
     </Box>
   );
