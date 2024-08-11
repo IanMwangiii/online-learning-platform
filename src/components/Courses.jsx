@@ -23,7 +23,7 @@ const courses = [
     title: 'JavaScript Fundamentals',
     description: 'Understand JavaScript fundamentals.',
     imageUrl: 'https://assets.entrepreneur.com/content/3x2/2000/20141031174145-15-free-online-learning-sites.jpeg',
-    price: '$5678.90',
+    price: '₹5678.90',
     rating: 5,
     instructor: 'Jane Smith',
     instructorImage: 'http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',
@@ -37,10 +37,10 @@ const courses = [
 const Courses = () => {
   return (
     <Box sx={{ padding: 2 }}>
-      <Typography variant="h4" gutterBottom>Courses</Typography>
+      <Typography variant="h4" gutterBottom>Available Courses</Typography>
       <Grid container spacing={2}>
         {courses.map((course) => (
-          <Grid item xs={12} sm={6} md={4} lg={3} key={course.id}>
+          <Grid item xs={12} sm={6} md={4} key={course.id}>
             <CourseCard {...course} />
           </Grid>
         ))}
