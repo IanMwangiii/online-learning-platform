@@ -22,10 +22,6 @@ function Navbar() {
           </IconButton>
           <Typography variant="h6" noWrap>course-TT</Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <div className="search-container">
-            <input type="text" className="search-input" placeholder="Search..." />
-            <button className="search-button"><FcSearch /></button>
-          </div>
           <div className="nav-links">
             <ul className="nav-list">
               <li className="nav-item"><Link to="/">Home</Link></li>
