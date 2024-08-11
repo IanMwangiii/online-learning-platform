@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Box } from '@mui/material';
+
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState('');
@@ -14,15 +14,18 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
-      <TextField
-        label="Search courses"
-        variant="outlined"
+    <form className="search-bar" onSubmit={handleSubmit}>
+      <input
+        type="text"
+        className="search-input"
+        placeholder="Search courses"
         value={query}
         onChange={handleChange}
-        sx={{ width: '100%', maxWidth: 600 }}
       />
-    </Box>
+      <button type="submit" className="search-button">
+        Search
+      </button>
+    </form>
   );
 };
 

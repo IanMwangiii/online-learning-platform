@@ -38,6 +38,11 @@ const Dashboard = () => {
     setDiscussions([...discussions, newDiscussion]);
   };
 
+  const handleSidebarClick = (path) => {
+    showNotification(`Navigating to ${path}`, 'info');
+    setDrawerOpen(false); // Close the drawer when an item is clicked
+  };
+
   return (
     <Box sx={{ display: 'flex' }}>
       <AppBar position="fixed">
@@ -48,8 +53,8 @@ const Dashboard = () => {
           <Typography variant="h6" noWrap>Dashboard</Typography>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={drawerOpen}>
-        <Sidebar onClick={(path) => showNotification(`Navigating to ${path}`, 'info')} />
+      <Drawer variant="temporary" open={drawerOpen} onClose={toggleDrawer}>
+        <Sidebar onClick={handleSidebarClick} />
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, padding: 3, marginTop: 8 }}>
         <Notification
