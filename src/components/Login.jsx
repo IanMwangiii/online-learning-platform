@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Typography, TextField, Button, IconButton, Box, Snackbar, InputAdornment } from '@mui/material';
-import Dialog from '@mui/material/Dialog'; // Add this import
-import DialogContent from '@mui/material/DialogContent'; // Add this import
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 import { ArrowBack as ArrowBackIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaPhoneAlt } from 'react-icons/fa';
@@ -29,10 +29,10 @@ const SignInOptions = ({ handleOpen }) => {
             <MdEmail size={30} />
             <Typography style={{ color: '#032541', marginLeft: '10px' }}>Log In with Email</Typography>
           </div>
-        </Grid>
+        </Grid >
         <Grid item>
           <Link to='/signup' style={{ textDecoration: 'none', }}>
-            <Typography style={{ textAlign: 'center', marginTop: '10px', cursor: 'pointer', color: '#007BFF' }}>Don't have an account? Sign up</Typography>
+            <Typography style={{ textAlign: 'center', marginTop: '10px', cursor: 'pointer', color: '#007BFF', paddingRight:200}}>Don't have an account? Sign up</Typography>
           </Link>
         </Grid>
       </Grid>
@@ -177,7 +177,7 @@ const Login = () => {
   const [open, setOpen] = useState(false);
   const [signInWithEmail, setSignInWithEmail] = useState(true);
   const [signInWithPhone, setSignInWithPhone] = useState(false);
-  const navigate = useNavigate(); // Make sure to include this
+  const navigate = useNavigate();
 
   const handleOpen = (type) => {
     if (type === 'email') {
@@ -194,8 +194,8 @@ const Login = () => {
 
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
-      <Grid item xs={12} sm={6}>
-        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
+      <Grid item xs={12} sm={8} md={6} lg={4} style={{ marginTop: '-150px' }}>
+        <Box sx={{ padding: 10, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
           <IconButton onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
             <ArrowBackIcon />
           </IconButton>
