@@ -10,7 +10,7 @@ import SignUp from './components/Signup';
 import UserProfile from './components/UserProfile';
 import PaymentPage from './components/PaymentPage';
 import DiscussionsPage from './components/DiscussionsPage';
-import RatingStars from './components/RatingStars';
+import FAQ from './components/ FAQ ';
 
 function App() {
   const [enrolledCourses, setEnrolledCourses] = useState([]);
@@ -37,6 +37,7 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/payment" element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
         <Route path="/discussions" element={<DiscussionsPage />} />
+        <Route path="/faq" element={<FAQ />} /> {/* Add the FAQ route */}
       </Routes>
     </Router>
   );

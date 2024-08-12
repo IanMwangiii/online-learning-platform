@@ -41,6 +41,7 @@ function Navbar() {
               <ul className="nav-list" style={{ display: 'flex', alignItems: 'center', padding: 0, margin: 0, listStyle: 'none' }}>
                 <li className="nav-item" style={{ marginRight: '16px' }}><Link to="/">Home</Link></li>
                 <li className="nav-item" style={{ marginRight: '16px' }}><Link to="/courses">Courses</Link></li>
+                <li className="nav-item" style={{ marginRight: '16px' }}><Link to="/faq">FAQ</Link></li>
                 <li className="nav-item" style={{ marginRight: '16px' }}>
                   <IconButton color="inherit" onClick={handleNotificationClick}>
                     <IoMdNotificationsOutline />
