@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { Grid, Typography, TextField, Button, IconButton, Box, Snackbar, InputAdornment } from '@mui/material';
-import Dialog from '@mui/material/Dialog'; // Add this import
-import DialogContent from '@mui/material/DialogContent'; // Add this import
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 import { ArrowBack as ArrowBackIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaPhoneAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
 
-const SignInOptions = ({ handleOpen }) => {
+const LogInOptions = ({ handleOpen }) => {
   return (
     <div>
       <Typography variant="h5" style={{ marginBottom: '20px' }}>Get your account</Typography>
@@ -31,8 +31,8 @@ const SignInOptions = ({ handleOpen }) => {
           </div>
         </Grid>
         <Grid item>
-          <Link to='/signup' style={{ textDecoration: 'none', }}>
-            <Typography style={{ textAlign: 'center', marginTop: '10px', cursor: 'pointer', color: '#007BFF' }}>Don't have an account? Sign up</Typography>
+          <Link to='/signup' style={{ textDecoration: 'none' }}>
+            <Typography style={{ textAlign: 'center', marginTop: '10px', cursor: 'pointer', color: '#007BFF', paddingRight: 200 }}>Don't have an account? Sign up</Typography>
           </Link>
         </Grid>
       </Grid>
@@ -40,7 +40,7 @@ const SignInOptions = ({ handleOpen }) => {
   );
 };
 
-const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
+const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
   const [formData, setFormData] = useState({ email: '', phone: '', password: '' });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
@@ -56,10 +56,10 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
     let endpoint;
     let body;
 
-    if (signInWithEmail) {
+    if (logInWithEmail) {
       endpoint = 'http://localhost:5555/auth/login';
       body = JSON.stringify({ email: formData.email, password: formData.password });
-    } else if (signInWithPhone) {
+    } else if (logInWithPhone) {
       endpoint = 'http://localhost:5555/auth/login';
       body = JSON.stringify({ phone: formData.phone, password: formData.password });
     }
@@ -101,9 +101,9 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
 
   return (
     <div>
-      <Typography variant="h5" style={{ marginBottom: '20px' }}>{signInWithEmail ? 'Log in with Email' : 'Log in with Phone'}</Typography>
+      <Typography variant="h5" style={{ marginBottom: '20px' }}>{logInWithEmail ? 'Log in with Email' : 'Log in with Phone'}</Typography>
       <form onSubmit={handleSubmit}>
-        {signInWithEmail && (
+        {logInWithEmail && (
           <TextField
             label="Email"
             type="email"
@@ -116,7 +116,7 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
             required
           />
         )}
-        {signInWithPhone && (
+        {logInWithPhone && (
           <TextField
             label="Phone"
             type="tel"
@@ -175,17 +175,17 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
 
 const Login = () => {
   const [open, setOpen] = useState(false);
-  const [signInWithEmail, setSignInWithEmail] = useState(true);
-  const [signInWithPhone, setSignInWithPhone] = useState(false);
-  const navigate = useNavigate(); // Make sure to include this
+  const [logInWithEmail, setLogInWithEmail] = useState(true);
+  const [logInWithPhone, setLogInWithPhone] = useState(false);
+  const navigate = useNavigate();
 
   const handleOpen = (type) => {
     if (type === 'email') {
-      setSignInWithEmail(true);
-      setSignInWithPhone(false);
+      setLogInWithEmail(true);
+      setLogInWithPhone(false);
     } else if (type === 'phone') {
-      setSignInWithEmail(false);
-      setSignInWithPhone(true);
+      setLogInWithEmail(false);
+      setLogInWithPhone(true);
     }
     setOpen(true);
   };
@@ -194,15 +194,15 @@ const Login = () => {
 
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
-      <Grid item xs={12} sm={6}>
-        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
+      <Grid item xs={12} sm={8} md={6} lg={4} style={{ marginTop: '-150px' }}>
+        <Box sx={{ padding: 10, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
           <IconButton onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
             <ArrowBackIcon />
           </IconButton>
-          <SignInOptions handleOpen={handleOpen} />
+          <LogInOptions handleOpen={handleOpen} />
           <Dialog open={open} onClose={handleClose}>
             <DialogContent>
-              <SignInForm signInWithEmail={signInWithEmail} signInWithPhone={signInWithPhone} handleClose={handleClose} />
+              <LogInForm logInWithEmail={logInWithEmail} logInWithPhone={logInWithPhone} handleClose={handleClose} />
             </DialogContent>
           </Dialog>
         </Box>
