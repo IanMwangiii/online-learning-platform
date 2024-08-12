@@ -1,30 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Grid, Typography, Button, Box, Snackbar, IconButton } from '@mui/material';
-import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
+import React, { useEffect, useState } from 'react';
+import { Grid, Typography, TextField, Button, Box, Snackbar } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
-  const [userData, setUserData] = useState(null);
-  const [message, setMessage] = useState('');
+  const [userData, setUserData] = useState({});
+  const [message, setMessage] = useState({ text: '', type: '' });
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem('access_token');
       const id = localStorage.getItem('id');
-
-      if (!token || !id) {
-        navigate('/login');
-        return;
-      }
+      const token = localStorage.getItem('access_token');
 
       try {
         const response = await fetch(`http://localhost:5555/user/${id}`, {
           method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Authorization': `Bearer ${token}` },
         });
 
         if (response.ok) {
@@ -32,57 +23,61 @@ const UserProfile = () => {
           setUserData(data);
         } else {
           const errorResult = await response.json();
-          setMessage(errorResult.error || 'Failed to fetch user data.');
+          setMessage({ text: errorResult.message || 'Failed to fetch user data.', type: 'error' });
         }
       } catch (error) {
-        setMessage('Error: ' + error.message);
+        setMessage({ text: 'Error: ' + error.message, type: 'error' });
       }
     };
 
     fetchUserData();
-  }, [navigate]);
+  }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('id');
-    navigate('/login');
-  };
-
-  const handleSnackbarClose = () => setMessage('');
+  const handleSnackbarClose = () => setMessage({ text: '', type: '' });
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
-      <Grid item xs={12} sm={8}>
-        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: '8px', textAlign: 'center' }}>
-          <IconButton onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography variant="h4">User Profile</Typography>
-          {userData ? (
-            <div>
-              <Typography variant="h6">Username: {userData.username}</Typography>
-              <Typography variant="h6">Name: {userData.name}</Typography>
-              <Typography variant="h6">Email: {userData.email}</Typography>
-              <Typography variant="h6">Phone: {userData.phone}</Typography>
-              <Button onClick={handleLogout} variant="contained" color="primary" style={{ marginTop: '1rem' }}>
-                Log Out
-              </Button>
-            </div>
-          ) : (
-            <Typography variant="h6">Loading...</Typography>
-          )}
+    <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: '100vh', backgroundColor: 'white' }}>
+      <Grid item xs={12} sm={6}>
+        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: 2 }}>
+          <Typography variant="h4" sx={{ marginBottom: 2 }}>User Profile</Typography>
+          <TextField
+            label="Username"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={userData.username || ''}
+            InputProps={{ readOnly: true }}
+          />
+          <TextField
+            label="Email"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={userData.email || ''}
+            InputProps={{ readOnly: true }}
+          />
+          <TextField
+            label="Phone"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            value={userData.phone || ''}
+            InputProps={{ readOnly: true }}
+          />
+          <Button variant="contained" color="primary" sx={{ marginTop: 2 }} onClick={() => navigate('/edit-profile')}>
+            Edit Profile
+          </Button>
         </Box>
       </Grid>
       <Snackbar
-        open={!!message}
+        open={!!message.text}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message={message}
+        message={message.text}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         ContentProps={{
-          style: {
-            backgroundColor: '#D32F2F',
+          sx: {
+            backgroundColor: message.type === 'success' ? '#4CAF50' : '#D32F2F',
             color: 'white'
           },
         }}

@@ -5,7 +5,7 @@ import CourseList from './CourseList';
 import DiscussionThread from './DiscussionThread';
 import Notification from './Notification';
 import Sidebar from './Sidebar';
-import DiscussionForm from './DiscussionForm';
+import DiscussionForm from './DiscussionForm'; // Import the DiscussionForm component
 
 const dummyDiscussions = [
   { user: 'Alice', comment: 'Great course!', date: '2024-08-01 10:30 AM' },
@@ -46,18 +46,16 @@ const Dashboard = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f4f6f8' }}>
-      <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, backgroundColor: '#1976d2' }}>
+    <Box sx={{ display: 'flex' }}>
+      <AppBar position="fixed">
         <Toolbar>
-          <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer} sx={{ mr: 2 }}>
+          <IconButton edge="start" color="inherit" aria-label="menu" onClick={toggleDrawer}>
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap>
-            Dashboard
-          </Typography>
+          <Typography variant="h6" noWrap>Dashboard</Typography>
         </Toolbar>
       </AppBar>
-      <Drawer variant="temporary" open={drawerOpen} onClose={toggleDrawer} PaperProps={{ sx: { width: 240 } }}>
+      <Drawer variant="temporary" open={drawerOpen} onClose={toggleDrawer}>
         <Sidebar onClick={handleSidebarClick} />
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, padding: 3, marginTop: 8 }}>
@@ -67,50 +65,21 @@ const Dashboard = () => {
           severity={notification.severity}
           onClose={handleNotificationClose}
         />
-        <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#333' }}>
-          Welcome to the Dashboard
-        </Typography>
+        <Typography variant="h4" gutterBottom>Welcome to the Dashboard</Typography>
         {role === 'admin' && (
           <Box sx={{ marginBottom: 3 }}>
-            <Typography variant="h6" sx={{ marginBottom: 2 }}>Admin Functions</Typography>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleSidebarClick('/manage-courses')}
-              sx={{
-                marginRight: '10px',
-                textTransform: 'none',
-                backgroundColor: '#1976d2',
-                '&:hover': {
-                  backgroundColor: '#155a9d',
-                },
-              }}
-            >
+            <Typography variant="h6">Admin Functions</Typography>
+            <Button variant="contained" color="primary" onClick={() => handleSidebarClick('/manage-courses')} style={{ marginRight: '10px' }}>
               Manage Courses
             </Button>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => handleSidebarClick('/manage-lessons')}
-              sx={{
-                textTransform: 'none',
-                backgroundColor: '#1976d2',
-                '&:hover': {
-                  backgroundColor: '#155a9d',
-                },
-              }}
-            >
+            <Button variant="contained" color="primary" onClick={() => handleSidebarClick('/manage-lessons')}>
               Manage Lessons
             </Button>
           </Box>
         )}
-        <Box sx={{ backgroundColor: 'white', padding: 3, borderRadius: 2, boxShadow: 3 }}>
-          <CourseList />
-        </Box>
-        <Box sx={{ marginTop: 4 }}>
-          <DiscussionForm onAddDiscussion={handleAddDiscussion} />
-          <DiscussionThread discussions={discussions} />
-        </Box>
+        <CourseList />
+        <DiscussionForm onAddDiscussion={handleAddDiscussion} />
+        <DiscussionThread discussions={discussions} />
       </Box>
     </Box>
   );

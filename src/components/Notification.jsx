@@ -1,9 +1,7 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { useState } from 'react';
 import Notification from './Notification';
 
-const NotificationContext = createContext();
-
-export const NotificationProvider = ({ children }) => {
+const NotificationManager = () => {
   const [notifications, setNotifications] = useState([]);
 
   const addNotification = (message, severity) => {
@@ -15,8 +13,7 @@ export const NotificationProvider = ({ children }) => {
   };
 
   return (
-    <NotificationContext.Provider value={{ addNotification }}>
-      {children}
+    <>
       {notifications.map((notification, index) => (
         <Notification
           key={index}
@@ -26,8 +23,8 @@ export const NotificationProvider = ({ children }) => {
           onClose={() => handleClose(index)}
         />
       ))}
-    </NotificationContext.Provider>
+    </>
   );
 };
 
-export const useNotification = () => useContext(NotificationContext);
+export default NotificationManager;
