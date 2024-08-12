@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; 
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { FcBusinessman } from 'react-icons/fc';
 import { IoMdNotificationsOutline } from 'react-icons/io';
 import { AppBar, Toolbar, IconButton, Typography, Box } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router-dom';
-import Notification from './Notification';
+import { useNotification } from './NotificationManager'; // Import the custom hook
 
 function Navbar() {
-  const [notificationOpen, setNotificationOpen] = useState(false);
-  const [notificationData, setNotificationData] = useState({ message: '', severity: 'info' });
+  const { addNotification } = useNotification();
   const navigate = useNavigate();
 
   const handleMenuClick = () => {
@@ -17,15 +16,7 @@ function Navbar() {
   };
 
   const handleNotificationClick = () => {
-    setNotificationData({
-      message: 'New course added!',
-      severity: 'info',
-    });
-    setNotificationOpen(true);
-  };
-
-  const handleNotificationClose = () => {
-    setNotificationOpen(false);
+    addNotification('New course added!', 'info'); // Use the context method to add a notification
   };
 
   return (
@@ -54,13 +45,6 @@ function Navbar() {
         </Toolbar>
       </AppBar>
       <Box sx={{ height: '64px' }} />
-
-      <Notification
-        open={notificationOpen}
-        message={notificationData.message}
-        severity={notificationData.severity}
-        onClose={handleNotificationClose}
-      />
     </>
   );
 }
