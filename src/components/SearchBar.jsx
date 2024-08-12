@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import { Box, TextField, Button } from '@mui/material';
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState('');
@@ -14,18 +14,52 @@ const SearchBar = ({ onSearch }) => {
   };
 
   return (
-    <form className="search-bar" onSubmit={handleSubmit}>
-      <input
-        type="text"
-        className="search-input"
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        mt: 2,
+        mb: 3,
+        width: '100%',
+      }}
+    >
+      <TextField
+        variant="outlined"
         placeholder="Search courses"
         value={query}
         onChange={handleChange}
+        sx={{
+          flexGrow: 1,
+          mr: 2,
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '25px',
+          },
+          '& .MuiInputBase-input': {
+            padding: '10px 20px',
+          },
+        }}
       />
-      <button type="submit" className="search-button">
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        sx={{
+          padding: '10px 25px',
+          borderRadius: '25px',
+          backgroundColor: '#1976d2',
+          textTransform: 'none',
+          fontWeight: 'bold',
+          '&:hover': {
+            backgroundColor: '#155a9d',
+          },
+        }}
+      >
         Search
-      </button>
-    </form>
+      </Button>
+    </Box>
   );
 };
 
