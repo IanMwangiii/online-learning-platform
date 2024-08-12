@@ -9,7 +9,6 @@ const UserProfile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch user data from the backend
     const fetchUserData = async () => {
       const token = localStorage.getItem('access_token');
       const id = localStorage.getItem('id');
@@ -50,9 +49,7 @@ const UserProfile = () => {
     navigate('/login');
   };
 
-  const handleSnackbarClose = () => {
-    setMessage('');
-  };
+  const handleSnackbarClose = () => setMessage('');
 
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
@@ -85,7 +82,7 @@ const UserProfile = () => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         ContentProps={{
           style: {
-            backgroundColor: '#D32F2F', // Red for error messages
+            backgroundColor: '#D32F2F',
             color: 'white'
           },
         }}
