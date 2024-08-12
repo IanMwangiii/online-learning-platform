@@ -42,6 +42,25 @@ const SignUp = () => {
   const handleSnackbarClose = () => setMessage({ text: '', type: '' });
 
   return (
+
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: '#f1f1f1' }}>
+      <Grid item xs={12} sm={6} md={5} lg={4}>
+        <Box
+          sx={{
+            padding: 4,
+            width: '100%',
+            bgcolor: 'background.paper',
+            boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
+            borderRadius: '12px',
+            textAlign: 'center',
+          }}
+        >
+          <IconButton onClick={() => navigate(-1)} style={{ marginBottom: '1rem', color: '#007BFF' }}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h4" style={{ marginBottom: '1.5rem', fontWeight: 'bold', color: '#333' }}>Sign Up</Typography>
+          {errorMessage && <Typography color="error" style={{ marginBottom: '1rem', fontWeight: 'bold' }}>{errorMessage}</Typography>}
+
     <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: '100vh', backgroundColor: 'white' }}>
       <Grid item xs={12} sm={6}>
         <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: 2 }}>
@@ -49,6 +68,7 @@ const SignUp = () => {
             <ArrowBackIcon />
           </IconButton>
           <Typography variant="h4" sx={{ marginBottom: 2 }}>Sign Up</Typography>
+
           <form onSubmit={handleSubmit}>
             <TextField
               label="Username"
@@ -59,6 +79,11 @@ const SignUp = () => {
               value={formData.username}
               onChange={handleInputChange}
               required
+              InputProps={{
+                style: {
+                  borderRadius: '8px',
+                },
+              }}
             />
             <TextField
               label="Email"
@@ -69,6 +94,11 @@ const SignUp = () => {
               value={formData.email}
               onChange={handleInputChange}
               required
+              InputProps={{
+                style: {
+                  borderRadius: '8px',
+                },
+              }}
             />
             <TextField
               label="Phone"
@@ -79,6 +109,11 @@ const SignUp = () => {
               value={formData.phone}
               onChange={handleInputChange}
               required
+              InputProps={{
+                style: {
+                  borderRadius: '8px',
+                },
+              }}
             />
             <TextField
               label="Password"
@@ -98,6 +133,9 @@ const SignUp = () => {
                     </IconButton>
                   </InputAdornment>
                 ),
+                style: {
+                  borderRadius: '8px',
+                },
               }}
             />
             <TextField
@@ -110,16 +148,46 @@ const SignUp = () => {
               margin="normal"
               variant="outlined"
               required
+              InputProps={{
+                style: {
+                  borderRadius: '8px',
+                },
+              }}
             >
               <MenuItem value="user">User</MenuItem>
               <MenuItem value="admin">Admin</MenuItem>
             </TextField>
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              style={{
+                marginTop: '1.5rem',
+                padding: '10px',
+                backgroundColor: '#007BFF',
+                color: '#fff',
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                transition: 'background-color 0.2s ease-in-out',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
+              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#007BFF'}
+            >
+              Sign Up
+            </Button>
+          </form>
+          <Typography variant="body2" style={{ marginTop: '1.5rem', textAlign: 'center', color: '#333' }}>
+            Already have an account? <Link to="/login" style={{ color: '#007BFF', fontWeight: 'bold' }}>Login</Link>
+
             <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
               Sign Up
             </Button>
           </form>
           <Typography variant="body2" sx={{ marginTop: 2, textAlign: 'center' }}>
             Already have an account? <Link to="/login" style={{ color: '#007BFF' }}>Login</Link>
+
           </Typography>
         </Box>
       </Grid>
@@ -130,9 +198,16 @@ const SignUp = () => {
         message={message.text}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         ContentProps={{
+
+          style: {
+            backgroundColor: successMessage ? '#4CAF50' : '#D32F2F',
+            color: 'white',
+            fontWeight: 'bold',
+
           sx: {
             backgroundColor: message.type === 'success' ? '#4CAF50' : '#D32F2F',
             color: 'white'
+
           },
         }}
       />
