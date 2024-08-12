@@ -1,42 +1,35 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './components/Home';
-import Dashboard from './components/Dashboard';
-import CourseList from './components/CourseList';
-import CoursePage from './components/CoursePage';
-import Login from './components/Login';
-import SignUp from './components/Signup';
+import Courses from './components/Courses';
+import CourseDetail from './components/CourseDetail';
+import LessonDetail from './components/LessonDetrail'; // Updated import
+import Discussions from './components/Discussions';
 import UserProfile from './components/UserProfile';
-import PaymentPage from './components/PaymentPage';
-import DiscussionsPage from './components/DiscussionsPage';
+import Enrollment from './components/Enrollment';
+import Payment from './components/Payment';
+import Footer from './components/Footer';
+import './components/App.css';
 
 function App() {
-  const [enrolledCourses, setEnrolledCourses] = useState([]);
-
-  const handlePaymentSuccess = (courseId) => {
-    setEnrolledCourses([...enrolledCourses, courseId]);
-  };
-
   return (
     <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/courses" element={<CourseList />} />
-        <Route
-          path="/course/:id"
-          element={
-            <CoursePage enrolledCourses={enrolledCourses} />
-          }
-        />
-        <Route path="/user-profile" element={<UserProfile />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/payment" element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
-        <Route path="/discussions" element={<DiscussionsPage />} />
-      </Routes>
+      <div className="App">
+        <Navbar />
+        <main className="main-content">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/courses" element={<Courses />} />
+            <Route path="/courses/:id" element={<CourseDetail />} />
+            <Route path="/lessons/:id" element={<LessonDetail />} />
+            <Route path="/discussions" element={<Discussions />} />
+            <Route path="/profile" element={<UserProfile />} />
+            <Route path="/enrollment" element={<Enrollment />} />
+            <Route path="/payment" element={<Payment />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
     </Router>
   );
 }

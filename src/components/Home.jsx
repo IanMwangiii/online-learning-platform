@@ -1,23 +1,16 @@
-import PropTypes from 'prop-types';
-import Footer from './Footer';
-import SearchBar from './SearchBar';
+import './App.css';
 
-function Home({ onSearch }) {
+function Home() {
   return (
-    <div>
-      <div className='home-page'>
-        <div>
-          <SearchBar onSearch={onSearch} /> {/* Pass onSearch to SearchBar */}
-        </div>
+    <div className="home">
+      <h1>Welcome to the Online Learning Platform</h1>
+      <p>Explore our courses and start learning today!</p>
+      <div className="home-buttons">
+        <button className="explore-button">Explore Courses</button>
+        <button className="join-button">Join Us</button>
       </div>
-      <Footer />
     </div>
   );
 }
-
-// Define PropTypes for the Home component
-Home.propTypes = {
-  onSearch: PropTypes.func.isRequired, // Ensures onSearch is a required function
-};
 
 export default Home;
