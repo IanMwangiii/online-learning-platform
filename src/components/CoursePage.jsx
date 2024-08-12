@@ -12,7 +12,7 @@ const dummyDiscussions = [
 
 const CoursePage = ({ enrolledCourses }) => {
   const { id } = useParams();
-  const courseId = parseInt(id);
+  const courseId = parseInt(id, 10);
 
   // Check if the user is enrolled in the course
   if (!enrolledCourses.includes(courseId)) {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box } from '@mui/material';
+import { Box, Typography, Grid, CircularProgress, Alert } from '@mui/material';
 import CourseCard from './CourseCard';
 import Pagination from './Pagination';
 
@@ -37,21 +37,32 @@ const courses = [
 
 const CourseList = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5; // Example total pages
+  const [totalPages] = useState(5); // Example total pages, adjust as needed
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    // Fetch new page data here
+    // Fetch new page data here if needed
   };
 
   return (
     <Box sx={{ padding: 2 }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-        {courses.map((course) => (
-          <CourseCard key={course.id} {...course} />
-        ))}
-      </Box>
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+      <Typography variant="h4" gutterBottom>Available Courses</Typography>
+      <Grid container spacing={2}>
+        {courses.length > 0 ? (
+          courses.map((course) => (
+            <Grid item xs={12} sm={6} md={4} key={course.id}>
+              <CourseCard {...course} />
+            </Grid>
+          ))
+        ) : (
+          <Typography>No courses available</Typography>
+        )}
+      </Grid>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </Box>
   );
 };

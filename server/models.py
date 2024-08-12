@@ -140,24 +140,25 @@ class Discussion(db.Model):
     def __repr__(self):
         return f'<Discussion {self.topic}>'
 
-
 class Enrollment(db.Model):
-    __tablename__ = 'enrollment'
+    __tablename__ = 'enrollments'
 
-    name = db.Column(db.String(100), db.ForeignKey('users.name'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), primary_key=True)
     enrolled_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
+    user = db.relationship('User', backref=db.backref('enrollments', lazy=True))
+    course = db.relationship('Course', backref=db.backref('enrollments', lazy=True))
+
     def to_dict(self):
         return {
-            'name': self.name,
+            'user_id': self.user_id,
             'course_id': self.course_id,
             'enrolled_at': self.enrolled_at,
         }
 
     def __repr__(self):
-        return f'<Enrollment User: {self.name}, Course: {self.course_id}>'
-
+        return f'<Enrollment User: {self.user_id}, Course: {self.course_id}>'
 
 class Payment(db.Model):
     __tablename__ = 'payments'
