@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Grid, Typography, TextField, Button, IconButton, Box, Snackbar, InputAdornment } from '@mui/material';
+import { Grid, Typography, TextField, Button, IconButton, Box, Snackbar, InputAdornment, MenuItem } from '@mui/material';
 import { ArrowBack as ArrowBackIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({ username: '', email: '', phone: '', password: '' });
+  const [formData, setFormData] = useState({ username: '', email: '', phone: '', password: '', role: 'user' });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -16,7 +16,7 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = 'http://127.0.0.1:5000/auth/signup';
+    const endpoint = 'http://localhost:5555/auth/signup';
     const body = JSON.stringify(formData);
 
     try {
@@ -111,6 +111,20 @@ const SignUp = () => {
                 ),
               }}
             />
+            <TextField
+              select
+              label="Role"
+              name="role"
+              value={formData.role}
+              onChange={handleInputChange}
+              fullWidth
+              margin="normal"
+              variant="outlined"
+              required
+            >
+              <MenuItem value="user">User</MenuItem>
+              <MenuItem value="admin">Admin</MenuItem>
+            </TextField>
             <Button type="submit" variant="contained" color="primary" fullWidth style={{ marginTop: '1rem' }}>
               Sign Up
             </Button>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Grid, Typography, TextField, Button, IconButton, Box, Snackbar, InputAdornment } from '@mui/material';
-import { ArrowBack as ArrowBackIcon, FormatIndentDecreaseSharp, Visibility, VisibilityOff } from '@mui/icons-material';
+import Dialog from '@mui/material/Dialog'; // Add this import
+import DialogContent from '@mui/material/DialogContent'; // Add this import
+import { ArrowBack as ArrowBackIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaPhoneAlt } from 'react-icons/fa';
 import { MdEmail } from 'react-icons/md';
@@ -8,7 +10,7 @@ import { MdEmail } from 'react-icons/md';
 const SignInOptions = ({ handleOpen }) => {
   return (
     <div>
-      <Typography variant="h5" style={{ marginBottom: '20px' }}>get your account</Typography>
+      <Typography variant="h5" style={{ marginBottom: '20px' }}>Get your account</Typography>
       <Grid container direction="column" spacing={2}>
         <Grid item>
           <div
@@ -16,7 +18,7 @@ const SignInOptions = ({ handleOpen }) => {
             style={{ display: "flex", alignItems: 'center', padding: "15px", width: '250px', boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px', cursor: "pointer" }}
           >
             <FaPhoneAlt size={30} />
-            <Typography style={{ color: '#032541', marginLeft: '10px' }}>Log In with phone</Typography>
+            <Typography style={{ color: '#032541', marginLeft: '10px' }}>Log In with Phone</Typography>
           </div>
         </Grid>
         <Grid item>
@@ -25,7 +27,7 @@ const SignInOptions = ({ handleOpen }) => {
             style={{ display: "flex", alignItems: 'center', padding: "15px", width: '250px', boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px', cursor: "pointer" }}
           >
             <MdEmail size={30} />
-            <Typography style={{ color: '#032541', marginLeft: '10px' }}>Log In with email</Typography>
+            <Typography style={{ color: '#032541', marginLeft: '10px' }}>Log In with Email</Typography>
           </div>
         </Grid>
         <Grid item>
@@ -55,10 +57,10 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
     let body;
 
     if (signInWithEmail) {
-      endpoint = 'http://localhost:5555/auth/login'; // Update this URL to match your backend route
+      endpoint = 'http://localhost:5555/auth/login';
       body = JSON.stringify({ email: formData.email, password: formData.password });
     } else if (signInWithPhone) {
-      endpoint = 'http://localhost:5555/auth/login'; // Update this URL to match your backend route
+      endpoint = 'http://localhost:5555/auth/login';
       body = JSON.stringify({ phone: formData.phone, password: formData.password });
     }
 
@@ -72,23 +74,20 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
       });
 
       if (response.ok) {
-        const result = await response.json();
-        localStorage.setItem('access_token', result.token);
-        localStorage.setItem('role', result.role);
-        localStorage.setItem('id', result.id);
-        setSuccessMessage('User signed in successfully!');
+        const data = await response.json();
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.role);
+        setSuccessMessage('Login successful!');
         setTimeout(() => {
-          navigate('/', { replace: true });
+          navigate('/dashboard', { replace: true });
         }, 3000);
       } else {
         const errorResult = await response.json();
-        setErrorMessage(errorResult.message || 'Login failed. Please check your credentials.');
+        setErrorMessage(errorResult.message || 'Login failed. Please check your details.');
       }
     } catch (error) {
       setErrorMessage('Error: ' + error.message);
     }
-
-    handleClose();
   };
 
   const togglePasswordVisibility = () => {
@@ -101,50 +100,62 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
   };
 
   return (
-    <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
-      <IconButton onClick={handleClose} style={{ marginBottom: '1rem' }}>
-        <ArrowBackIcon />
-      </IconButton>
-      <h2>Log In</h2>
-      {errorMessage && <Typography color="error" style={{ marginBottom: '1rem' }}>{errorMessage}</Typography>}
-      {signInWithEmail && (
-        <form onSubmit={handleSubmit}>
-          <TextField label="Email" variant="outlined" fullWidth margin="normal" name="email" value={formData.email} onChange={handleInputChange} />
-          <TextField label="Password" type={passwordVisible ? "text" : "password"} variant="outlined" fullWidth margin="normal" name="password" value={formData.password} onChange={handleInputChange}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={togglePasswordVisibility}>
-                    {passwordVisible ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
+    <div>
+      <Typography variant="h5" style={{ marginBottom: '20px' }}>{signInWithEmail ? 'Log in with Email' : 'Log in with Phone'}</Typography>
+      <form onSubmit={handleSubmit}>
+        {signInWithEmail && (
+          <TextField
+            label="Email"
+            type="email"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="email"
+            value={formData.email}
+            onChange={handleInputChange}
+            required
           />
-          <Button type="submit" variant="contained" color="primary" fullWidth style={{ marginTop: '1rem' }}>
-            Log In with Email
-          </Button>
-        </form>
-      )}
-      {signInWithPhone && (
-        <form onSubmit={handleSubmit}>
-          <TextField label="Phone" variant="outlined" fullWidth margin="normal" name="phone" value={formData.phone} onChange={handleInputChange} />
-          <TextField label="Password" type={passwordVisible ? "text" : "password"} variant="outlined" fullWidth margin="normal" name="password" value={formData.password} onChange={handleInputChange}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton onClick={togglePasswordVisibility}>
-                    {passwordVisible ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              )
-            }}
+        )}
+        {signInWithPhone && (
+          <TextField
+            label="Phone"
+            type="tel"
+            variant="outlined"
+            fullWidth
+            margin="normal"
+            name="phone"
+            value={formData.phone}
+            onChange={handleInputChange}
+            required
           />
-          <Button type="submit" variant="contained" color="primary" fullWidth style={{ marginTop: '1rem' }}>
-            Log In with Phone
-          </Button>
-        </form>
-      )}
+        )}
+        <TextField
+          label="Password"
+          type={passwordVisible ? "text" : "password"}
+          variant="outlined"
+          fullWidth
+          margin="normal"
+          name="password"
+          value={formData.password}
+          onChange={handleInputChange}
+          required
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={togglePasswordVisibility}>
+                  {passwordVisible ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
+        <Button type="submit" variant="contained" color="primary" fullWidth style={{ marginTop: '1rem' }}>
+          Log In
+        </Button>
+      </form>
+      <Typography variant="body2" style={{ marginTop: '1rem', textAlign: 'center' }}>
+        Don't have an account? <Link to="/signup" style={{ color: '#007BFF' }}>Sign Up</Link>
+      </Typography>
       <Snackbar
         open={!!successMessage || !!errorMessage}
         autoHideDuration={6000}
@@ -153,43 +164,48 @@ const SignInForm = ({ signInWithEmail, signInWithPhone, handleClose }) => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         ContentProps={{
           style: {
-            backgroundColor: successMessage ? '#4CAF50' : '#D32F2F', // Green for success, Red for error
+            backgroundColor: successMessage ? '#4CAF50' : '#D32F2F',
             color: 'white'
           },
         }}
       />
-    </Box>
+    </div>
   );
 };
 
 const Login = () => {
-  const [signInWithEmail, setSignInWithEmail] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [signInWithEmail, setSignInWithEmail] = useState(true);
   const [signInWithPhone, setSignInWithPhone] = useState(false);
+  const navigate = useNavigate(); // Make sure to include this
 
-  const handleOpen = (method) => {
-    setSignInWithEmail(method === 'email');
-    setSignInWithPhone(method === 'phone');
+  const handleOpen = (type) => {
+    if (type === 'email') {
+      setSignInWithEmail(true);
+      setSignInWithPhone(false);
+    } else if (type === 'phone') {
+      setSignInWithEmail(false);
+      setSignInWithPhone(true);
+    }
+    setOpen(true);
   };
 
-  const handleClose = () => {
-    setSignInWithEmail(false);
-    setSignInWithPhone(false);
-  };
+  const handleClose = () => setOpen(false);
 
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
       <Grid item xs={12} sm={6}>
-      </Grid>
-      <Grid item xs={12} sm={6} container justifyContent="center" alignItems="center">
-        {signInWithEmail || signInWithPhone ? (
-          <SignInForm
-            signInWithEmail={signInWithEmail}
-            signInWithPhone={signInWithPhone}
-            handleClose={handleClose}
-          />
-        ) : (
+        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
+          <IconButton onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
+            <ArrowBackIcon />
+          </IconButton>
           <SignInOptions handleOpen={handleOpen} />
-        )}
+          <Dialog open={open} onClose={handleClose}>
+            <DialogContent>
+              <SignInForm signInWithEmail={signInWithEmail} signInWithPhone={signInWithPhone} handleClose={handleClose} />
+            </DialogContent>
+          </Dialog>
+        </Box>
       </Grid>
     </Grid>
   );
