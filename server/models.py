@@ -1,6 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import relationship
-from sqlalchemy import MetaData, CheckConstraint
+from sqlalchemy import MetaData
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 from flask import abort
@@ -11,7 +11,7 @@ metadata = MetaData(naming_convention={
 db = SQLAlchemy(metadata=metadata)
 
 class User(db.Model):
-    _tablename_ = 'users'
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
@@ -22,10 +22,21 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
-    discussions = relationship('Discussion', back_populates='user')
+    discussions = relationship('Discussion', back_populates='user', cascade='all, delete-orphan', lazy=True)
     payments = relationship('Payment', back_populates='user', foreign_keys='Payment.user_id', cascade='all, delete-orphan')
 
-    def _repr_(self):
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'username': self.username,
+            'email': self.email,
+            'phone': self.phone,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+        }
+
+    def __repr__(self):
         return f'<User {self.username}>'
 
     @staticmethod
@@ -50,7 +61,7 @@ class User(db.Model):
 
 
 class Course(db.Model):
-    _tablename_ = 'courses'
+    __tablename__ = 'courses'
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(200), nullable=False)
@@ -62,12 +73,21 @@ class Course(db.Model):
     discussions = relationship('Discussion', back_populates='course', cascade='all, delete-orphan')
     payments = relationship('Payment', back_populates='course', cascade='all, delete-orphan')
 
-    def _repr_(self):
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'rating': self.rating,
+            'price': self.price,
+        }
+
+    def __repr__(self):
         return f'<Course {self.name}>'
 
 
 class Lesson(db.Model):
-    _tablename_ = 'lessons'
+    __tablename__ = 'lessons'
 
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.Text, nullable=False)
@@ -79,12 +99,23 @@ class Lesson(db.Model):
 
     course = db.relationship('Course', back_populates='lessons')
 
-    def _repr_(self):
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'topic': self.topic,
+            'content': self.content,
+            'video_url': self.video_url,
+            'course_id': self.course_id,
+            'created_at': self.created_at,
+            'updated_at': self.updated_at,
+        }
+
+    def __repr__(self):
         return f'<Lesson {self.topic}>'
 
 
 class Discussion(db.Model):
-    _tablename_ = 'discussions'
+    __tablename__ = 'discussions'
 
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.Text, nullable=False)
@@ -96,23 +127,40 @@ class Discussion(db.Model):
     user = db.relationship('User', back_populates='discussions')
     course = db.relationship('Course', back_populates='discussions')
 
-    def _repr_(self):
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'topic': self.topic,
+            'content': self.content,
+            'comment': self.comment,
+            'user_id': self.user_id,
+            'course_id': self.course_id,
+        }
+
+    def __repr__(self):
         return f'<Discussion {self.topic}>'
 
 
 class Enrollment(db.Model):
-    _tablename_ = 'enrollment'
+    __tablename__ = 'enrollment'
 
     name = db.Column(db.String(100), db.ForeignKey('users.name'), primary_key=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), primary_key=True)
     enrolled_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-    def _repr_(self):
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'course_id': self.course_id,
+            'enrolled_at': self.enrolled_at,
+        }
+
+    def __repr__(self):
         return f'<Enrollment User: {self.name}, Course: {self.course_id}>'
 
 
 class Payment(db.Model):
-    _tablename_ = 'payments'
+    __tablename__ = 'payments'
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
@@ -130,7 +178,23 @@ class Payment(db.Model):
     user = relationship('User', back_populates='payments', foreign_keys=[user_id])
     course = db.relationship('Course', back_populates='payments')
 
-    def _repr_(self):
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'name': self.name,
+            'amount': self.amount,
+            'payment_date': self.payment_date,
+            'course_id': self.course_id,
+            'method_of_payment': self.method_of_payment,
+            'card_number': self.card_number,
+            'expiry_date': self.expiry_date,
+            'cvv': self.cvv,
+            'phone_number': self.phone_number,
+            'mpesa_reference': self.mpesa_reference,
+        }
+
+    def __repr__(self):
         return f'<Payment {self.amount} by User {self.user_id} for Course {self.course_id}>'
 
     @staticmethod
