@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { Grid, Typography, TextField, Button, IconButton, Box, Snackbar, InputAdornment } from '@mui/material';
-<<<<<<< HEAD
-import Dialog from '@mui/material/Dialog'; // Add this import
-import DialogContent from '@mui/material/DialogContent'; // Add this import
-=======
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
->>>>>>> origin
 import { ArrowBack as ArrowBackIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaPhoneAlt } from 'react-icons/fa';
@@ -61,17 +56,10 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
     let endpoint;
     let body;
 
-<<<<<<< HEAD
-    if (signInWithEmail) {
-      endpoint = 'http://localhost:5555/auth/login';
-      body = JSON.stringify({ email: formData.email, password: formData.password });
-    } else if (signInWithPhone) {
-=======
     if (logInWithEmail) {
       endpoint = 'http://localhost:5555/auth/login';
       body = JSON.stringify({ email: formData.email, password: formData.password });
     } else if (logInWithPhone) {
->>>>>>> origin
       endpoint = 'http://localhost:5555/auth/login';
       body = JSON.stringify({ phone: formData.phone, password: formData.password });
     }
@@ -113,15 +101,9 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
 
   return (
     <div>
-<<<<<<< HEAD
-      <Typography variant="h5" style={{ marginBottom: '20px' }}>{signInWithEmail ? 'Log in with Email' : 'Log in with Phone'}</Typography>
-      <form onSubmit={handleSubmit}>
-        {signInWithEmail && (
-=======
       <Typography variant="h5" style={{ marginBottom: '20px' }}>{logInWithEmail ? 'Log in with Email' : 'Log in with Phone'}</Typography>
       <form onSubmit={handleSubmit}>
         {logInWithEmail && (
->>>>>>> origin
           <TextField
             label="Email"
             type="email"
@@ -134,11 +116,7 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
             required
           />
         )}
-<<<<<<< HEAD
-        {signInWithPhone && (
-=======
         {logInWithPhone && (
->>>>>>> origin
           <TextField
             label="Phone"
             type="tel"
@@ -197,19 +175,6 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
 
 const Login = () => {
   const [open, setOpen] = useState(false);
-<<<<<<< HEAD
-  const [signInWithEmail, setSignInWithEmail] = useState(true);
-  const [signInWithPhone, setSignInWithPhone] = useState(false);
-  const navigate = useNavigate(); // Make sure to include this
-
-  const handleOpen = (type) => {
-    if (type === 'email') {
-      setSignInWithEmail(true);
-      setSignInWithPhone(false);
-    } else if (type === 'phone') {
-      setSignInWithEmail(false);
-      setSignInWithPhone(true);
-=======
   const [logInWithEmail, setLogInWithEmail] = useState(true);
   const [logInWithPhone, setLogInWithPhone] = useState(false);
   const navigate = useNavigate();
@@ -221,7 +186,6 @@ const Login = () => {
     } else if (type === 'phone') {
       setLogInWithEmail(false);
       setLogInWithPhone(true);
->>>>>>> origin
     }
     setOpen(true);
   };
@@ -230,17 +194,6 @@ const Login = () => {
 
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
-<<<<<<< HEAD
-      <Grid item xs={12} sm={6}>
-        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
-          <IconButton onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
-            <ArrowBackIcon />
-          </IconButton>
-          <SignInOptions handleOpen={handleOpen} />
-          <Dialog open={open} onClose={handleClose}>
-            <DialogContent>
-              <SignInForm signInWithEmail={signInWithEmail} signInWithPhone={signInWithPhone} handleClose={handleClose} />
-=======
       <Grid item xs={12} sm={8} md={6} lg={4} style={{ marginTop: '-150px' }}>
         <Box sx={{ padding: 10, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
           <IconButton onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
@@ -250,7 +203,6 @@ const Login = () => {
           <Dialog open={open} onClose={handleClose}>
             <DialogContent>
               <LogInForm logInWithEmail={logInWithEmail} logInWithPhone={logInWithPhone} handleClose={handleClose} />
->>>>>>> origin
             </DialogContent>
           </Dialog>
         </Box>
