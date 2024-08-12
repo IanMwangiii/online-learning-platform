@@ -10,29 +10,55 @@ import { MdEmail } from 'react-icons/md';
 const LogInOptions = ({ handleOpen }) => {
   return (
     <div>
-      <Typography variant="h5" style={{ marginBottom: '20px' }}>Get your account</Typography>
-      <Grid container direction="column" spacing={2}>
+      <Typography variant="h5" style={{ marginBottom: '20px', fontWeight: 'bold', color: '#333' }}>Access Your Account</Typography>
+      <Grid container direction="column" spacing={2} alignItems="center">
         <Grid item>
           <div
             onClick={() => handleOpen('phone')}
-            style={{ display: "flex", alignItems: 'center', padding: "15px", width: '250px', boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px', cursor: "pointer" }}
+            style={{
+              display: "flex",
+              alignItems: 'center',
+              padding: "15px",
+              width: '300px',
+              boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
+              borderRadius: '8px',
+              cursor: "pointer",
+              backgroundColor: '#f9f9f9',
+              transition: 'transform 0.2s ease-in-out',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <FaPhoneAlt size={30} />
-            <Typography style={{ color: '#032541', marginLeft: '10px' }}>Log In with Phone</Typography>
+            <FaPhoneAlt size={30} color="#007BFF" />
+            <Typography style={{ color: '#333', marginLeft: '10px', fontWeight: '500' }}>Log In with Phone</Typography>
           </div>
         </Grid>
         <Grid item>
           <div
             onClick={() => handleOpen('email')}
-            style={{ display: "flex", alignItems: 'center', padding: "15px", width: '250px', boxShadow: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px', cursor: "pointer" }}
+            style={{
+              display: "flex",
+              alignItems: 'center',
+              padding: "15px",
+              width: '300px',
+              boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
+              borderRadius: '8px',
+              cursor: "pointer",
+              backgroundColor: '#f9f9f9',
+              transition: 'transform 0.2s ease-in-out',
+            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <MdEmail size={30} />
-            <Typography style={{ color: '#032541', marginLeft: '10px' }}>Log In with Email</Typography>
+            <MdEmail size={30} color="#007BFF" />
+            <Typography style={{ color: '#333', marginLeft: '10px', fontWeight: '500' }}>Log In with Email</Typography>
           </div>
         </Grid>
         <Grid item>
           <Link to='/signup' style={{ textDecoration: 'none' }}>
-            <Typography style={{ textAlign: 'center', marginTop: '10px', cursor: 'pointer', color: '#007BFF', paddingRight: 200 }}>Don't have an account? Sign up</Typography>
+            <Typography style={{ textAlign: 'center', marginTop: '20px', cursor: 'pointer', color: '#007BFF', fontWeight: 'bold' }}>
+              Don't have an account? Sign up
+            </Typography>
           </Link>
         </Grid>
       </Grid>
@@ -101,7 +127,9 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
 
   return (
     <div>
-      <Typography variant="h5" style={{ marginBottom: '20px' }}>{logInWithEmail ? 'Log in with Email' : 'Log in with Phone'}</Typography>
+      <Typography variant="h5" style={{ marginBottom: '20px', fontWeight: 'bold', color: '#333' }}>
+        {logInWithEmail ? 'Log in with Email' : 'Log in with Phone'}
+      </Typography>
       <form onSubmit={handleSubmit}>
         {logInWithEmail && (
           <TextField
@@ -114,6 +142,11 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
             value={formData.email}
             onChange={handleInputChange}
             required
+            InputProps={{
+              style: {
+                borderRadius: '8px',
+              },
+            }}
           />
         )}
         {logInWithPhone && (
@@ -127,6 +160,11 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
             value={formData.phone}
             onChange={handleInputChange}
             required
+            InputProps={{
+              style: {
+                borderRadius: '8px',
+              },
+            }}
           />
         )}
         <TextField
@@ -147,14 +185,33 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
                 </IconButton>
               </InputAdornment>
             ),
+            style: {
+              borderRadius: '8px',
+            },
           }}
         />
-        <Button type="submit" variant="contained" color="primary" fullWidth style={{ marginTop: '1rem' }}>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          style={{
+            marginTop: '1rem',
+            padding: '10px',
+            backgroundColor: '#007BFF',
+            color: '#fff',
+            fontWeight: 'bold',
+            borderRadius: '8px',
+            transition: 'background-color 0.2s ease-in-out',
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#007BFF'}
+        >
           Log In
         </Button>
       </form>
-      <Typography variant="body2" style={{ marginTop: '1rem', textAlign: 'center' }}>
-        Don't have an account? <Link to="/signup" style={{ color: '#007BFF' }}>Sign Up</Link>
+      <Typography variant="body2" style={{ marginTop: '1rem', textAlign: 'center', color: '#333' }}>
+        Don't have an account? <Link to="/signup" style={{ color: '#007BFF', fontWeight: 'bold' }}>Sign Up</Link>
       </Typography>
       <Snackbar
         open={!!successMessage || !!errorMessage}
@@ -165,7 +222,8 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
         ContentProps={{
           style: {
             backgroundColor: successMessage ? '#4CAF50' : '#D32F2F',
-            color: 'white'
+            color: 'white',
+            fontWeight: 'bold',
           },
         }}
       />
@@ -193,14 +251,23 @@ const Login = () => {
   const handleClose = () => setOpen(false);
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
-      <Grid item xs={12} sm={8} md={6} lg={4} style={{ marginTop: '-150px' }}>
-        <Box sx={{ padding: 10, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
-          <IconButton onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: '#f1f1f1' }}>
+      <Grid item xs={12} sm={8} md={6} lg={4}>
+        <Box
+          sx={{
+            padding: 4,
+            width: '100%',
+            bgcolor: 'background.paper',
+            boxShadow: 'rgba(0, 0, 0, 0.1) 0px 4px 12px',
+            borderRadius: '12px',
+            textAlign: 'center',
+          }}
+        >
+          <IconButton onClick={() => navigate(-1)} style={{ marginBottom: '1rem', color: '#007BFF' }}>
             <ArrowBackIcon />
           </IconButton>
           <LogInOptions handleOpen={handleOpen} />
-          <Dialog open={open} onClose={handleClose}>
+          <Dialog open={open} onClose={handleClose} maxWidth="xs" fullWidth>
             <DialogContent>
               <LogInForm logInWithEmail={logInWithEmail} logInWithPhone={logInWithPhone} handleClose={handleClose} />
             </DialogContent>

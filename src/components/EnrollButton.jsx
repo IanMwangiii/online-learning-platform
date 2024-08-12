@@ -8,11 +8,28 @@ const EnrollButton = ({ isEnrolled, onEnroll }) => {
   return (
     <Button
       variant="contained"
-      color="primary"
+      color={isEnrolled ? "success" : "primary"}
       disabled={isEnrolled}
       onClick={() => {
         if (!isEnrolled) {
           navigate('/payment');
+        }
+      }}
+      sx={{
+        padding: '10px 20px',
+        fontWeight: 'bold',
+        fontSize: '1rem',
+        borderRadius: '8px',
+        textTransform: 'none',
+        backgroundColor: isEnrolled ? '#4CAF50' : '#007BFF',
+        '&:hover': {
+          backgroundColor: isEnrolled ? '#388E3C' : '#0056b3',
+          transition: 'background-color 0.3s ease',
+        },
+        '&:disabled': {
+          backgroundColor: '#9E9E9E',
+          color: '#ffffff',
+          cursor: 'not-allowed',
         }
       }}
     >
