@@ -22,7 +22,7 @@ class User(db.Model):
     created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
     updated_at = db.Column(db.DateTime, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp())
 
-    discussions = relationship('Discussion', back_populates='user')
+    discussions = relationship('Discussion', back_populates='user', cascade='all, delete-orphan', lazy=True)
     payments = relationship('Payment', back_populates='user', foreign_keys='Payment.user_id', cascade='all, delete-orphan')
 
     def to_dict(self):
