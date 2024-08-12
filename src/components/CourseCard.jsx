@@ -16,7 +16,6 @@ const CourseCard = ({ id, title, description, imageUrl, price, rating: initialRa
 
   const handleRatingChange = (event, newValue) => {
     setRating(newValue);
-    // Here, you would typically send the new rating to the backend to persist it
     console.log(`New rating for course ${id}: ${newValue}`);
   };
 

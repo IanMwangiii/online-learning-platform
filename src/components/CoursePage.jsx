@@ -3,7 +3,7 @@ import { Box, Typography, Button } from '@mui/material';
 import { useParams, Navigate } from 'react-router-dom';
 import VideoPlayer from './VideoPlayer';
 import DiscussionThread from './DiscussionThread';
-import RatingStars from './RatingStars';
+import RatingStars from './RatingStars'; // Make sure this component exists in your project
 import ProgressTracker from './ProgressTracker';
 
 const dummyDiscussions = [

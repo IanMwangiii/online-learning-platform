@@ -3,8 +3,8 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_bcrypt import Bcrypt
-from server.models.models import db, User, Discussion, Lesson, Enrollment, Course, Payment
-from app_config import get_config
+from models import db, User, Discussion, Lesson, Enrollment, Course, Payment
+from config import get_config
 
 app = Flask(__name__)
 app.config.from_object(get_config())
@@ -20,7 +20,7 @@ class UserResource(Resource):
         if user_id:
             user = User.query.get(user_id)
             if user:
-                return jsonify(user)
+                return jsonify(user.to_dict())
             return {'message': 'User not found'}, 404
         users = User.query.all()
         return jsonify([user.to_dict() for user in users])
@@ -49,18 +49,18 @@ class UserResource(Resource):
             data = request.get_json()
             if 'email' in data:
                 User.validate_email(data['email'])
+                user.email = data['email']
             if 'phone' in data:
                 User.validate_phone(data['phone'])
+                user.phone = data['phone']
             if 'password' in data:
                 User.validate_password(data['password'])
                 user.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
             if 'username' in data:
                 User.validate_username(data['username'])
+                user.username = data['username']
 
             user.name = data.get('name', user.name)
-            user.email = data.get('email', user.email)
-            user.username = data.get('username', user.username)
-            user.phone = data.get('phone', user.phone)
             db.session.commit()
             return {'message': 'User updated successfully'}
         return {'message': 'User not found'}, 404
@@ -78,7 +78,7 @@ class DiscussionResource(Resource):
         if discussion_id:
             discussion = Discussion.query.get(discussion_id)
             if discussion:
-                return jsonify(discussion)
+                return jsonify(discussion.to_dict())
             return {'message': 'Discussion not found'}, 404
         discussions = Discussion.query.all()
         return jsonify([discussion.to_dict() for discussion in discussions])
@@ -109,7 +109,7 @@ class LessonResource(Resource):
         if lesson_id:
             lesson = Lesson.query.get(lesson_id)
             if lesson:
-                return jsonify(lesson)
+                return jsonify(lesson.to_dict())
             return {'message': 'Lesson not found'}, 404
         lessons = Lesson.query.all()
         return jsonify([lesson.to_dict() for lesson in lessons])
@@ -127,11 +127,11 @@ class LessonResource(Resource):
         return {'message': 'Lesson created successfully'}, 201
 
 class EnrollmentResource(Resource):
-    def get(self, enrollment_id=None):
-        if enrollment_id:
-            enrollment = Enrollment.query.get(enrollment_id)
+    def get(self, name=None, course_id=None):
+        if name and course_id:
+            enrollment = Enrollment.query.filter_by(name=name, course_id=course_id).first()
             if enrollment:
-                return jsonify(enrollment)
+                return jsonify(enrollment.to_dict())
             return {'message': 'Enrollment not found'}, 404
         enrollments = Enrollment.query.all()
         return jsonify([enrollment.to_dict() for enrollment in enrollments])
@@ -146,8 +146,8 @@ class EnrollmentResource(Resource):
         db.session.commit()
         return {'message': 'Enrollment created successfully'}, 201
 
-    def patch(self, enrollment_id):
-        enrollment = Enrollment.query.get(enrollment_id)
+    def patch(self, name, course_id):
+        enrollment = Enrollment.query.filter_by(name=name, course_id=course_id).first()
         if enrollment:
             data = request.get_json()
             enrollment.name = data.get('name', enrollment.name)
@@ -156,8 +156,8 @@ class EnrollmentResource(Resource):
             return {'message': 'Enrollment updated successfully'}
         return {'message': 'Enrollment not found'}, 404
 
-    def delete(self, enrollment_id):
-        enrollment = Enrollment.query.get(enrollment_id)
+    def delete(self, name, course_id):
+        enrollment = Enrollment.query.filter_by(name=name, course_id=course_id).first()
         if enrollment:
             db.session.delete(enrollment)
             db.session.commit()
@@ -169,7 +169,7 @@ class CourseResource(Resource):
         if course_id:
             course = Course.query.get(course_id)
             if course:
-                return jsonify(course)
+                return jsonify(course.to_dict())
             return {'message': 'Course not found'}, 404
         courses = Course.query.all()
         return jsonify([course.to_dict() for course in courses])
@@ -191,7 +191,7 @@ class PaymentResource(Resource):
         if payment_id:
             payment = Payment.query.get(payment_id)
             if payment:
-                return jsonify(payment)
+                return jsonify(payment.to_dict())
             return {'message': 'Payment not found'}, 404
         payments = Payment.query.all()
         return jsonify([payment.to_dict() for payment in payments])
@@ -234,9 +234,9 @@ class PaymentResource(Resource):
 api.add_resource(UserResource, '/users', '/users/<int:user_id>')
 api.add_resource(DiscussionResource, '/discussions', '/discussions/<int:discussion_id>')
 api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
-api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:enrollment_id>')
+api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<string:name>/<int:course_id>')
 api.add_resource(CourseResource, '/courses', '/courses/<int:course_id>')
 api.add_resource(PaymentResource, '/payments', '/payments/<int:payment_id>')
 
-if __name__ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True, port=5555)
