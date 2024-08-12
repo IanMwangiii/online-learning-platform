@@ -1,6 +1,5 @@
 from app import app
 from models import db, User, Course, Lesson, Enrollment, Payment, Discussion
-from datetime import date
 from werkzeug.security import generate_password_hash  
 
 with app.app_context():

@@ -6,8 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 const SignUp = () => {
   const [formData, setFormData] = useState({ username: '', email: '', phone: '', password: '', role: 'user' });
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [message, setMessage] = useState({ text: '', type: '' });
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -22,36 +21,28 @@ const SignUp = () => {
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: body,
       });
 
       if (response.ok) {
-        setSuccessMessage('User signed up successfully!');
-        setTimeout(() => {
-          navigate('/login', { replace: true });
-        }, 3000);
+        setMessage({ text: 'User signed up successfully!', type: 'success' });
+        navigate('/login', { replace: true });
       } else {
         const errorResult = await response.json();
-        setErrorMessage(errorResult.message || 'Signup failed. Please check your details.');
+        setMessage({ text: errorResult.message || 'Signup failed. Please check your details.', type: 'error' });
       }
     } catch (error) {
-      setErrorMessage('Error: ' + error.message);
+      setMessage({ text: 'Error: ' + error.message, type: 'error' });
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+  const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
 
-  const handleSnackbarClose = () => {
-    setSuccessMessage('');
-    setErrorMessage('');
-  };
+  const handleSnackbarClose = () => setMessage({ text: '', type: '' });
 
   return (
+
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: '#f1f1f1' }}>
       <Grid item xs={12} sm={6} md={5} lg={4}>
         <Box
@@ -69,6 +60,15 @@ const SignUp = () => {
           </IconButton>
           <Typography variant="h4" style={{ marginBottom: '1.5rem', fontWeight: 'bold', color: '#333' }}>Sign Up</Typography>
           {errorMessage && <Typography color="error" style={{ marginBottom: '1rem', fontWeight: 'bold' }}>{errorMessage}</Typography>}
+
+    <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: '100vh', backgroundColor: 'white' }}>
+      <Grid item xs={12} sm={6}>
+        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: 2 }}>
+          <IconButton onClick={() => navigate(-1)} sx={{ marginBottom: 2 }}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h4" sx={{ marginBottom: 2 }}>Sign Up</Typography>
+
           <form onSubmit={handleSubmit}>
             <TextField
               label="Username"
@@ -157,6 +157,7 @@ const SignUp = () => {
               <MenuItem value="user">User</MenuItem>
               <MenuItem value="admin">Admin</MenuItem>
             </TextField>
+
             <Button
               type="submit"
               variant="contained"
@@ -179,20 +180,34 @@ const SignUp = () => {
           </form>
           <Typography variant="body2" style={{ marginTop: '1.5rem', textAlign: 'center', color: '#333' }}>
             Already have an account? <Link to="/login" style={{ color: '#007BFF', fontWeight: 'bold' }}>Login</Link>
+
+            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
+              Sign Up
+            </Button>
+          </form>
+          <Typography variant="body2" sx={{ marginTop: 2, textAlign: 'center' }}>
+            Already have an account? <Link to="/login" style={{ color: '#007BFF' }}>Login</Link>
+
           </Typography>
         </Box>
       </Grid>
       <Snackbar
-        open={!!successMessage || !!errorMessage}
+        open={!!message.text}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message={successMessage || errorMessage}
+        message={message.text}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         ContentProps={{
+
           style: {
             backgroundColor: successMessage ? '#4CAF50' : '#D32F2F',
             color: 'white',
             fontWeight: 'bold',
+
+          sx: {
+            backgroundColor: message.type === 'success' ? '#4CAF50' : '#D32F2F',
+            color: 'white'
+
           },
         }}
       />

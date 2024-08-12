@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { Grid, Typography, TextField, Button, IconButton, Box, Snackbar, InputAdornment } from '@mui/material';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
 import { ArrowBack as ArrowBackIcon, Visibility, VisibilityOff } from '@mui/icons-material';
 import { Link, useNavigate } from 'react-router-dom';
-import { FaPhoneAlt } from 'react-icons/fa';
-import { MdEmail } from 'react-icons/md';
+
 
 const LogInOptions = ({ handleOpen }) => {
   return (
@@ -68,9 +65,12 @@ const LogInOptions = ({ handleOpen }) => {
 
 const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
   const [formData, setFormData] = useState({ email: '', phone: '', password: '' });
+
+const Login = () => {
+  const [formData, setFormData] = useState({ username: '', password: '' });
+
   const [passwordVisible, setPasswordVisible] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+  const [message, setMessage] = useState({ text: '', type: '' });
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -79,53 +79,37 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let endpoint;
-    let body;
-
-    if (logInWithEmail) {
-      endpoint = 'http://localhost:5555/auth/login';
-      body = JSON.stringify({ email: formData.email, password: formData.password });
-    } else if (logInWithPhone) {
-      endpoint = 'http://localhost:5555/auth/login';
-      body = JSON.stringify({ phone: formData.phone, password: formData.password });
-    }
+    const endpoint = 'http://localhost:5555/auth/login';
+    const body = JSON.stringify(formData);
 
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: body,
       });
 
       if (response.ok) {
         const data = await response.json();
-        localStorage.setItem('token', data.token);
+        localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('role', data.role);
-        setSuccessMessage('Login successful!');
-        setTimeout(() => {
-          navigate('/dashboard', { replace: true });
-        }, 3000);
+        localStorage.setItem('id', data.id);
+        navigate('/user-profile', { replace: true });
       } else {
         const errorResult = await response.json();
-        setErrorMessage(errorResult.message || 'Login failed. Please check your details.');
+        setMessage({ text: errorResult.message || 'Login failed. Please check your credentials.', type: 'error' });
       }
     } catch (error) {
-      setErrorMessage('Error: ' + error.message);
+      setMessage({ text: 'Error: ' + error.message, type: 'error' });
     }
   };
 
-  const togglePasswordVisibility = () => {
-    setPasswordVisible(!passwordVisible);
-  };
+  const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
 
-  const handleSnackbarClose = () => {
-    setSuccessMessage('');
-    setErrorMessage('');
-  };
+  const handleSnackbarClose = () => setMessage({ text: '', type: '' });
 
   return (
+
     <div>
       <Typography variant="h5" style={{ marginBottom: '20px', fontWeight: 'bold', color: '#333' }}>
         {logInWithEmail ? 'Log in with Email' : 'Log in with Phone'}
@@ -213,13 +197,63 @@ const LogInForm = ({ logInWithEmail, logInWithPhone, handleClose }) => {
       <Typography variant="body2" style={{ marginTop: '1rem', textAlign: 'center', color: '#333' }}>
         Don't have an account? <Link to="/signup" style={{ color: '#007BFF', fontWeight: 'bold' }}>Sign Up</Link>
       </Typography>
+
+    <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: '100vh', backgroundColor: 'white' }}>
+      <Grid item xs={12} sm={6}>
+        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: 2 }}>
+          <IconButton onClick={() => navigate(-1)} sx={{ marginBottom: 2 }}>
+            <ArrowBackIcon />
+          </IconButton>
+          <Typography variant="h4" sx={{ marginBottom: 2 }}>Login</Typography>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              label="Username"
+              variant='outlined'
+              fullWidth
+              margin='normal'
+              name='username'
+              value={formData.username}
+              onChange={handleInputChange}
+              required
+            />
+            <TextField
+              label="Password"
+              type={passwordVisible ? "text" : "password"}
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton onClick={togglePasswordVisibility}>
+                      {passwordVisible ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
+              Login
+            </Button>
+          </form>
+          <Typography variant="body2" sx={{ marginTop: 2, textAlign: 'center' }}>
+            Don't have an account? <Link to="/signup" style={{ color: '#007BFF' }}>Sign Up</Link>
+          </Typography>
+        </Box>
+      </Grid>
+
       <Snackbar
-        open={!!successMessage || !!errorMessage}
+        open={!!message.text}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message={successMessage || errorMessage}
+        message={message.text}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         ContentProps={{
+
           style: {
             backgroundColor: successMessage ? '#4CAF50' : '#D32F2F',
             color: 'white',
@@ -274,6 +308,14 @@ const Login = () => {
           </Dialog>
         </Box>
       </Grid>
+
+          sx: {
+            backgroundColor: message.type === 'success' ? '#4CAF50' : '#D32F2F',
+            color: 'white'
+          },
+        }}
+      />
+
     </Grid>
   );
 };
