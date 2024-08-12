@@ -19,7 +19,7 @@ const UserProfile = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:5555/user/${id}`, {
+        const response = await fetch(`http://localhost:5555/users/${id}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,

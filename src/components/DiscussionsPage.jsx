@@ -15,6 +15,8 @@ const DiscussionsPage = () => {
     setDiscussions([...discussions, newDiscussion]);
   };
 
+  console.log('Discussions data:', discussions); // Debugging line
+
   return (
     <Box sx={{ padding: 2 }}>
       <DiscussionForm onAddDiscussion={handleAddDiscussion} />

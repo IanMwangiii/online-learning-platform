@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Box, Typography, Card, CardMedia, CardContent, CardActions, Collapse, Rating } from '@mui/material';
 import LessonCard from './LessonCard';
