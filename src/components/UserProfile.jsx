@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, Typography, Button, Box, Snackbar, IconButton } from '@mui/material';
+import { Grid, Typography, Button, Box, Snackbar, IconButton, Alert } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
@@ -94,15 +94,12 @@ const UserProfile = () => {
         open={!!message}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message={message}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        ContentProps={{
-          style: {
-            backgroundColor: '#D32F2F',
-            color: 'white'
-          },
-        }}
-      />
+      >
+        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: '100%' }}>
+          {message}
+        </Alert>
+      </Snackbar>
     </Grid>
   );
 };

@@ -9,7 +9,7 @@ import Notification from './Notification';
 
 const CourseList = ({ enrolledCourses, onEnroll }) => {
   const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
