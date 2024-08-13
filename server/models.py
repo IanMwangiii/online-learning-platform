@@ -93,7 +93,7 @@ class Course(db.Model):
     name = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
     price = db.Column(db.Float, nullable=False)
-    rating = db.Column(db.Float)
+    rating = db.Column(db.Float)  # Rating is optional
 
     def to_dict(self):
         return {
