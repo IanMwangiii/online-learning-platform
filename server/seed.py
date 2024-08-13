@@ -11,9 +11,9 @@ with app.app_context():
     Lesson.query.delete()
     Course.query.delete()
     User.query.delete()
-    db.session.commit(
+    db.session.commit() 
 
-    print("Creating users...")
+    print("Creating users...")  
     users = [
         User(name="Alice", username="alice123", email="alice@gmail.com", phone="0123456789", password=generate_password_hash("Password123")),
         User(name="Bob", username="bob456", email="bob@gmail.com", phone="0987654321", password=generate_password_hash("Password456")),
