@@ -37,10 +37,23 @@ const SignUp = () => {
   const handleSnackbarClose = () => setMessage('');
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
-      <Grid item xs={12} sm={6}>
-        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
-          <Typography variant="h4" sx={{ marginBottom: 2 }}>Sign Up</Typography>
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', background: 'linear-gradient(to right, #74ebd5, #ACB6E5)' }}>
+      <Grid item xs={12} sm={8} md={4}>
+        <Box
+          sx={{
+            padding: 4,
+            bgcolor: 'white',
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+            textAlign: 'center',
+          }}
+        >
+          <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold', color: '#007BFF' }}>
+            Create an Account
+          </Typography>
+          <Typography variant="body1" sx={{ marginBottom: 3, color: '#555' }}>
+            Join us to explore more!
+          </Typography>
           <form onSubmit={handleSubmit}>
             <TextField
               label="Username"
@@ -51,6 +64,7 @@ const SignUp = () => {
               value={formData.username}
               onChange={handleInputChange}
               required
+              sx={{ borderRadius: '8px' }}
             />
             <TextField
               label="Email"
@@ -61,6 +75,7 @@ const SignUp = () => {
               value={formData.email}
               onChange={handleInputChange}
               required
+              sx={{ borderRadius: '8px' }}
             />
             <TextField
               label="Password"
@@ -72,6 +87,7 @@ const SignUp = () => {
               value={formData.password}
               onChange={handleInputChange}
               required
+              sx={{ borderRadius: '8px' }}
             />
             <TextField
               label="Phone"
@@ -82,6 +98,7 @@ const SignUp = () => {
               value={formData.phone}
               onChange={handleInputChange}
               required
+              sx={{ borderRadius: '8px' }}
             />
             <TextField
               label="Role"
@@ -92,13 +109,29 @@ const SignUp = () => {
               value={formData.role}
               onChange={handleInputChange}
               required
+              sx={{ borderRadius: '8px' }}
             />
-            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              sx={{
+                marginTop: 2,
+                padding: 1.5,
+                backgroundColor: '#007BFF',
+                color: 'white',
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                '&:hover': {
+                  backgroundColor: '#0056b3',
+                },
+              }}
+            >
               Sign Up
             </Button>
           </form>
-          <Typography variant="body2" sx={{ marginTop: 2, textAlign: 'center' }}>
-            Already have an account? <Link to="/login" style={{ color: '#007BFF' }}>Login</Link>
+          <Typography variant="body2" sx={{ marginTop: 2, color: '#555' }}>
+            Already have an account? <Link to="/login" style={{ color: '#007BFF', textDecoration: 'none', fontWeight: 'bold' }}>Login</Link>
           </Typography>
         </Box>
       </Grid>
