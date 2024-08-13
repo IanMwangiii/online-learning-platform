@@ -27,4 +27,4 @@ def get_config():
     elif env == 'production':
         return ProductionConfig
     else:
-        raise ValueError('Invalid FLASK_ENV value')
+        return Config

@@ -22,6 +22,8 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 def index():
     return "Welcome to the API!", 200
 
+# Define API resource routes
+
 class UserResource(Resource):
     def get(self, user_id=None):
         if user_id is not None:
@@ -40,7 +42,6 @@ class UserResource(Resource):
         User.validate_username(data['username'])
 
         new_user = User(
-            name=data['name'],
             username=data['username'],
             email=data['email'],
             phone=data.get('phone'),
@@ -67,7 +68,6 @@ class UserResource(Resource):
                 User.validate_username(data['username'])
                 user.username = data['username']
 
-            user.name = data.get('name', user.name)
             db.session.commit()
             return {'message': 'User updated successfully'}
         return {'message': 'User not found'}, 404
