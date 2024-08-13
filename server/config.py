@@ -1,30 +1,28 @@
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'a_default_secret_key'
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
+    SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URI', 'sqlite:///test.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    CORS_HEADERS = 'Content-Type'
-    JSONIFY_PRETTYPRINT_REGULAR = False
-    DEBUG = False
+    SECRET_KEY = os.getenv('SECRET_KEY', 'your_secret_key')
 
 class DevelopmentConfig(Config):
     DEBUG = True
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///test.db'
+    SQLALCHEMY_DATABASE_URI = os.getenv('TEST_DATABASE_URI', 'sqlite:///test.db')
 
 class ProductionConfig(Config):
     DEBUG = False
 
 def get_config():
     env = os.getenv('FLASK_ENV', 'development')
-    if env == 'development':
-        return DevelopmentConfig
+    if env == 'production':
+        return ProductionConfig
     elif env == 'testing':
         return TestingConfig
-    elif env == 'production':
-        return ProductionConfig
     else:
-        return Config
+        return DevelopmentConfig
