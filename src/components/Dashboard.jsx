@@ -6,6 +6,7 @@ import DiscussionThread from './DiscussionThread';
 import Notification from './Notification';
 import Sidebar from './Sidebar';
 import DiscussionForm from './DiscussionForm'; // Import the DiscussionForm component
+import FeatureHighlights from './FeatureHighlights'; // Import the FeatureHighlights component
 
 const dummyDiscussions = [
   { user: 'Alice', comment: 'Great course!', date: '2024-08-01 10:30 AM' },
@@ -77,6 +78,8 @@ const Dashboard = () => {
             </Button>
           </Box>
         )}
+        {/* Include the FeatureHighlights component here */}
+        <FeatureHighlights />
         <CourseList />
         <DiscussionForm onAddDiscussion={handleAddDiscussion} />
         <DiscussionThread discussions={discussions} />
