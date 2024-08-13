@@ -51,4 +51,3 @@ const CourseCard = ({ course, enrolledCourses, onEnroll }) => {
 };
 
 export default CourseCard;
-
