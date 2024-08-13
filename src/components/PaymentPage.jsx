@@ -1,83 +1,125 @@
 import React, { useState } from 'react';
-import { Box, Typography, TextField, Button } from '@mui/material';
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { TextField, Button, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
+import Notification from './Notification';
 
-const PaymentPage = ({ onPaymentSuccess }) => {
-  const navigate = useNavigate();
+const PaymentPage = ({ onPaymentSuccess, courseId }) => {
+  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [cardNumber, setCardNumber] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCvv] = useState('');
-  const [errors, setErrors] = useState({});
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [mpesaReference, setMpesaReference] = useState('');
+  const navigate = useNavigate();
 
-  const validateCardNumber = (number) => /^[0-9]{16}$/.test(number);
-  const validateExpiryDate = (date) => /^(0[1-9]|1[0-2])\/\d{2}$/.test(date);
-  const validateCvv = (cvv) => /^[0-9]{3}$/.test(cvv);
+  const handlePayment = async () => {
+    setLoading(true);
+    setError(null);
 
-  const handlePayment = () => {
-    const newErrors = {};
-    if (!validateCardNumber(cardNumber)) newErrors.cardNumber = 'Invalid card number';
-    if (!validateExpiryDate(expiryDate)) newErrors.expiryDate = 'Invalid expiry date';
-    if (!validateCvv(cvv)) newErrors.cvv = 'Invalid CVV';
+    try {
+      // Validate payment details
+      if (paymentMethod === 'credit_card') {
+        if (!cardNumber || !expiryDate || !cvv) {
+          throw new Error('Credit card details are required.');
+        }
+      } else if (paymentMethod === 'mpesa') {
+        if (!mpesaReference) {
+          throw new Error('M-Pesa reference is required.');
+        }
+      }
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+      const response = await axios.post('http://127.0.0.1:5555/payments', {
+        amount: 100, // Adjust the amount as necessary
+        user_id: 1,  // Replace with actual user ID
+        course_id: courseId,
+        method_of_payment: paymentMethod,
+        card_number: paymentMethod === 'credit_card' ? cardNumber : undefined,
+        expiry_date: paymentMethod === 'credit_card' ? expiryDate : undefined,
+        cvv: paymentMethod === 'credit_card' ? cvv : undefined,
+        phone_number: paymentMethod === 'mpesa' ? phoneNumber : undefined,
+        mpesa_reference: paymentMethod === 'mpesa' ? mpesaReference : undefined
+      });
+
+      if (response.status === 200) {
+        onPaymentSuccess(courseId);  // Notify success and pass course ID
+        navigate('/courses');  // Redirect to courses page or wherever needed
+      }
+    } catch (err) {
+      setError(err.response ? err.response.data.message : 'Payment failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-
-    // Here, you would normally process the payment.
-    // For simplicity, let's assume the payment is always successful.
-    if (typeof onPaymentSuccess === 'function') {
-      onPaymentSuccess(); // This will call setIsEnrolled(true) in the parent component
-    } else {
-      console.error('onPaymentSuccess is not a function');
-    }
-    navigate('/courses');
   };
 
   return (
-    <Box sx={{ padding: 4 }}>
-      <Typography variant="h4" gutterBottom>Payment Page</Typography>
-      <TextField
-        autoFocus
-        margin="dense"
-        id="cardNumber"
-        label="Card Number"
-        type="text"
-        fullWidth
-        variant="standard"
-        value={cardNumber}
-        onChange={(e) => setCardNumber(e.target.value)}
-        error={!!errors.cardNumber}
-        helperText={errors.cardNumber}
-      />
-      <TextField
-        margin="dense"
-        id="expiryDate"
-        label="Expiry Date (MM/YY)"
-        type="text"
-        fullWidth
-        variant="standard"
-        value={expiryDate}
-        onChange={(e) => setExpiryDate(e.target.value)}
-        error={!!errors.expiryDate}
-        helperText={errors.expiryDate}
-      />
-      <TextField
-        margin="dense"
-        id="cvv"
-        label="CVV"
-        type="text"
-        fullWidth
-        variant="standard"
-        value={cvv}
-        onChange={(e) => setCvv(e.target.value)}
-        error={!!errors.cvv}
-        helperText={errors.cvv}
-      />
-      <Button variant="contained" color="primary" sx={{ marginTop: 2 }} onClick={handlePayment}>
-        Make Payment
+    <div>
+      <h2>Payment Page</h2>
+      <FormControl fullWidth margin="normal">
+        <InputLabel>Payment Method</InputLabel>
+        <Select
+          value={paymentMethod}
+          onChange={(e) => setPaymentMethod(e.target.value)}
+        >
+          <MenuItem value="credit_card">Credit/Debit Card</MenuItem>
+          <MenuItem value="mpesa">M-Pesa</MenuItem>
+        </Select>
+      </FormControl>
+      {paymentMethod === 'credit_card' && (
+        <>
+          <TextField
+            label="Card Number"
+            value={cardNumber}
+            onChange={(e) => setCardNumber(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="Expiry Date (MM/YYYY)"
+            value={expiryDate}
+            onChange={(e) => setExpiryDate(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="CVV"
+            value={cvv}
+            onChange={(e) => setCvv(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+        </>
+      )}
+      {paymentMethod === 'mpesa' && (
+        <>
+          <TextField
+            label="Phone Number"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+          <TextField
+            label="M-Pesa Reference"
+            value={mpesaReference}
+            onChange={(e) => setMpesaReference(e.target.value)}
+            fullWidth
+            margin="normal"
+          />
+        </>
+      )}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handlePayment}
+        disabled={loading}
+      >
+        {loading ? <CircularProgress size={24} /> : 'Pay'}
       </Button>
-    </Box>
+      {error && <Notification message={error} severity="error" />}
+    </div>
   );
 };
 

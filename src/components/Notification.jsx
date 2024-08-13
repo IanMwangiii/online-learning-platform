@@ -1,23 +1,30 @@
-import React from 'react';
-import { Snackbar, Alert } from '@mui/material';
+import React, { useState } from 'react';
+import Notification from './Notification';
 
-const Notification = ({ open, message, severity, onClose }) => {
+const NotificationManager = () => {
+  const [notifications, setNotifications] = useState([]);
+
+  const addNotification = (message, severity) => {
+    setNotifications([...notifications, { message, severity }]);
+  };
+
+  const handleClose = (index) => {
+    setNotifications(notifications.filter((_, i) => i !== index));
+  };
+
   return (
-    <Snackbar
-      open={open}
-      autoHideDuration={6000}
-      onClose={onClose}
-      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-    >
-      <Alert
-        onClose={onClose}
-        severity={severity}
-        sx={{ width: '100%' }}
-      >
-        {message}
-      </Alert>
-    </Snackbar>
+    <>
+      {notifications.map((notification, index) => (
+        <Notification
+          key={index}
+          open={true}
+          message={notification.message}
+          severity={notification.severity}
+          onClose={() => handleClose(index)}
+        />
+      ))}
+    </>
   );
 };
 
-export default Notification;
+export default NotificationManager;

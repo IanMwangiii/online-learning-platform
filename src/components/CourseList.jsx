@@ -1,60 +1,89 @@
-import React, { useState } from 'react';
-import { Box } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import CourseCard from './CourseCard';
-import Pagination from './Pagination';
+import Pagination from '@mui/material/Pagination';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
+import Typography from '@mui/material/Typography';
+import Notification from './Notification';
 
-const courses = [
-  {
-    id: 1,
-    title: 'React Basics',
-    description: 'Learn the basics of React.',
-    imageUrl: 'https://assets.entrepreneur.com/content/3x2/2000/20141031174145-15-free-online-learning-sites.jpeg',
-    rating: 4,
-    price: '₹1234.50',
-    instructor: 'John Doe',
-    instructorImage: 'http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',
-    lessons: [
-      { id: 1, title: 'Introduction to React', description: 'An overview of React and its core concepts.', videoUrl: 'https://www.youtube.com/embed/abc123' },
-      { id: 2, title: 'Components and Props', description: 'Learn about React components and props.', videoUrl: 'https://www.youtube.com/embed/abc123' },
-      { id: 3, title: 'State Management', description: 'Understanding state management in React.', videoUrl: 'https://www.youtube.com/embed/abc123' },
-    ],
-  },
-  {
-    id: 2,
-    title: 'JavaScript Fundamentals',
-    description: 'Understand JavaScript fundamentals.',
-    imageUrl: 'https://assets.entrepreneur.com/content/3x2/2000/20141031174145-15-free-online-learning-sites.jpeg',
-    price: '$5678.90',
-    rating: 5,
-    instructor: 'Jane Smith',
-    instructorImage: 'http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640-300x300.png',
-    lessons: [
-      { id: 1, title: 'JavaScript Basics', description: 'Introduction to JavaScript.', videoUrl: 'https://www.youtube.com/embed/abc123' },
-      { id: 2, title: 'Advanced JavaScript', description: 'Deep dive into JavaScript features.', videoUrl: 'https://www.youtube.com/embed/abc123' },
-    ],
-  },
-];
+const CourseList = ({ enrolledCourses, onEnroll }) => {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
-const CourseList = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = 5; // Example total pages
+  useEffect(() => {
+    const fetchCourses = async () => {
+      setLoading(true);
+      setError(null);
 
-  const handlePageChange = (page) => {
-    setCurrentPage(page);
-    // Fetch new page data here
-  };
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError('No authentication token found.');
+          setLoading(false);
+          return;
+        }
+
+        const response = await axios.get('http://127.0.0.1:5555/courses', {
+          headers: {
+            Authorization: `Bearer ${token}`
+          },
+          params: {
+            page,
+            per_page: 10 // Adjust the number of courses per page as needed
+          }
+        });
+
+        console.log('API Response:', response.data);
+
+        if (response.data && Array.isArray(response.data.courses)) {
+          setCourses(response.data.courses);
+          setTotalPages(response.data.totalPages || 1);
+        } else {
+          setError('Unexpected API response format.');
+          console.error('Unexpected API response format:', response.data);
+        }
+      } catch (err) {
+        console.error('API Error:', err.response ? err.response.data : err.message);
+        setError(err.response ? err.response.data.message : 'Failed to load courses.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, [page]);
 
   return (
-    <Box sx={{ padding: 2 }}>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-        {courses.map((course) => (
-          <CourseCard key={course.id} {...course} />
-        ))}
+    <div>
+      {loading && <CircularProgress />}
+      {error && <Notification message={error} severity="error" />}
+      <div>
+        {courses.length > 0 ? (
+          courses.map(course => (
+            <CourseCard
+              key={course.id}
+              course={course}
+              enrolledCourses={enrolledCourses}
+              onEnroll={onEnroll}
+            />
+          ))
+        ) : (
+          !loading && <Typography variant="body1">No courses available.</Typography>
+        )}
+      </div>
+      <Box mt={2} display="flex" justifyContent="center">
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={(event, value) => setPage(value)}
+        />
       </Box>
-      <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
-    </Box>
+    </div>
   );
 };
 
 export default CourseList;
-

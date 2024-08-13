@@ -1,32 +1,31 @@
 import React, { useState } from 'react';
-import { Box, TextField, Button } from '@mui/material';
+import { TextField, Button, Box } from '@mui/material';
+import axios from 'axios';
 
-const DiscussionForm = ({ onAddDiscussion }) => {
+const DiscussionForm = ({ courseId, onAddDiscussion }) => {
   const [comment, setComment] = useState('');
-  const [user, setUser] = useState(''); // Manage user information elsewhere
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const newDiscussion = {
-      user,
-      comment,
-      date: new Date().toLocaleString(),
-    };
-    onAddDiscussion(newDiscussion);
-    setComment('');
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (comment.trim()) {
+      try {
+        const response = await axios.post(`/courses/${courseId}/discussions`, { comment });
+        onAddDiscussion(response.data); // Assume the response includes the new discussion
+        setComment('');
+      } catch (error) {
+        console.error('Error posting comment:', error);
+      }
+    }
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
       <TextField
-        label="Comment"
-        variant="outlined"
         fullWidth
+        label="Add a comment"
+        variant="outlined"
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        required
-        multiline
-        rows={4}
         sx={{ mb: 2 }}
       />
       <Button type="submit" variant="contained" color="primary">
