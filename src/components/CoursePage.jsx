@@ -1,83 +1,51 @@
-import React, { useState } from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import { useParams, Navigate } from 'react-router-dom';
-import VideoPlayer from './VideoPlayer';
-import DiscussionThread from './DiscussionThread';
-import ProgressTracker from './ProgressTracker';
-
-const dummyDiscussions = [
-  { user: 'Alice', comment: 'Great course!', date: '2024-08-01 10:30 AM' },
-  { user: 'Bob', comment: 'I found the lessons very useful.', date: '2024-08-02 1:45 PM' },
-];
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { Typography, Button, Card, CardContent } from '@mui/material';
+import Notification from './Notification';
 
 const CoursePage = ({ enrolledCourses }) => {
   const { id } = useParams();
-  const courseId = parseInt(id, 10);
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Check if the user is enrolled in the course
-  if (!enrolledCourses.includes(courseId)) {
-    // Redirect to payment page if not enrolled
-    return <Navigate to="/payment" />;
-  }
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const response = await axios.get(`/api/courses/${id}`);
+        setCourse(response.data);
+      } catch (err) {
+        setError('Failed to load course details.');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Example course data
-  const course = {
-    title: `Course ${courseId}`,
-    description: 'This is a detailed description of the course.',
-    lessons: [
-      { id: 1, title: 'Introduction to React', description: 'Introduction to the course', videoUrl: 'https://www.youtube.com/embed/cjWqQkct6EI' },
-      { id: 2, title: 'Advanced Topics', description: 'Advanced Topics', videoUrl: 'https://www.youtube.com/embed/cjWqQkct6EI' },
-    ],
-  };
+    fetchCourse();
+  }, [id]);
 
-  // State for managing completed lessons
-  const [completedLessons, setCompletedLessons] = useState([]);
-
-  const markLessonAsDone = (lessonId) => {
-    const lesson = course.lessons.find(lesson => lesson.id === lessonId);
-    if (lesson && !completedLessons.find(l => l.id === lessonId)) {
-      setCompletedLessons([...completedLessons, lesson]);
-    }
-  };
+  if (loading) return <div>Loading...</div>;
+  if (error) return <Notification message={error} severity="error" />;
 
   return (
-    <Box sx={{ padding: 4 }}>
-      <Typography variant="h4" gutterBottom>{course.title}</Typography>
-      <Typography variant="body1" gutterBottom>{course.description}</Typography>
-
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom>Lessons</Typography>
-        {course.lessons.map((lesson) => (
-          <Box key={lesson.id} sx={{ mb: 2 }}>
-            <Typography variant="h6">{lesson.title}</Typography>
-            <Typography variant="body2" color="text.secondary">{lesson.description}</Typography>
-            <VideoPlayer videoUrl={lesson.videoUrl} />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => markLessonAsDone(lesson.id)}
-              disabled={!!completedLessons.find(l => l.id === lesson.id)}
-              sx={{ mt: 2 }}
-            >
-              {completedLessons.find(l => l.id === lesson.id) ? 'Completed' : 'Mark as Done'}
+    <div>
+      {course && (
+        <div>
+          <Typography variant="h3">{course.title}</Typography>
+          <Typography variant="body1">{course.description}</Typography>
+          <Typography variant="body1">Instructor: {course.instructor}</Typography>
+          {enrolledCourses.includes(course.id) ? (
+            <Typography variant="body1">You are enrolled in this course.</Typography>
+          ) : (
+            <Button variant="contained" color="primary">
+              Enroll Now
             </Button>
-          </Box>
-        ))}
-      </Box>
-
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom>Progress Tracker</Typography>
-        <ProgressTracker
-          lessons={course.lessons}
-          completedLessons={completedLessons}
-        />
-      </Box>
-
-      <Box sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom>Discussion Thread</Typography>
-        <DiscussionThread discussions={dummyDiscussions} />
-      </Box>
-    </Box>
+          )}
+          {/* Add progress tracking and discussion threads here */}
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
+import axios from 'axios';
 
-const DiscussionForm = ({ onAddDiscussion }) => {
+const DiscussionForm = ({ courseId, onAddDiscussion }) => {
   const [comment, setComment] = useState('');
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     if (comment.trim()) {
-      onAddDiscussion(comment);
-      setComment('');
+      try {
+        const response = await axios.post(`/courses/${courseId}/discussions`, { comment });
+        onAddDiscussion(response.data); // Assume the response includes the new discussion
+        setComment('');
+      } catch (error) {
+        console.error('Error posting comment:', error);
+      }
     }
   };
 

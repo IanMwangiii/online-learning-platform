@@ -1,121 +1,328 @@
-from app import app
-from models import db, User, Course, Lesson, Enrollment, Payment, Discussion
-from werkzeug.security import generate_password_hash  
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from flask_migrate import Migrate
+from flask_restful import Api, Resource
+from flask_bcrypt import Bcrypt
+from models import db, User, Discussion, Lesson, Enrollment, Course, Payment
+from config import get_config
+import jwt
+import datetime
+from functools import wraps
 
-with app.app_context():
-    print("Deleting existing data...")
-    Discussion.query.delete()
-    Payment.query.delete()
-    Enrollment.query.delete()
-    Lesson.query.delete()
-    Course.query.delete()
-    User.query.delete()
+app = Flask(__name__)
+app.config.from_object(get_config())
+
+# Initialize extensions
+db.init_app(app)
+migrate = Migrate(app, db)
+api = Api(app)
+bcrypt = Bcrypt(app)
+
+# Initialize CORS with specific origin
+CORS(app, resources={r"/*": {"origins": "*"}})  # Adjust the origin as needed
+
+# JWT Secret Key
+SECRET_KEY = app.config['SECRET_KEY']
+
+def token_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not token:
+            return {'message': 'Token is missing!'}, 403
+        try:
+            token = token.split(" ")[1]  # Extract token from 'Bearer <token>'
+            payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+            print(f"Token payload: {payload}")  # Debug line
+        except jwt.ExpiredSignatureError:
+            return {'message': 'Token has expired!'}, 403
+        except jwt.InvalidTokenError:
+            return {'message': 'Invalid token!'}, 403
+        return f(*args, **kwargs)
+    return decorated_function
+
+@app.route('/')
+def index():
+    return "Welcome to the API!", 200
+
+@app.route('/auth/signup', methods=['POST'])
+def signup():
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
+    phone = data.get('phone')
+    role = data.get('role', 'user')  # Default to 'user' if role is not provided
+
+    # Validate the data
+    if not username or not email or not password:
+        return jsonify({'message': 'Username, email, and password are required'}), 400
+
+    if User.query.filter_by(username=username).first():
+        return jsonify({'message': 'Username already exists'}), 400
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({'message': 'Email already exists'}), 400
+
+    # Create a new user
+    new_user = User(
+        username=username,
+        email=email,
+        phone=phone,
+        role=role,
+        password=bcrypt.generate_password_hash(password).decode('utf-8')
+    )
+    db.session.add(new_user)
     db.session.commit()
 
-    print("Creating users...")
-    users = [
-        User(name="Alice", username="alice123", email="alice@gmail.com", phone="0123456789", password=generate_password_hash("Password123")),
-        User(name="Bob", username="bob456", email="bob@gmail.com", phone="0987654321", password=generate_password_hash("Password456")),
-        User(name="Carol", username="carol789", email="carol@gmail.com", phone="0234567890", password=generate_password_hash("Password789")),
-        User(name="David", username="david321", email="david@gmail.com", phone="0345678901", password=generate_password_hash("Password321")),
-        User(name="Eve", username="eve432", email="eve@gmail.com", phone="0456789012", password=generate_password_hash("Password432")),
-        User(name="Frank", username="frank543", email="frank@gmail.com", phone="0567890123", password=generate_password_hash("Password543")),
-        User(name="Grace", username="grace654", email="grace@gmail.com", phone="0678901234", password=generate_password_hash("Password654")),
-        User(name="Hank", username="hank765", email="hank@gmail.com", phone="0789012345", password=generate_password_hash("Password765")),
-        User(name="Ivy", username="ivy876", email="ivy@gmail.com", phone="0890123456", password=generate_password_hash("Password876")),
-        User(name="Jack", username="jack987", email="jack@gmail.com", phone="0901234567", password=generate_password_hash("Password987"))
-    ]
-    db.session.add_all(users)
-    db.session.commit()
+    return jsonify({'message': 'User created successfully'}), 201
 
-    print("Creating courses...")
-    courses = [
-        Course(name="Advanced Data Science", description="In-depth course on data science techniques and tools.", rating=4.9, price=120000.00),
-        Course(name="Machine Learning Fundamentals", description="Basics of machine learning algorithms and applications.", rating=4.8, price=150000.00),
-        Course(name="Cloud Computing with AWS", description="Introduction to cloud services using AWS.", rating=4.7, price=130000.00),
-        Course(name="Cybersecurity Essentials", description="Fundamentals of cybersecurity practices and technologies.", rating=4.6, price=140000.00),
-        Course(name="Full Stack Web Development", description="Comprehensive course on full stack web development.", rating=4.8, price=160000.00),
-        Course(name="Database Management", description="Essential concepts and techniques in database management.", rating=4.7, price=110000.00),
-        Course(name="Artificial Intelligence", description="Introduction to artificial intelligence and its applications.", rating=4.8, price=140000.00),
-        Course(name="IoT Innovations", description="Exploring innovations and applications of the Internet of Things.", rating=4.9, price=150000.00),
-        Course(name="Software Engineering", description="Principles and practices of software engineering.", rating=4.7, price=125000.00),
-        Course(name="Blockchain Technology", description="Introduction to blockchain technology and cryptocurrencies.", rating=4.6, price=135000.00)
-    ]
-    db.session.add_all(courses)
-    db.session.commit()
+@app.route('/auth/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
 
-    print("Creating lessons...")
-    lessons = [
-        Lesson(topic="Introduction to Data Analysis", content="Learn the basics of data analysis using Python.", video_url="http://example.com/video1", course_id=courses[0].id),
-        Lesson(topic="Advanced Data Visualization", content="Techniques for visualizing complex data sets.", video_url="http://example.com/video2", course_id=courses[0].id),
-        Lesson(topic="Supervised Learning Algorithms", content="Understanding and applying supervised learning techniques.", video_url="http://example.com/video3", course_id=courses[1].id),
-        Lesson(topic="Unsupervised Learning Techniques", content="Exploring unsupervised learning methods and applications.", video_url="http://example.com/video4", course_id=courses[1].id),
-        Lesson(topic="Introduction to AWS Services", content="Overview of key AWS services and their use cases.", video_url="http://example.com/video5", course_id=courses[2].id),
-        Lesson(topic="Deploying Applications on AWS", content="Learn how to deploy and manage applications using AWS.", video_url="http://example.com/video6", course_id=courses[2].id),
-        Lesson(topic="Network Security Fundamentals", content="Basics of securing network communications and protocols.", video_url="http://example.com/video7", course_id=courses[3].id),
-        Lesson(topic="Threat Detection and Response", content="Techniques for detecting and responding to cybersecurity threats.", video_url="http://example.com/video8", course_id=courses[3].id),
-        Lesson(topic="Frontend Development with React", content="Building interactive user interfaces with React.", video_url="http://example.com/video9", course_id=courses[4].id),
-        Lesson(topic="Backend Development with Node.js", content="Creating server-side applications using Node.js.", video_url="http://example.com/video10", course_id=courses[4].id),
-        Lesson(topic="Database Design Principles", content="Understanding the principles of database design.", video_url="http://example.com/video11", course_id=courses[5].id),
-        Lesson(topic="SQL Query Optimization", content="Techniques for optimizing SQL queries.", video_url="http://example.com/video12", course_id=courses[5].id),
-        Lesson(topic="AI Concepts Overview", content="Introduction to core concepts in artificial intelligence.", video_url="http://example.com/video13", course_id=courses[6].id),
-        Lesson(topic="Deep Learning Applications", content="Exploring applications of deep learning.", video_url="http://example.com/video14", course_id=courses[6].id),
-        Lesson(topic="IoT Protocols", content="Overview of common Internet of Things protocols.", video_url="http://example.com/video15", course_id=courses[7].id),
-        Lesson(topic="IoT Device Management", content="Managing and maintaining IoT devices.", video_url="http://example.com/video16", course_id=courses[7].id),
-        Lesson(topic="Software Development Life Cycle", content="Understanding the phases of the software development life cycle.", video_url="http://example.com/video17", course_id=courses[8].id),
-        Lesson(topic="Agile Methodologies", content="Exploring various agile methodologies for software development.", video_url="http://example.com/video18", course_id=courses[8].id),
-        Lesson(topic="Blockchain Basics", content="Introduction to blockchain technology and its fundamentals.", video_url="http://example.com/video19", course_id=courses[9].id),
-        Lesson(topic="Cryptocurrency Technologies", content="Exploring technologies behind cryptocurrencies.", video_url="http://example.com/video20", course_id=courses[9].id)
-    ]
-    db.session.add_all(lessons)
-    db.session.commit()
+    user = User.query.filter_by(username=username).first()
+    if user and bcrypt.check_password_hash(user.password, password):
+        token = jwt.encode({
+            'user_id': user.id,
+            'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1)
+        }, SECRET_KEY, algorithm='HS256')
+        return jsonify({'access_token': token, 'role': user.role, 'id': user.id})
+    
+    return jsonify({'message': 'Invalid credentials'}), 401
 
-    print("Creating enrollments...")
-    enrollments = [
-        Enrollment(name=users[0].name, course_id=courses[0].id),
-        Enrollment(name=users[1].name, course_id=courses[1].id),
-        Enrollment(name=users[2].name, course_id=courses[2].id),
-        Enrollment(name=users[3].name, course_id=courses[3].id),
-        Enrollment(name=users[4].name, course_id=courses[4].id),
-        Enrollment(name=users[5].name, course_id=courses[5].id),
-        Enrollment(name=users[6].name, course_id=courses[6].id),
-        Enrollment(name=users[7].name, course_id=courses[7].id),
-        Enrollment(name=users[8].name, course_id=courses[8].id),
-        Enrollment(name=users[9].name, course_id=courses[9].id)
-    ]
-    db.session.add_all(enrollments)
-    db.session.commit()
+class UserResource(Resource):
+    @token_required
+    def get(self, user_id=None):
+        if user_id is not None:
+            user = User.query.get(user_id)
+            if user:
+                return jsonify(user.to_dict())
+            return {'message': 'User not found'}, 404
+        users = User.query.all()
+        return jsonify([user.to_dict() for user in users])
 
-    print("Creating payments...")
-    payments = [
-        Payment(user_id=users[0].id, name=users[0].name, amount=120000.00, course_id=courses[0].id, method_of_payment="Card", card_number="1234567812345678", expiry_date="12/25", cvv="123"),
-        Payment(user_id=users[1].id, name=users[1].name, amount=150000.00, course_id=courses[1].id, method_of_payment="Mpesa", phone_number="0712345678", mpesa_reference="MPESA12345"),
-        Payment(user_id=users[2].id, name=users[2].name, amount=130000.00, course_id=courses[2].id, method_of_payment="Cash"),
-        Payment(user_id=users[3].id, name=users[3].name, amount=140000.00, course_id=courses[3].id, method_of_payment="Card", card_number="8765432187654321", expiry_date="11/24", cvv="321"),
-        Payment(user_id=users[4].id, name=users[4].name, amount=160000.00, course_id=courses[4].id, method_of_payment="Mpesa", phone_number="0723456789", mpesa_reference="MPESA54321"),
-        Payment(user_id=users[5].id, name=users[5].name, amount=110000.00, course_id=courses[5].id, method_of_payment="Cash"),
-        Payment(user_id=users[6].id, name=users[6].name, amount=140000.00, course_id=courses[6].id, method_of_payment="Card", card_number="2345678923456789", expiry_date="10/23", cvv="456"),
-        Payment(user_id=users[7].id, name=users[7].name, amount=150000.00, course_id=courses[7].id, method_of_payment="Mpesa", phone_number="0734567890", mpesa_reference="MPESA67890"),
-        Payment(user_id=users[8].id, name=users[8].name, amount=125000.00, course_id=courses[8].id, method_of_payment="Cash"),
-        Payment(user_id=users[9].id, name=users[9].name, amount=135000.00, course_id=courses[9].id, method_of_payment="Card", card_number="3456789034567890", expiry_date="09/22", cvv="789")
-    ]
-    db.session.add_all(payments)
-    db.session.commit()
+    @token_required
+    def post(self):
+        data = request.get_json()
+        try:
+            User.validate_email(data['email'])
+            User.validate_phone(data['phone'])
+            User.validate_password(data['password'])
+            User.validate_username(data['username'])
+        except ValueError as e:
+            return {'message': str(e)}, 400
 
-    print("Creating discussions...")
-    discussions = [
-        Discussion(topic="Data Analysis Question", content="How do you handle missing data in Python?", user_id=users[0].id, course_id=courses[0].id),
-        Discussion(topic="Machine Learning Advice", content="What is the best way to optimize a random forest model?", user_id=users[1].id, course_id=courses[1].id),
-        Discussion(topic="AWS Pricing", content="Can someone explain AWS free tier limitations?", user_id=users[2].id, course_id=courses[2].id),
-        Discussion(topic="Security Certifications", content="Which certifications are most recognized in cybersecurity?", user_id=users[3].id, course_id=courses[3].id),
-        Discussion(topic="React State Management", content="What are the best practices for managing state in React apps?", user_id=users[4].id, course_id=courses[4].id),
-        Discussion(topic="SQL Performance Tips", content="How can I improve the performance of complex SQL queries?", user_id=users[5].id, course_id=courses[5].id),
-        Discussion(topic="AI Bias", content="What are some methods to mitigate bias in AI models?", user_id=users[6].id, course_id=courses[6].id),
-        Discussion(topic="IoT Device Security", content="How do you secure IoT devices in a smart home environment?", user_id=users[7].id, course_id=courses[7].id),
-        Discussion(topic="Agile vs Waterfall", content="When should you choose Agile over Waterfall in software projects?", user_id=users[8].id, course_id=courses[8].id),
-        Discussion(topic="Blockchain for Supply Chain", content="What are the benefits of using blockchain in supply chain management?", user_id=users[9].id, course_id=courses[9].id)
-    ]
-    db.session.add_all(discussions)
-    db.session.commit()
+        new_user = User(
+            username=data['username'],
+            email=data['email'],
+            phone=data.get('phone'),
+            password=bcrypt.generate_password_hash(data['password']).decode('utf-8')
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        return {'message': 'User created successfully'}, 201
 
-    print("Seeding completed successfully!")
+    @token_required
+    def patch(self, user_id):
+        user = User.query.get(user_id)
+        if user:
+            data = request.get_json()
+            try:
+                if 'email' in data:
+                    User.validate_email(data['email'])
+                    user.email = data['email']
+                if 'phone' in data:
+                    User.validate_phone(data['phone'])
+                    user.phone = data['phone']
+                if 'password' in data:
+                    User.validate_password(data['password'])
+                    user.password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+                if 'username' in data:
+                    User.validate_username(data['username'])
+                    user.username = data['username']
+            except ValueError as e:
+                return {'message': str(e)}, 400
+
+            db.session.commit()
+            return {'message': 'User updated successfully'}
+        return {'message': 'User not found'}, 404
+
+    @token_required
+    def delete(self, user_id):
+        user = User.query.get(user_id)
+        if user:
+            db.session.delete(user)
+            db.session.commit()
+            return {'message': 'User deleted successfully'}
+        return {'message': 'User not found'}, 404
+
+class DiscussionResource(Resource):
+    @token_required
+    def get(self, discussion_id=None):
+        if discussion_id is not None:
+            discussion = Discussion.query.get(discussion_id)
+            if discussion:
+                return jsonify(discussion.to_dict())
+            return {'message': 'Discussion not found'}, 404
+        discussions = Discussion.query.all()
+        return jsonify([discussion.to_dict() for discussion in discussions])
+
+    @token_required
+    def post(self):
+        data = request.get_json()
+        new_discussion = Discussion(
+            topic=data['topic'],
+            content=data['content'],
+            comment=data.get('comment'),
+            user_id=data['user_id'],
+            course_id=data['course_id']
+        )
+        db.session.add(new_discussion)
+        db.session.commit()
+        return {'message': 'Discussion created successfully'}, 201
+
+    @token_required
+    def delete(self, discussion_id):
+        discussion = Discussion.query.get(discussion_id)
+        if discussion:
+            db.session.delete(discussion)
+            db.session.commit()
+            return {'message': 'Discussion deleted successfully'}
+        return {'message': 'Discussion not found'}, 404
+
+class LessonResource(Resource):
+    @token_required
+    def get(self, lesson_id=None):
+        if lesson_id is not None:
+            lesson = Lesson.query.get(lesson_id)
+            if lesson:
+                return jsonify(lesson.to_dict())
+            return {'message': 'Lesson not found'}, 404
+        lessons = Lesson.query.all()
+        return jsonify([lesson.to_dict() for lesson in lessons])
+
+    @token_required
+    def post(self):
+        data = request.get_json()
+        new_lesson = Lesson(
+            topic=data['topic'],
+            content=data['content'],
+            video_url=data.get('video_url'),
+            course_id=data['course_id']
+        )
+        db.session.add(new_lesson)
+        db.session.commit()
+        return {'message': 'Lesson created successfully'}, 201
+
+class EnrollmentResource(Resource):
+    @token_required
+    def get(self, user_id=None, course_id=None):
+        if user_id and course_id:
+            enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
+            if enrollment:
+                return jsonify(enrollment.to_dict())
+            return {'message': 'Enrollment not found'}, 404
+        enrollments = Enrollment.query.all()
+        return jsonify([enrollment.to_dict() for enrollment in enrollments])
+
+    @token_required
+    def post(self):
+        data = request.get_json()
+        new_enrollment = Enrollment(
+            user_id=data['user_id'],
+            course_id=data['course_id']
+        )
+        db.session.add(new_enrollment)
+        db.session.commit()
+        return {'message': 'Enrollment created successfully'}, 201
+
+    @token_required
+    def patch(self, user_id, course_id):
+        enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
+        if enrollment:
+            data = request.get_json()
+            enrollment.user_id = data.get('user_id', enrollment.user_id)
+            enrollment.course_id = data.get('course_id', enrollment.course_id)
+            db.session.commit()
+            return {'message': 'Enrollment updated successfully'}
+        return {'message': 'Enrollment not found'}, 404
+
+    @token_required
+    def delete(self, user_id, course_id):
+        enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
+        if enrollment:
+            db.session.delete(enrollment)
+            db.session.commit()
+            return {'message': 'Enrollment deleted successfully'}
+        return {'message': 'Enrollment not found'}, 404
+
+class CourseResource(Resource):
+    @token_required
+    def get(self, course_id=None):
+        if course_id is not None:
+            course = Course.query.get(course_id)
+            if course:
+                return jsonify(course.to_dict())
+            return {'message': 'Course not found'}, 404
+        courses = Course.query.all()
+        return jsonify([course.to_dict() for course in courses])
+
+    @token_required
+    def post(self):
+        data = request.get_json()
+        new_course = Course(
+            title=data['title'],
+            description=data.get('description'),
+            image_url=data.get('image_url')
+        )
+        db.session.add(new_course)
+        db.session.commit()
+        return {'message': 'Course created successfully'}, 201
+
+    @token_required
+    def patch(self, course_id):
+        course = Course.query.get(course_id)
+        if course:
+            data = request.get_json()
+            course.title = data.get('title', course.title)
+            course.description = data.get('description', course.description)
+            course.image_url = data.get('image_url', course.image_url)
+            db.session.commit()
+            return {'message': 'Course updated successfully'}
+        return {'message': 'Course not found'}, 404
+
+    @token_required
+    def delete(self, course_id):
+        course = Course.query.get(course_id)
+        if course:
+            db.session.delete(course)
+            db.session.commit()
+            return {'message': 'Course deleted successfully'}
+        return {'message': 'Course not found'}, 404
+
+class PaymentResource(Resource):
+    @token_required
+    def post(self):
+        data = request.get_json()
+        new_payment = Payment(
+            user_id=data['user_id'],
+            course_id=data['course_id'],
+            amount=data['amount']
+        )
+        db.session.add(new_payment)
+        db.session.commit()
+        return {'message': 'Payment processed successfully'}, 201
+
+# Add resources to API
+api.add_resource(UserResource, '/users', '/users/<int:user_id>')
+api.add_resource(DiscussionResource, '/discussions', '/discussions/<int:discussion_id>')
+api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
+api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:user_id>/<int:course_id>')
+api.add_resource(CourseResource, '/courses', '/courses/<int:course_id>')
+api.add_resource(PaymentResource, '/payments')
+
+if __name__ == '__main__':
+    app.run(debug=True)

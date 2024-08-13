@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
-import { Grid, Typography, TextField, Button, IconButton, Box, Snackbar, InputAdornment, MenuItem } from '@mui/material';
-import { ArrowBack as ArrowBackIcon, Visibility, VisibilityOff } from '@mui/icons-material';
-import { Link, useNavigate } from 'react-router-dom';
+import { Grid, Typography, TextField, Button, Box, Snackbar } from '@mui/material';
+import { useNavigate, Link } from 'react-router-dom';
 
 const SignUp = () => {
-  const [formData, setFormData] = useState({ username: '', email: '', phone: '', password: '', role: 'user' });
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [message, setMessage] = useState({ text: '', type: '' });
+  const [formData, setFormData] = useState({ username: '', email: '', password: '', phone: '', role: 'user' });
+  const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -15,48 +13,41 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = 'http://localhost:5555/auth/signup';
+    const endpoint = 'http://localhost:5555/auth/signup';  // Adjusted to match Flask route
     const body = JSON.stringify(formData);
 
     try {
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: body,
       });
 
       if (response.ok) {
-        setMessage({ text: 'User signed up successfully!', type: 'success' });
         navigate('/login', { replace: true });
       } else {
         const errorResult = await response.json();
-        setMessage({ text: errorResult.message || 'Signup failed. Please check your details.', type: 'error' });
+        setMessage(errorResult.message || 'Signup failed. Please check your details.');
       }
     } catch (error) {
-      setMessage({ text: 'Error: ' + error.message, type: 'error' });
+      setMessage('Error: ' + error.message);
     }
   };
 
-  const togglePasswordVisibility = () => setPasswordVisible(!passwordVisible);
-
-  const handleSnackbarClose = () => setMessage({ text: '', type: '' });
+  const handleSnackbarClose = () => setMessage('');
 
   return (
-    <Grid container justifyContent="center" alignItems="center" sx={{ minHeight: '100vh', backgroundColor: 'white' }}>
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
       <Grid item xs={12} sm={6}>
-        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: 2 }}>
-          <IconButton onClick={() => navigate(-1)} sx={{ marginBottom: 2 }}>
-            <ArrowBackIcon />
-          </IconButton>
+        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
           <Typography variant="h4" sx={{ marginBottom: 2 }}>Sign Up</Typography>
           <form onSubmit={handleSubmit}>
             <TextField
               label="Username"
-              variant='outlined'
+              variant="outlined"
               fullWidth
-              margin='normal'
-              name='username'
+              margin="normal"
+              name="username"
               value={formData.username}
               onChange={handleInputChange}
               required
@@ -72,6 +63,17 @@ const SignUp = () => {
               required
             />
             <TextField
+              label="Password"
+              type="password"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              required
+            />
+            <TextField
               label="Phone"
               variant="outlined"
               fullWidth
@@ -82,39 +84,15 @@ const SignUp = () => {
               required
             />
             <TextField
-              label="Password"
-              type={passwordVisible ? "text" : "password"}
+              label="Role"
               variant="outlined"
               fullWidth
               margin="normal"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              required
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton onClick={togglePasswordVisibility}>
-                      {passwordVisible ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
-              }}
-            />
-            <TextField
-              select
-              label="Role"
               name="role"
               value={formData.role}
               onChange={handleInputChange}
-              fullWidth
-              margin="normal"
-              variant="outlined"
               required
-            >
-              <MenuItem value="user">User</MenuItem>
-              <MenuItem value="admin">Admin</MenuItem>
-            </TextField>
+            />
             <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
               Sign Up
             </Button>
@@ -125,14 +103,14 @@ const SignUp = () => {
         </Box>
       </Grid>
       <Snackbar
-        open={!!message.text}
+        open={!!message}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message={message.text}
+        message={message}
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         ContentProps={{
-          sx: {
-            backgroundColor: message.type === 'success' ? '#4CAF50' : '#D32F2F',
+          style: {
+            backgroundColor: '#D32F2F',
             color: 'white'
           },
         }}
