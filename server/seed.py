@@ -11,7 +11,7 @@ with app.app_context():
     Lesson.query.delete()
     Course.query.delete()
     User.query.delete()
-    db.session.commit()
+    db.session.commit(
 
     print("Creating users...")
     users = [
