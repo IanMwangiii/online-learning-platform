@@ -33,11 +33,10 @@ def token_required(f):
         try:
             token = token.split(" ")[1]  # Extract token from 'Bearer <token>'
             payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-            print(f"Token payload: {payload}")  # Debug line
         except jwt.ExpiredSignatureError:
-            return {'message': 'Token has expired!'}, 403
+            return {'message': 'Token has expired! Please log in again.'}, 403
         except jwt.InvalidTokenError:
-            return {'message': 'Invalid token!'}, 403
+            return {'message': 'Invalid token! Please log in again.'}, 403
         return f(*args, **kwargs)
     return decorated_function
 
@@ -159,106 +158,6 @@ class UserResource(Resource):
             return {'message': 'User deleted successfully'}
         return {'message': 'User not found'}, 404
 
-class DiscussionResource(Resource):
-    @token_required
-    def get(self, discussion_id=None):
-        if discussion_id is not None:
-            discussion = Discussion.query.get(discussion_id)
-            if discussion:
-                return jsonify(discussion.to_dict())
-            return {'message': 'Discussion not found'}, 404
-        discussions = Discussion.query.all()
-        return jsonify([discussion.to_dict() for discussion in discussions])
-
-    @token_required
-    def post(self):
-        data = request.get_json()
-        new_discussion = Discussion(
-            topic=data['topic'],
-            content=data['content'],
-            comment=data.get('comment'),
-            user_id=data['user_id'],
-            course_id=data['course_id']
-        )
-        db.session.add(new_discussion)
-        db.session.commit()
-        return {'message': 'Discussion created successfully'}, 201
-
-    @token_required
-    def delete(self, discussion_id):
-        discussion = Discussion.query.get(discussion_id)
-        if discussion:
-            db.session.delete(discussion)
-            db.session.commit()
-            return {'message': 'Discussion deleted successfully'}
-        return {'message': 'Discussion not found'}, 404
-
-class LessonResource(Resource):
-    @token_required
-    def get(self, lesson_id=None):
-        if lesson_id is not None:
-            lesson = Lesson.query.get(lesson_id)
-            if lesson:
-                return jsonify(lesson.to_dict())
-            return {'message': 'Lesson not found'}, 404
-        lessons = Lesson.query.all()
-        return jsonify([lesson.to_dict() for lesson in lessons])
-
-    @token_required
-    def post(self):
-        data = request.get_json()
-        new_lesson = Lesson(
-            topic=data['topic'],
-            content=data['content'],
-            video_url=data.get('video_url'),
-            course_id=data['course_id']
-        )
-        db.session.add(new_lesson)
-        db.session.commit()
-        return {'message': 'Lesson created successfully'}, 201
-
-class EnrollmentResource(Resource):
-    @token_required
-    def get(self, user_id=None, course_id=None):
-        if user_id and course_id:
-            enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
-            if enrollment:
-                return jsonify(enrollment.to_dict())
-            return {'message': 'Enrollment not found'}, 404
-        enrollments = Enrollment.query.all()
-        return jsonify([enrollment.to_dict() for enrollment in enrollments])
-
-    @token_required
-    def post(self):
-        data = request.get_json()
-        new_enrollment = Enrollment(
-            user_id=data['user_id'],
-            course_id=data['course_id']
-        )
-        db.session.add(new_enrollment)
-        db.session.commit()
-        return {'message': 'Enrollment created successfully'}, 201
-
-    @token_required
-    def patch(self, user_id, course_id):
-        enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
-        if enrollment:
-            data = request.get_json()
-            enrollment.user_id = data.get('user_id', enrollment.user_id)
-            enrollment.course_id = data.get('course_id', enrollment.course_id)
-            db.session.commit()
-            return {'message': 'Enrollment updated successfully'}
-        return {'message': 'Enrollment not found'}, 404
-
-    @token_required
-    def delete(self, user_id, course_id):
-        enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
-        if enrollment:
-            db.session.delete(enrollment)
-            db.session.commit()
-            return {'message': 'Enrollment deleted successfully'}
-        return {'message': 'Enrollment not found'}, 404
-
 class CourseResource(Resource):
     @token_required
     def get(self, course_id=None):
@@ -274,9 +173,10 @@ class CourseResource(Resource):
     def post(self):
         data = request.get_json()
         new_course = Course(
-            title=data['title'],
-            description=data.get('description'),
-            image_url=data.get('image_url')
+            name=data['name'],
+            description=data['description'],
+            price=data['price'],
+            rating=data.get('rating')
         )
         db.session.add(new_course)
         db.session.commit()
@@ -287,9 +187,10 @@ class CourseResource(Resource):
         course = Course.query.get(course_id)
         if course:
             data = request.get_json()
-            course.title = data.get('title', course.title)
+            course.name = data.get('name', course.name)
             course.description = data.get('description', course.description)
-            course.image_url = data.get('image_url', course.image_url)
+            course.price = data.get('price', course.price)
+            course.rating = data.get('rating', course.rating)
             db.session.commit()
             return {'message': 'Course updated successfully'}
         return {'message': 'Course not found'}, 404
@@ -305,24 +206,56 @@ class CourseResource(Resource):
 
 class PaymentResource(Resource):
     @token_required
+    def get(self, payment_id=None):
+        if payment_id is not None:
+            payment = Payment.query.get(payment_id)
+            if payment:
+                return jsonify(payment.to_dict())
+            return {'message': 'Payment not found'}, 404
+        payments = Payment.query.all()
+        return jsonify([payment.to_dict() for payment in payments])
+
+    @token_required
     def post(self):
         data = request.get_json()
-        new_payment = Payment(
-            user_id=data['user_id'],
-            course_id=data['course_id'],
-            amount=data['amount']
-        )
-        db.session.add(new_payment)
-        db.session.commit()
-        return {'message': 'Payment processed successfully'}, 201
+        try:
+            new_payment = Payment(
+                user_id=data['user_id'],
+                course_id=data['course_id'],
+                amount=data['amount']
+            )
+            db.session.add(new_payment)
+            db.session.commit()
+            return {'message': 'Payment processed successfully'}, 201
+        except Exception as e:
+            db.session.rollback()
+            return {'message': str(e)}, 500
+
+    @token_required
+    def patch(self, payment_id):
+        payment = Payment.query.get(payment_id)
+        if payment:
+            data = request.get_json()
+            payment.user_id = data.get('user_id', payment.user_id)
+            payment.course_id = data.get('course_id', payment.course_id)
+            payment.amount = data.get('amount', payment.amount)
+            db.session.commit()
+            return {'message': 'Payment updated successfully'}
+        return {'message': 'Payment not found'}, 404
+
+    @token_required
+    def delete(self, payment_id):
+        payment = Payment.query.get(payment_id)
+        if payment:
+            db.session.delete(payment)
+            db.session.commit()
+            return {'message': 'Payment deleted successfully'}
+        return {'message': 'Payment not found'}, 404
 
 # Add resources to API
-api.add_resource(UserResource, '/users', '/users/<int:user_id>')
-api.add_resource(DiscussionResource, '/discussions', '/discussions/<int:discussion_id>')
-api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
-api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:user_id>/<int:course_id>')
-api.add_resource(CourseResource, '/courses', '/courses/<int:course_id>')
-api.add_resource(PaymentResource, '/payments')
+api.add_resource(UserResource, '/user', '/user/<int:user_id>')
+api.add_resource(CourseResource, '/course', '/course/<int:course_id>')
+api.add_resource(PaymentResource, '/payment', '/payment/<int:payment_id>')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5555)

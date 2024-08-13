@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { TextField, Button, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
 import Notification from './Notification';
 
-const PaymentPage = ({ onPaymentSuccess }) => {
+const PaymentPage = ({ onPaymentSuccess, courseId }) => {
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -15,11 +15,25 @@ const PaymentPage = ({ onPaymentSuccess }) => {
     setError(null);
 
     try {
-      const response = await axios.post('/api/payments', { method: paymentMethod });
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('No authentication token found.');
+        setLoading(false);
+        return;
+      }
+
+      const response = await axios.post('http://127.0.0.1:5555/payments', 
+        { method: paymentMethod, courseId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
 
       if (response.status === 200) {
-        onPaymentSuccess(response.data.courseId);  // Adjust if necessary
-        navigate('/courses');  // Redirect or adjust based on your flow
+        onPaymentSuccess(); // Adjust as needed based on your flow
+        navigate('/courses'); // Redirect or adjust based on your flow
       }
     } catch (err) {
       setError('Payment failed. Please try again.');
