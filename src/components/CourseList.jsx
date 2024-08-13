@@ -9,7 +9,7 @@ import Notification from './Notification';
 
 const CourseList = ({ enrolledCourses, onEnroll }) => {
   const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -18,7 +18,7 @@ const CourseList = ({ enrolledCourses, onEnroll }) => {
     const fetchCourses = async () => {
       setLoading(true);
       setError(null);
-  
+
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -26,20 +26,25 @@ const CourseList = ({ enrolledCourses, onEnroll }) => {
           setLoading(false);
           return;
         }
-  
-        const response = await axios.get(`http://127.0.0.1:5555/courses`, {
+
+        const response = await axios.get('http://127.0.0.1:5555/courses', {
           headers: {
             Authorization: `Bearer ${token}`
+          },
+          params: {
+            page,
+            per_page: 10 // Adjust the number of courses per page as needed
           }
         });
-  
+
         console.log('API Response:', response.data);
-  
+
         if (response.data && Array.isArray(response.data.courses)) {
           setCourses(response.data.courses);
           setTotalPages(response.data.totalPages || 1);
         } else {
           setError('Unexpected API response format.');
+          console.error('Unexpected API response format:', response.data);
         }
       } catch (err) {
         console.error('API Error:', err.response ? err.response.data : err.message);
@@ -48,10 +53,10 @@ const CourseList = ({ enrolledCourses, onEnroll }) => {
         setLoading(false);
       }
     };
-  
+
     fetchCourses();
   }, [page]);
-  
+
   return (
     <div>
       {loading && <CircularProgress />}
@@ -67,7 +72,7 @@ const CourseList = ({ enrolledCourses, onEnroll }) => {
             />
           ))
         ) : (
-          <Typography variant="body1">No courses available.</Typography>
+          !loading && <Typography variant="body1">No courses available.</Typography>
         )}
       </div>
       <Box mt={2} display="flex" justifyContent="center">
