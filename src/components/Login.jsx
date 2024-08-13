@@ -48,10 +48,23 @@ const Login = () => {
   const handleSnackbarClose = () => setMessage('');
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
-      <Grid item xs={12} sm={6}>
-        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: '8px' }}>
-          <Typography variant="h4" sx={{ marginBottom: 2 }}>Login</Typography>
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', background: 'linear-gradient(to right, #74ebd5, #ACB6E5)' }}>
+      <Grid item xs={12} sm={8} md={4}>
+        <Box
+          sx={{
+            padding: 4,
+            bgcolor: 'white',
+            borderRadius: '12px',
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
+            textAlign: 'center',
+          }}
+        >
+          <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold', color: '#007BFF' }}>
+            Welcome Back
+          </Typography>
+          <Typography variant="body1" sx={{ marginBottom: 3, color: '#555' }}>
+            Please log in to your account
+          </Typography>
           <form onSubmit={handleSubmit}>
             <TextField
               label="Email"
@@ -62,6 +75,7 @@ const Login = () => {
               value={formData.email}
               onChange={handleInputChange}
               required
+              sx={{ borderRadius: '8px' }}
             />
             <TextField
               label="Password"
@@ -73,6 +87,7 @@ const Login = () => {
               value={formData.password}
               onChange={handleInputChange}
               required
+              sx={{ borderRadius: '8px' }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -83,12 +98,27 @@ const Login = () => {
                 ),
               }}
             />
-            <Button type="submit" variant="contained" color="primary" fullWidth sx={{ marginTop: 2 }}>
+            <Button
+              type="submit"
+              variant="contained"
+              fullWidth
+              sx={{
+                marginTop: 2,
+                padding: 1.5,
+                backgroundColor: '#007BFF',
+                color: 'white',
+                fontWeight: 'bold',
+                borderRadius: '8px',
+                '&:hover': {
+                  backgroundColor: '#0056b3',
+                },
+              }}
+            >
               Login
             </Button>
           </form>
-          <Typography variant="body2" sx={{ marginTop: 2, textAlign: 'center' }}>
-            Don't have an account? <Link to="/signup" style={{ color: '#007BFF' }}>Sign Up</Link>
+          <Typography variant="body2" sx={{ marginTop: 2, color: '#555' }}>
+            Don't have an account? <Link to="/signup" style={{ color: '#007BFF', textDecoration: 'none', fontWeight: 'bold' }}>Sign Up</Link>
           </Typography>
         </Box>
       </Grid>

@@ -52,25 +52,41 @@ const UserProfile = () => {
   const handleSnackbarClose = () => setMessage('');
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', backgroundColor: 'white' }}>
-      <Grid item xs={12} sm={8}>
-        <Box sx={{ padding: 4, width: '100%', bgcolor: 'background.paper', borderRadius: '8px', textAlign: 'center' }}>
+    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh', background: 'linear-gradient(to right, #74ebd5, #ACB6E5)' }}>
+      <Grid item xs={12} sm={8} md={6}>
+        <Box sx={{ padding: 4, bgcolor: 'white', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', textAlign: 'center' }}>
           <IconButton onClick={() => navigate(-1)} style={{ marginBottom: '1rem' }}>
-            <ArrowBackIcon />
+            <ArrowBackIcon style={{ color: '#007BFF' }} />
           </IconButton>
-          <Typography variant="h4">User Profile</Typography>
+          <Typography variant="h4" sx={{ marginBottom: 2, fontWeight: 'bold', color: '#007BFF' }}>
+            User Profile
+          </Typography>
           {userData ? (
-            <div>
-              <Typography variant="h6">Username: {userData.username}</Typography>
-              <Typography variant="h6">Name: {userData.name}</Typography>
-              <Typography variant="h6">Email: {userData.email}</Typography>
-              <Typography variant="h6">Phone: {userData.phone}</Typography>
-              <Button onClick={handleLogout} variant="contained" color="primary" style={{ marginTop: '1rem' }}>
+            <Box>
+              <Typography variant="h6" sx={{ color: '#555', marginBottom: 1 }}>Username: <span style={{ fontWeight: 'bold' }}>{userData.username}</span></Typography>
+              <Typography variant="h6" sx={{ color: '#555', marginBottom: 1 }}>Name: <span style={{ fontWeight: 'bold' }}>{userData.name}</span></Typography>
+              <Typography variant="h6" sx={{ color: '#555', marginBottom: 1 }}>Email: <span style={{ fontWeight: 'bold' }}>{userData.email}</span></Typography>
+              <Typography variant="h6" sx={{ color: '#555', marginBottom: 1 }}>Phone: <span style={{ fontWeight: 'bold' }}>{userData.phone}</span></Typography>
+              <Button
+                onClick={handleLogout}
+                variant="contained"
+                sx={{
+                  marginTop: 3,
+                  padding: 1.5,
+                  backgroundColor: '#D32F2F',
+                  color: 'white',
+                  fontWeight: 'bold',
+                  borderRadius: '8px',
+                  '&:hover': {
+                    backgroundColor: '#B71C1C',
+                  },
+                }}
+              >
                 Log Out
               </Button>
-            </div>
+            </Box>
           ) : (
-            <Typography variant="h6">Loading...</Typography>
+            <Typography variant="h6" sx={{ color: '#555' }}>Loading...</Typography>
           )}
         </Box>
       </Grid>
