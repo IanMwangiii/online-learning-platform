@@ -15,8 +15,11 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = 'http://localhost:5555/auth/login';
-    const body = JSON.stringify(formData);
+    const endpoint = 'http://127.0.0.1:5555/auth/login'; // Adjusted to match Flask route
+    const body = JSON.stringify({
+      username: formData.email, // Ensure this matches the field expected by the backend
+      password: formData.password,
+    });
 
     try {
       const response = await fetch(endpoint, {

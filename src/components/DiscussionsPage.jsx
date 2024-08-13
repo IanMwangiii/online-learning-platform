@@ -1,25 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import DiscussionThread from './DiscussionThread';
 import DiscussionForm from './DiscussionForm';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
 
 const DiscussionsPage = () => {
+  const { id } = useParams();
   const [discussions, setDiscussions] = useState([]);
 
-  const handleAddDiscussion = (newComment) => {
-    const newDiscussion = {
-      user: 'Current User', // Replace with actual user
-      comment: newComment,
-      date: new Date().toLocaleString(),
+  useEffect(() => {
+    // Fetch discussions for the specific course
+    const fetchDiscussions = async () => {
+      try {
+        const response = await axios.get(`/courses/${id}/discussions`);
+        setDiscussions(response.data);
+      } catch (error) {
+        console.error('Error fetching discussions:', error);
+      }
     };
+
+    fetchDiscussions();
+  }, [id]);
+
+  const handleAddDiscussion = (newDiscussion) => {
     setDiscussions([...discussions, newDiscussion]);
   };
 
-  console.log('Discussions data:', discussions); // Debugging line
-
   return (
     <Box sx={{ padding: 2 }}>
-      <DiscussionForm onAddDiscussion={handleAddDiscussion} />
+      <DiscussionForm courseId={id} onAddDiscussion={handleAddDiscussion} />
       <DiscussionThread discussions={discussions} />
     </Box>
   );

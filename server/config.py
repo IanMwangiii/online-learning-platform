@@ -20,11 +20,9 @@ class ProductionConfig(Config):
 
 def get_config():
     env = os.getenv('FLASK_ENV', 'development')
-    if env == 'development':
-        return DevelopmentConfig
+    if env == 'production':
+        return ProductionConfig
     elif env == 'testing':
         return TestingConfig
-    elif env == 'production':
-        return ProductionConfig
     else:
-        return Config
+        return DevelopmentConfig
