@@ -1,51 +1,32 @@
-import React, { useState } from 'react';
-import { Box, Typography, Card, CardMedia, CardContent, CardActions, Collapse, Rating } from '@mui/material';
-import LessonCard from './LessonCard';
-import EnrollButton from './EnrollButton';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { Card, CardMedia, CardContent, Typography, Button } from '@mui/material';
+import { Link } from 'react-router-dom';
+import Rating from '@mui/material/Rating';
 
-const CourseCard = ({ id, title, description, imageUrl, price, rating: initialRating, instructor, instructorImage, lessons = [], isEnrolled: isEnrolledProp }) => {
-  const [enrolled, setEnrolled] = useState(isEnrolledProp);
-  const [rating, setRating] = useState(initialRating);
-  const navigate = useNavigate();
-
-  const handleEnroll = () => {
-    setEnrolled(true);
-    navigate('/payment');
-  };
-
-  const handleRatingChange = (event, newValue) => {
-    setRating(newValue);
-    console.log(`New rating for course ${id}: ${newValue}`);
-  };
+const CourseCard = ({ course, enrolledCourses, onEnroll }) => {
+  const isEnrolled = enrolledCourses.includes(course.id);
 
   return (
-    <Card sx={{ mb: 2 }}>
-      <CardMedia component="img" height="140" image={imageUrl} alt={title} />
+    <Card>
+      <CardMedia
+        component="img"
+        alt={course.title}
+        height="140"
+        image={course.image_url || '/default-image.png'}
+      />
       <CardContent>
         <Typography variant="h6">{title}</Typography>
         <Typography variant="body2" color="textSecondary">{description}</Typography>
         <Typography variant="h6" color="textPrimary">Price: {price}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
           <Typography variant="body2" color="textSecondary">Rating:</Typography>
-          <Rating value={rating} onChange={handleRatingChange} size="small" sx={{ ml: 1 }} />
+          <Rating value={rating} readOnly size="small" sx={{ ml: 1 }} />
         </Box>
         <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>Instructor: {instructor}</Typography>
         <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
           <img src={instructorImage} alt="Instructor" style={{ width: 50, height: 50, borderRadius: '50%' }} />
         </Box>
       </CardContent>
-      <CardActions>
-        <EnrollButton isEnrolled={enrolled} onEnroll={handleEnroll} />
-        <Collapse in={enrolled}>
-          <Box sx={{ padding: 2 }}>
-            <Typography variant="h6">Lessons:</Typography>
-            {lessons.map((lesson) => (
-              <LessonCard key={lesson.id} {...lesson} />
-            ))}
-          </Box>
-        </Collapse>
-      </CardActions>
     </Card>
   );
 };

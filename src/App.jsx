@@ -10,7 +10,6 @@ import SignUp from './components/Signup';
 import UserProfile from './components/UserProfile';
 import PaymentPage from './components/PaymentPage';
 import DiscussionsPage from './components/DiscussionsPage';
-import FAQ from './components/ FAQ ';
 import FeatureHighlights from './components/FeatureHighlights';
 
 function App() {
@@ -27,17 +26,12 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/courses" element={<CourseList />} />
-        <Route
-          path="/course/:id"
-          element={<CoursePage enrolledCourses={enrolledCourses} />}
-        />
+        <Route path="/courses" element={<CourseList enrolledCourses={enrolledCourses} onEnroll={handlePaymentSuccess} />} />
+        <Route path="/course/:id" element={<CoursePage enrolledCourses={enrolledCourses} />} />
         <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/payment" element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
         <Route path="/discussions" element={<DiscussionsPage />} />
-        <Route path="/faq" element={<FAQ />} /> {/* FAQ Route */}
-        <Route path="/features" element={<FeatureHighlights />} /> {/* Feature Highlights Route */}
       </Routes>
     </Router>
   );
