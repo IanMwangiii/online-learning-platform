@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { makePayment } from '../api'; // Adjust path as needed
+import EnrollmentForm from './EnrollmentForm'; // Adjust path as needed
 
 function PaymentPage() {
   const [paymentData, setPaymentData] = useState({
@@ -15,10 +16,8 @@ function PaymentPage() {
   });
 
   const [error, setError] = useState(null);
-
-  const handleChange = (e) => {
-    setPaymentData({ ...paymentData, [e.target.name]: e.target.value });
-  };
+  const [paymentSuccessful, setPaymentSuccessful] = useState(false);
+  const [showEnrollmentForm, setShowEnrollmentForm] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -39,11 +38,24 @@ function PaymentPage() {
         }
       }
 
-      await makePayment(paymentData); // Use makePayment here
+      await makePayment(paymentData);
+      setPaymentSuccessful(true); // Set success state to enable "Proceed to Enrollment Page" button
       alert('Payment successful!');
     } catch (err) {
       setError(err.message);
     }
+  };
+
+  const handleChange = (e) => {
+    setPaymentData({ ...paymentData, [e.target.name]: e.target.value });
+  };
+
+  const handleEnrollmentOpen = () => {
+    setShowEnrollmentForm(true);
+  };
+
+  const handleEnrollmentClose = () => {
+    setShowEnrollmentForm(false);
   };
 
   return (
@@ -101,6 +113,19 @@ function PaymentPage() {
         )}
         <button type="submit">Pay</button>
       </form>
+      {paymentSuccessful && (
+        <button onClick={handleEnrollmentOpen}>Proceed to Enrollment Page</button>
+      )}
+      {showEnrollmentForm && (
+        <EnrollmentForm
+          courseId={paymentData.course_id}
+          onClose={handleEnrollmentClose}
+          onEnroll={(courseId) => {
+            console.log(`Enrolled in course with ID: ${courseId}`);
+            handleEnrollmentClose();
+          }}
+        />
+      )}
     </div>
   );
 }

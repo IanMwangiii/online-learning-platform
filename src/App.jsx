@@ -29,10 +29,9 @@ function App() {
         <Route path="/course/:id" element={<CoursePage enrolledCourses={enrolledCourses} />} />
         <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/payment" element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
+        <Route path="/payment/:courseId" element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
         <Route path="/discussions" element={<DiscussionsPage />} />
       </Routes>
-      {/* <CoursePage/> */}
     </Router>
   );
 }
