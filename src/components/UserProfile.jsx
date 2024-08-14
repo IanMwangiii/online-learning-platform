@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Grid, Typography, Button, Box, Snackbar, TextField, InputAdornment, Alert, IconButton } from "@mui/material";
+import { Grid, Typography, Button, Box, Snackbar, TextField, InputAdornment, IconButton } from "@mui/material";
 import { ArrowBack as ArrowBackIcon, Visibility, VisibilityOff } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,6 @@ const UserProfile = () => {
     username: "",
     email: "",
     contactNumber: "",
-    address: "",
     password: "",
   });
   const [avatar, setAvatar] = useState(null);
@@ -41,7 +40,6 @@ const UserProfile = () => {
             username: data.username || "",
             email: data.email || "",
             contactNumber: data.phone || "",
-            address: data.address || "",
             password: "",
           });
           setAvatar(data.avatar || null);
@@ -174,14 +172,6 @@ const UserProfile = () => {
                 sx={{ marginBottom: 2 }}
               />
               <TextField
-                label="Address"
-                name="address"
-                value={formData.address}
-                onChange={handleInputChange}
-                fullWidth
-                sx={{ marginBottom: 2 }}
-              />
-              <TextField
                 label="Password"
                 name="password"
                 type={showPassword ? "text" : "password"}
@@ -214,7 +204,7 @@ const UserProfile = () => {
                   },
                 }}
               >
-                Update Information
+                Save Changes
               </Button>
               <Button
                 onClick={handleLogout}
@@ -243,9 +233,18 @@ const UserProfile = () => {
         onClose={handleSnackbarClose}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert onClose={handleSnackbarClose} severity="error" sx={{ width: "100%" }}>
-          {message}
-        </Alert>
+        <Box
+          sx={{
+            bgcolor: "green",  
+            color: "white",
+            p: 2,
+            borderRadius: "4px",
+          }}
+        >
+          <Typography variant="body1" align="center">
+            {message}
+          </Typography>
+        </Box>
       </Snackbar>
     </Grid>
   );

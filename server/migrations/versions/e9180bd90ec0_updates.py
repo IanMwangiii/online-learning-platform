@@ -1,8 +1,8 @@
-"""Changes
+"""Updates
 
-Revision ID: d1b178347be5
+Revision ID: e9180bd90ec0
 Revises: 
-Create Date: 2024-08-13 22:53:02.760291
+Create Date: 2024-08-14 16:04:29.691198
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd1b178347be5'
+revision = 'e9180bd90ec0'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -41,7 +41,6 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('topic', sa.String(length=200), nullable=False),
     sa.Column('content', sa.Text(), nullable=False),
-    sa.Column('comment', sa.String(length=200), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('course_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['course_id'], ['course.id'], ),
@@ -69,7 +68,6 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('amount', sa.Float(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
-    sa.Column('name', sa.String(length=200), nullable=True),
     sa.Column('course_id', sa.Integer(), nullable=False),
     sa.Column('method_of_payment', sa.String(length=50), nullable=False),
     sa.Column('card_number', sa.String(length=20), nullable=True),
