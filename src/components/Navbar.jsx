@@ -16,7 +16,7 @@ const NavList = styled('ul')({
 });
 
 const NavItem = styled('li')(({ theme }) => ({
-  marginRight: theme.spacing(4), // Increased margin for more spacing
+  marginRight: theme.spacing(4),
   '&:hover': {
     transform: 'scale(1.1)',
     transition: 'transform 0.3s ease-in-out',
@@ -35,11 +35,10 @@ const LoginLink = styled(Link)({
 function Navbar() {
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [notificationData, setNotificationData] = useState({ message: '', severity: 'info' });
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // State to manage login status
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if user is logged in by looking for the access token in local storage
     const token = localStorage.getItem('access_token');
     setIsLoggedIn(!!token);
   }, []);
@@ -71,22 +70,6 @@ function Navbar() {
             course-TT
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-<<<<<<< HEAD
-            <div className="nav-links">
-              <ul className="nav-list" style={{ display: 'flex', alignItems: 'center', padding: 0, margin: 0, listStyle: 'none' }}>
-                <li className="nav-item" style={{ marginRight: '16px' }}><Link to="/">Home</Link></li>
-                <li className="nav-item" style={{ marginRight: '16px' }}><Link to="/courses">Courses</Link></li>
-                <li className="nav-item" style={{ marginRight: '16px' }}><Link to="/faq">FAQ</Link></li>  {/* Link to FAQ page */}
-                <li className="nav-item" style={{ marginRight: '16px' }}>
-                  <IconButton color="inherit" onClick={handleNotificationClick}>
-                    <IoMdNotificationsOutline />
-                  </IconButton>
-                </li>
-                <li className="nav-item" style={{ marginRight: '16px' }}><Link to="/login" className='login-link'>Login</Link></li>
-                <li className="nav-item"><Link to="/user-profile"><FcBusinessman /></Link></li>
-              </ul>
-            </div>
-=======
             <NavList>
               <NavItem>
                 <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>Home</Link>
@@ -98,11 +81,17 @@ function Navbar() {
                 <Link to="/FAQ" style={{ textDecoration: 'none', color: 'inherit' }}>FAQ</Link>
               </NavItem>
               <NavItem>
+                <Link to="/about-us" style={{ textDecoration: 'none', color: 'inherit' }}>About Us</Link>
+              </NavItem>
+              <NavItem>
+                <Link to="/contact-us" style={{ textDecoration: 'none', color: 'inherit' }}>Contact Us</Link>
+              </NavItem>
+              <NavItem>
                 <IconButton color="inherit" onClick={handleNotificationClick}>
                   <IoMdNotificationsOutline />
                 </IconButton>
               </NavItem>
-              {!isLoggedIn && ( // Conditionally render the Login button
+              {!isLoggedIn && (
                 <NavItem>
                   <LoginLink to="/login" className="login-link">Login</LoginLink>
                 </NavItem>
@@ -113,7 +102,6 @@ function Navbar() {
                 </Link>
               </NavItem>
             </NavList>
->>>>>>> main
           </Box>
         </Toolbar>
       </AppBar>

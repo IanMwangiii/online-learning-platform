@@ -84,8 +84,4 @@ const FeatureHighlights = () => {
   );
 };
 
-<<<<<<< HEAD
 export default FeatureHighlights;
-=======
-export default FeatureHighlights;
->>>>>>> main
