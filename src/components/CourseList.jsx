@@ -1,88 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import CourseCard from './CourseCard';
-import Pagination from '@mui/material/Pagination';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Typography from '@mui/material/Typography';
-import Notification from './Notification';
+import { Grid, CircularProgress, Typography, Button } from '@mui/material';
 
-const CourseList = ({ enrolledCourses, onEnroll }) => {
+const CourseList = () => {
   const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+
+  const fetchCourses = async () => {
+    try {
+      const response = await axios.get('http://127.0.0.1:5555/api/courses');  // Ensure this URL matches your Flask API route
+      console.log('API response:', response);  // Debug line to check API response
+      setCourses(response.data);  // Update to handle the response as an array
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching courses:', err);
+      setError('Failed to load courses. Please try again.');
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchCourses = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setError('No authentication token found.');
-          setLoading(false);
-          return;
-        }
-
-        const response = await axios.get('http://127.0.0.1:5555/courses', {
-          headers: {
-            Authorization: `Bearer ${token}`
-          },
-          params: {
-            page,
-            per_page: 10 // Adjust the number of courses per page as needed
-          }
-        });
-
-        console.log('API Response:', response.data);
-
-        if (response.data && Array.isArray(response.data.courses)) {
-          setCourses(response.data.courses);
-          setTotalPages(response.data.totalPages || 1);
-        } else {
-          setError('Unexpected API response format.');
-          console.error('Unexpected API response format:', response.data);
-        }
-      } catch (err) {
-        console.error('API Error:', err.response ? err.response.data : err.message);
-        setError(err.response ? err.response.data.message : 'Failed to load courses.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchCourses();
-  }, [page]);
+  }, []);
+
+  const handleRetry = () => {
+    setLoading(true);
+    setError(null);
+    fetchCourses();
+  };
+
+  if (loading) return <CircularProgress />;
+  if (error) return (
+    <div>
+      <Typography variant="h6" color="error">{error}</Typography>
+      <Button variant="contained" color="primary" onClick={handleRetry}>Retry</Button>
+    </div>
+  );
 
   return (
-    <div>
-      {loading && <CircularProgress />}
-      {error && <Notification message={error} severity="error" />}
-      <div>
-        {courses.length > 0 ? (
-          courses.map(course => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              enrolledCourses={enrolledCourses}
-              onEnroll={onEnroll}
-            />
-          ))
-        ) : (
-          !loading && <Typography variant="body1">No courses available.</Typography>
-        )}
-      </div>
-      <Box mt={2} display="flex" justifyContent="center">
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={(event, value) => setPage(value)}
-        />
-      </Box>
-    </div>
+    <Grid container spacing={2}>
+      {courses.length > 0 ? (
+        courses.map((course) => (
+          <Grid item xs={12} sm={6} md={4} key={course.id}>
+            <CourseCard course={course} />
+          </Grid>
+        ))
+      ) : (
+        <Typography variant="h6">No courses available</Typography>
+      )}
+    </Grid>
   );
 };
 

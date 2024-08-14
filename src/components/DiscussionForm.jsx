@@ -3,16 +3,21 @@ import { TextField, Button, Box } from '@mui/material';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 
-const DiscussionForm = ({ courseId, onAddDiscussion }) => {
-  const [comment, setComment] = useState('');
+const DiscussionForm = ({ topic, content, comment, user_id, course_id, onAddDiscussion }) => {
+  const [newComment, setNewComment] = useState(comment || '');  // Use a different name to avoid conflict
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (comment.trim() && courseId) {
+    if (newComment.trim() && course_id) {
       try {
-        const response = await axios.post(`/courses/${courseId}/discussions`, { comment });
+        const response = await axios.post(`/courses/${course_id}/discussions`, { 
+          topic, 
+          content, 
+          comment: newComment, 
+          user_id 
+        });
         onAddDiscussion(response.data);
-        setComment('');
+        setNewComment('');
       } catch (error) {
         console.error('Error posting comment:', error);
       }
@@ -27,8 +32,8 @@ const DiscussionForm = ({ courseId, onAddDiscussion }) => {
         fullWidth
         label="Add a comment"
         variant="outlined"
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
+        value={newComment}
+        onChange={(e) => setNewComment(e.target.value)}
         sx={{ mb: 2 }}
       />
       <Button type="submit" variant="contained" color="primary">
@@ -39,7 +44,11 @@ const DiscussionForm = ({ courseId, onAddDiscussion }) => {
 };
 
 DiscussionForm.propTypes = {
-  courseId: PropTypes.number.isRequired,
+  topic: PropTypes.string,
+  content: PropTypes.string,
+  comment: PropTypes.string,
+  user_id: PropTypes.number.isRequired,
+  course_id: PropTypes.number.isRequired,
   onAddDiscussion: PropTypes.func.isRequired,
 };
 

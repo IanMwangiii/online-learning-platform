@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, Typography, Toolbar, AppBar, IconButton, Drawer, Button } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CourseList from './CourseList';
@@ -17,7 +17,7 @@ const Dashboard = () => {
   const [discussions, setDiscussions] = useState(dummyDiscussions);
   const [notification, setNotification] = useState({ open: false, message: '', severity: '' });
 
-  const role = localStorage.getItem('role'); // Get the role from localStorage
+  const role = localStorage.getItem('role'); 
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
