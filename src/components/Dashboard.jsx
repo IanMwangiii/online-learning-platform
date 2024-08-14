@@ -6,6 +6,7 @@ import DiscussionThread from './DiscussionThread';
 import Notification from './Notification';
 import Sidebar from './Sidebar';
 import DiscussionForm from './DiscussionForm';
+import FeatureHighlights from './FeatureHighlights';
 import { deepOrange, deepPurple } from '@mui/material/colors';
 
 const dummyDiscussions = [
