@@ -93,6 +93,15 @@ def login():
     
     return jsonify({'message': 'Invalid credentials'}), 401
 
+@app.route('/api/courses', methods=['GET'])
+def get_courses():
+    print("Received request for /api/courses")
+    courses = Course.query.all()
+    if not courses:
+        return jsonify({'message': 'No courses found'}), 404
+    return jsonify([course.to_dict() for course in courses])
+
+
 class UserResource(Resource):
     @token_required
     def get(self, user_id=None):
@@ -239,101 +248,24 @@ class EnrollmentResource(Resource):
         db.session.commit()
         return {'message': 'Enrollment created successfully'}, 201
 
-    @token_required
-    def patch(self, user_id, course_id):
-        enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
-        if enrollment:
-            data = request.get_json()
-            # Ensure only allowed fields are updated
-            enrollment.user_id = data.get('user_id', enrollment.user_id)
-            enrollment.course_id = data.get('course_id', enrollment.course_id)
-            db.session.commit()
-            return {'message': 'Enrollment updated successfully'}
-        return {'message': 'Enrollment not found'}, 404
-
-    @token_required
-    def delete(self, user_id, course_id):
-        enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
-        if enrollment:
-            db.session.delete(enrollment)
-            db.session.commit()
-            return {'message': 'Enrollment deleted successfully'}
-        return {'message': 'Enrollment not found'}, 404
-
-class CourseResource(Resource):
-    @token_required
-    def get(self, course_id=None):
-        if course_id is not None:
-            course = Course.query.get(course_id)
-            if course:
-                return jsonify(course.to_dict())
-            return {'message': 'Course not found'}, 404
-        courses = Course.query.all()
-        return jsonify([course.to_dict() for course in courses])
-
-    @token_required
-    def post(self):
-        data = request.get_json()
-        new_course = Course(
-            name=data['name'],
-            description=data['description'],
-            price=data['price'],
-            rating=data.get('rating')  # Rating is optional
-        )
-        db.session.add(new_course)
-        db.session.commit()
-        return {'message': 'Course created successfully'}, 201
-
-    @token_required
-    def patch(self, course_id):
-        course = Course.query.get(course_id)
-        if course:
-            data = request.get_json()
-            course.name = data.get('name', course.name)
-            course.description = data.get('description', course.description)
-            course.price = data.get('price', course.price)
-            course.rating = data.get('rating', course.rating)
-            db.session.commit()
-            return {'message': 'Course updated successfully'}
-        return {'message': 'Course not found'}, 404
-
-    @token_required
-    def delete(self, course_id):
-        course = Course.query.get(course_id)
-        if course:
-            db.session.delete(course)
-            db.session.commit()
-            return {'message': 'Course deleted successfully'}
-        return {'message': 'Course not found'}, 404
-
-
 class PaymentResource(Resource):
     @token_required
     def post(self):
         data = request.get_json()
-        new_payment = Payment(
-            amount=data['amount'],
+        payment = Payment(
             user_id=data['user_id'],
-            course_id=data['course_id'],
-            name=data.get('name'),  # Optional
-            method_of_payment=data['method_of_payment'],
-            card_number=data.get('card_number'),  # Optional, depending on payment method
-            expiry_date=data.get('expiry_date'),  # Optional, depending on payment method
-            cvv=data.get('cvv'),  # Optional, depending on payment method
-            phone_number=data.get('phone_number'),  # Optional, depending on payment method
-            mpesa_reference=data.get('mpesa_reference')  # Optional, depending on payment method
+            amount=data['amount'],
+            payment_method=data['payment_method']
         )
-        db.session.add(new_payment)
+        db.session.add(payment)
         db.session.commit()
         return {'message': 'Payment processed successfully'}, 201
 
-# Add resources to API
-api.add_resource(UserResource, '/users', '/users/<int:user_id>')
-api.add_resource(DiscussionResource, '/discussions', '/discussions/<int:discussion_id>')
-api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
-api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:user_id>/<int:course_id>')
-api.add_resource(CourseResource, '/courses', '/courses/<int:course_id>')
-api.add_resource(PaymentResource, '/payments')
+api.add_resource(UserResource, '/api/users', '/api/users/<int:user_id>')
+api.add_resource(DiscussionResource, '/api/discussions', '/api/discussions/<int:discussion_id>')
+api.add_resource(LessonResource, '/api/lessons', '/api/lessons/<int:lesson_id>')
+api.add_resource(EnrollmentResource, '/api/enrollments', '/api/enrollments/<int:user_id>/<int:course_id>')
+api.add_resource(PaymentResource, '/api/payments')
 
 if __name__ == '__main__':
     app.run(debug=True)
