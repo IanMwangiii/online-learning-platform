@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { Box, Typography, Toolbar, AppBar, IconButton, Drawer, Button, Grid, Card, CardContent, Avatar } from '@mui/material';
+import { Box, Typography, Toolbar, AppBar, IconButton, Drawer, Button, Grid, Card, CardContent } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { deepOrange, deepPurple } from '@mui/material/colors';
 import CourseList from './CourseList';
 import DiscussionThread from './DiscussionThread';
 import Notification from './Notification';
 import Sidebar from './Sidebar';
 import DiscussionForm from './DiscussionForm';
 import FeatureHighlights from './FeatureHighlights';
-import { deepOrange, deepPurple } from '@mui/material/colors';
 
 const dummyDiscussions = [
   { user: 'Alice', comment: 'Great course!', date: '2024-08-01 10:30 AM' },
@@ -164,6 +164,11 @@ const Dashboard = () => {
           </Typography>
           <DiscussionForm onAddDiscussion={handleAddDiscussion} />
           <DiscussionThread discussions={discussions} />
+        </Box>
+
+        {/* Feature Highlights Section */}
+        <Box sx={{ marginTop: 4 }}>
+          <FeatureHighlights />
         </Box>
       </Box>
     </Box>
