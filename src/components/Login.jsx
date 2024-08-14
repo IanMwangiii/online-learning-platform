@@ -7,6 +7,7 @@ const Login = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [message, setMessage] = useState('');
+  const [snackbarColor, setSnackbarColor] = useState(''); // State to manage Snackbar background color
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -33,13 +34,19 @@ const Login = () => {
         localStorage.setItem('access_token', data.access_token);
         localStorage.setItem('role', data.role);
         localStorage.setItem('id', data.id);
-        navigate('/userprofile', { replace: true });
+        setMessage('Login successful! Redirecting...');
+        setSnackbarColor('#4CAF50'); // Set success color for Snackbar
+        setTimeout(() => {
+          navigate('/userprofile', { replace: true });
+        }, 2000); // Delay the navigation to show the success message
       } else {
         const errorResult = await response.json();
         setMessage(errorResult.message || 'Login failed. Please check your details.');
+        setSnackbarColor('#D32F2F'); // Set error color for Snackbar
       }
     } catch (error) {
       setMessage('Error: ' + error.message);
+      setSnackbarColor('#D32F2F'); // Set error color for Snackbar
     }
   };
 
@@ -130,7 +137,7 @@ const Login = () => {
         anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         ContentProps={{
           style: {
-            backgroundColor: '#D32F2F',
+            backgroundColor: snackbarColor, // Dynamic color based on success or error
             color: 'white'
           },
         }}
