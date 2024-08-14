@@ -24,27 +24,43 @@ CORS(app, resources={r"/*": {"origins": "*"}})  # Adjust the origin as needed
 # JWT Secret Key
 SECRET_KEY = app.config['SECRET_KEY']
 
+# Token authentication middleware
 def token_required(f):
     @wraps(f)
-    def decorated_function(*args, **kwargs):
-        token = request.headers.get('Authorization')
-        if not token:
-            return {'message': 'Token is missing!'}, 403
-        try:
-            token = token.split(" ")[1]  # Extract token from 'Bearer <token>'
-            payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-            print(f"Token payload: {payload}")  # Debug line
-        except jwt.ExpiredSignatureError:
-            return {'message': 'Token has expired!'}, 403
-        except jwt.InvalidTokenError:
-            return {'message': 'Invalid token!'}, 403
-        return f(*args, **kwargs)
-    return decorated_function
+    def decorated(*args, **kwargs):
+        token = None
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization'].split(" ")[1]
 
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 401
+
+        try:
+            data = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+            current_user = User.query.get(data['user_id'])
+            if current_user is None:
+                return jsonify({'message': 'User not found!'}), 401
+        except Exception as e:
+            return jsonify({'message': 'Token is invalid!', 'error': str(e)}), 401
+
+        return f(current_user, *args, **kwargs)
+
+    return decorated
+
+def admin_required(f):
+    @wraps(f)
+    def decorated(current_user, *args, **kwargs):
+        if current_user.role != 'admin':
+            return jsonify({'message': 'Admin access required!'}), 403
+        return f(current_user, *args, **kwargs)
+    return decorated
+
+# Routes
 @app.route('/')
 def index():
     return "Welcome to the API!", 200
 
+# User registration route
 @app.route('/auth/signup', methods=['POST'])
 def signup():
     data = request.get_json()
@@ -77,6 +93,7 @@ def signup():
 
     return jsonify({'message': 'User created successfully'}), 201
 
+# User login route
 @app.route('/auth/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -93,18 +110,66 @@ def login():
     
     return jsonify({'message': 'Invalid credentials'}), 401
 
+# Course CRUD operations
 @app.route('/api/courses', methods=['GET'])
-def get_courses():
-    print("Received request for /api/courses")
+@token_required
+def get_courses(current_user):
     courses = Course.query.all()
     if not courses:
         return jsonify({'message': 'No courses found'}), 404
     return jsonify([course.to_dict() for course in courses])
 
+@app.route('/api/courses/<int:course_id>', methods=['GET'])
+@token_required
+def get_course(current_user, course_id):
+    course = Course.query.get(course_id)
+    if course:
+        return jsonify(course.to_dict())
+    return jsonify({'message': 'Course not found'}), 404
 
+@app.route('/api/courses', methods=['POST'])
+@token_required
+@admin_required
+def create_course(current_user):
+    data = request.get_json()
+    new_course = Course(
+        title=data['title'],
+        description=data.get('description'),
+        duration=data.get('duration')
+    )
+    db.session.add(new_course)
+    db.session.commit()
+    return jsonify({'message': 'Course created successfully'}), 201
+
+@app.route('/api/courses/<int:course_id>', methods=['PATCH'])
+@token_required
+@admin_required
+def update_course(current_user, course_id):
+    course = Course.query.get(course_id)
+    if course:
+        data = request.get_json()
+        course.title = data.get('title', course.title)
+        course.description = data.get('description', course.description)
+        course.duration = data.get('duration', course.duration)
+        db.session.commit()
+        return jsonify({'message': 'Course updated successfully'})
+    return jsonify({'message': 'Course not found'}), 404
+
+@app.route('/api/courses/<int:course_id>', methods=['DELETE'])
+@token_required
+@admin_required
+def delete_course(current_user, course_id):
+    course = Course.query.get(course_id)
+    if course:
+        db.session.delete(course)
+        db.session.commit()
+        return jsonify({'message': 'Course deleted successfully'})
+    return jsonify({'message': 'Course not found'}), 404
+
+# RESTful resources for Users and Discussions
 class UserResource(Resource):
     @token_required
-    def get(self, user_id=None):
+    def get(self, current_user, user_id=None):
         if user_id is not None:
             user = User.query.get(user_id)
             if user:
@@ -114,7 +179,8 @@ class UserResource(Resource):
         return jsonify([user.to_dict() for user in users])
 
     @token_required
-    def post(self):
+    @admin_required
+    def post(self, current_user):
         data = request.get_json()
         try:
             User.validate_email(data['email'])
@@ -135,7 +201,8 @@ class UserResource(Resource):
         return {'message': 'User created successfully'}, 201
 
     @token_required
-    def patch(self, user_id):
+    @admin_required
+    def patch(self, current_user, user_id):
         user = User.query.get(user_id)
         if user:
             data = request.get_json()
@@ -160,7 +227,8 @@ class UserResource(Resource):
         return {'message': 'User not found'}, 404
 
     @token_required
-    def delete(self, user_id):
+    @admin_required
+    def delete(self, current_user, user_id):
         user = User.query.get(user_id)
         if user:
             db.session.delete(user)
@@ -170,31 +238,35 @@ class UserResource(Resource):
 
 class DiscussionResource(Resource):
     @token_required
-    def get(self, discussion_id=None):
-        if discussion_id is not None:
-            discussion = Discussion.query.get(discussion_id)
-            if discussion:
-                return jsonify(discussion.to_dict())
-            return {'message': 'Discussion not found'}, 404
-        discussions = Discussion.query.all()
-        return jsonify([discussion.to_dict() for discussion in discussions])
-
-    @token_required
-    def post(self):
+    def post(self, current_user, course_id):
         data = request.get_json()
         new_discussion = Discussion(
             topic=data['topic'],
             content=data['content'],
             comment=data.get('comment'),
-            user_id=data['user_id'],
-            course_id=data['course_id']
+            user_id=current_user.id,
+            course_id=course_id
         )
         db.session.add(new_discussion)
         db.session.commit()
         return {'message': 'Discussion created successfully'}, 201
 
     @token_required
-    def delete(self, discussion_id):
+    def get(self, current_user, course_id=None, discussion_id=None):
+        if discussion_id is not None:
+            discussion = Discussion.query.get(discussion_id)
+            if discussion:
+                return jsonify(discussion.to_dict())
+            return {'message': 'Discussion not found'}, 404
+        if course_id is not None:
+            discussions = Discussion.query.filter_by(course_id=course_id).all()
+            return jsonify([discussion.to_dict() for discussion in discussions])
+        discussions = Discussion.query.all()
+        return jsonify([discussion.to_dict() for discussion in discussions])
+
+    @token_required
+    @admin_required
+    def delete(self, current_user, discussion_id):
         discussion = Discussion.query.get(discussion_id)
         if discussion:
             db.session.delete(discussion)
@@ -202,70 +274,9 @@ class DiscussionResource(Resource):
             return {'message': 'Discussion deleted successfully'}
         return {'message': 'Discussion not found'}, 404
 
-class LessonResource(Resource):
-    @token_required
-    def get(self, lesson_id=None):
-        if lesson_id is not None:
-            lesson = Lesson.query.get(lesson_id)
-            if lesson:
-                return jsonify(lesson.to_dict())
-            return {'message': 'Lesson not found'}, 404
-        lessons = Lesson.query.all()
-        return jsonify([lesson.to_dict() for lesson in lessons])
-
-    @token_required
-    def post(self):
-        data = request.get_json()
-        new_lesson = Lesson(
-            topic=data['topic'],
-            content=data['content'],
-            video_url=data.get('video_url'),  # Optional field
-            course_id=data['course_id']
-        )
-        db.session.add(new_lesson)
-        db.session.commit()
-        return {'message': 'Lesson created successfully'}, 201
-
-class EnrollmentResource(Resource):
-    @token_required
-    def get(self, user_id=None, course_id=None):
-        if user_id and course_id:
-            enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
-            if enrollment:
-                return jsonify(enrollment.to_dict())
-            return {'message': 'Enrollment not found'}, 404
-        enrollments = Enrollment.query.all()
-        return jsonify([enrollment.to_dict() for enrollment in enrollments])
-
-    @token_required
-    def post(self):
-        data = request.get_json()
-        new_enrollment = Enrollment(
-            user_id=data['user_id'],
-            course_id=data['course_id']
-        )
-        db.session.add(new_enrollment)
-        db.session.commit()
-        return {'message': 'Enrollment created successfully'}, 201
-
-class PaymentResource(Resource):
-    @token_required
-    def post(self):
-        data = request.get_json()
-        payment = Payment(
-            user_id=data['user_id'],
-            amount=data['amount'],
-            payment_method=data['payment_method']
-        )
-        db.session.add(payment)
-        db.session.commit()
-        return {'message': 'Payment processed successfully'}, 201
-
+# Register the resources with the API
 api.add_resource(UserResource, '/api/users', '/api/users/<int:user_id>')
-api.add_resource(DiscussionResource, '/api/discussions', '/api/discussions/<int:discussion_id>')
-api.add_resource(LessonResource, '/api/lessons', '/api/lessons/<int:lesson_id>')
-api.add_resource(EnrollmentResource, '/api/enrollments', '/api/enrollments/<int:user_id>/<int:course_id>')
-api.add_resource(PaymentResource, '/api/payments')
+api.add_resource(DiscussionResource, '/api/courses/<int:course_id>/discussions', '/api/discussions/<int:discussion_id>')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5555)
