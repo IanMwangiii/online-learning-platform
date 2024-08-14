@@ -210,7 +210,7 @@ class LessonResource(Resource):
         new_lesson = Lesson(
             topic=data['topic'],
             content=data['content'],
-            video_url=data.get('video_url'),
+            video_url=data.get('video_url'),  # Optional field
             course_id=data['course_id']
         )
         db.session.add(new_lesson)
@@ -244,6 +244,7 @@ class EnrollmentResource(Resource):
         enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
         if enrollment:
             data = request.get_json()
+            # Ensure only allowed fields are updated
             enrollment.user_id = data.get('user_id', enrollment.user_id)
             enrollment.course_id = data.get('course_id', enrollment.course_id)
             db.session.commit()
@@ -274,9 +275,10 @@ class CourseResource(Resource):
     def post(self):
         data = request.get_json()
         new_course = Course(
-            title=data['title'],
-            description=data.get('description'),
-            image_url=data.get('image_url')
+            name=data['name'],
+            description=data['description'],
+            price=data['price'],
+            rating=data.get('rating')  # Rating is optional
         )
         db.session.add(new_course)
         db.session.commit()
@@ -287,9 +289,10 @@ class CourseResource(Resource):
         course = Course.query.get(course_id)
         if course:
             data = request.get_json()
-            course.title = data.get('title', course.title)
+            course.name = data.get('name', course.name)
             course.description = data.get('description', course.description)
-            course.image_url = data.get('image_url', course.image_url)
+            course.price = data.get('price', course.price)
+            course.rating = data.get('rating', course.rating)
             db.session.commit()
             return {'message': 'Course updated successfully'}
         return {'message': 'Course not found'}, 404
@@ -303,14 +306,22 @@ class CourseResource(Resource):
             return {'message': 'Course deleted successfully'}
         return {'message': 'Course not found'}, 404
 
+
 class PaymentResource(Resource):
     @token_required
     def post(self):
         data = request.get_json()
         new_payment = Payment(
+            amount=data['amount'],
             user_id=data['user_id'],
             course_id=data['course_id'],
-            amount=data['amount']
+            name=data.get('name'),  # Optional
+            method_of_payment=data['method_of_payment'],
+            card_number=data.get('card_number'),  # Optional, depending on payment method
+            expiry_date=data.get('expiry_date'),  # Optional, depending on payment method
+            cvv=data.get('cvv'),  # Optional, depending on payment method
+            phone_number=data.get('phone_number'),  # Optional, depending on payment method
+            mpesa_reference=data.get('mpesa_reference')  # Optional, depending on payment method
         )
         db.session.add(new_payment)
         db.session.commit()
