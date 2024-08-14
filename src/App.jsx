@@ -6,7 +6,7 @@ import Dashboard from './components/Dashboard';
 import CourseList from './components/CourseList';
 import CoursePage from './components/CoursePage';
 import Login from './components/Login';
-import Signup from './components/Signup';  // Corrected import statement
+import Signup from './components/Signup';  
 import UserProfile from './components/UserProfile';
 import PaymentPage from './components/PaymentPage';
 import DiscussionsPage from './components/DiscussionsPage';
@@ -24,7 +24,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />  {/* Updated component */}
+        <Route path="/signup" element={<Signup />} /> 
         <Route path="/courses" element={<CourseList enrolledCourses={enrolledCourses} onEnroll={handlePaymentSuccess} />} />
         <Route path="/course/:id" element={<CoursePage enrolledCourses={enrolledCourses} />} />
         <Route path="/user-profile" element={<UserProfile />} />

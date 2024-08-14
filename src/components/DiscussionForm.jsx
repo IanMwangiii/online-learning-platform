@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { TextField, Button, Box } from '@mui/material';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 const DiscussionForm = ({ courseId, onAddDiscussion }) => {
   const [comment, setComment] = useState('');
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (comment.trim()) {
+    if (comment.trim() && courseId) {
       try {
         const response = await axios.post(`/courses/${courseId}/discussions`, { comment });
-        onAddDiscussion(response.data); // Assume the response includes the new discussion
+        onAddDiscussion(response.data);
         setComment('');
       } catch (error) {
         console.error('Error posting comment:', error);
       }
+    } else {
+      console.error('Course ID is missing or comment is empty');
     }
   };
 
@@ -33,6 +36,11 @@ const DiscussionForm = ({ courseId, onAddDiscussion }) => {
       </Button>
     </Box>
   );
+};
+
+DiscussionForm.propTypes = {
+  courseId: PropTypes.number.isRequired,
+  onAddDiscussion: PropTypes.func.isRequired,
 };
 
 export default DiscussionForm;

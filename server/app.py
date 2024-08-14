@@ -161,28 +161,31 @@ class UserResource(Resource):
 
 class DiscussionResource(Resource):
     @token_required
-    def get(self, discussion_id=None):
-        if discussion_id is not None:
-            discussion = Discussion.query.get(discussion_id)
-            if discussion:
-                return jsonify(discussion.to_dict())
-            return {'message': 'Discussion not found'}, 404
-        discussions = Discussion.query.all()
-        return jsonify([discussion.to_dict() for discussion in discussions])
-
-    @token_required
-    def post(self):
+    def post(self, course_id):
         data = request.get_json()
         new_discussion = Discussion(
             topic=data['topic'],
             content=data['content'],
             comment=data.get('comment'),
             user_id=data['user_id'],
-            course_id=data['course_id']
+            course_id=course_id
         )
         db.session.add(new_discussion)
         db.session.commit()
         return {'message': 'Discussion created successfully'}, 201
+
+    @token_required
+    def get(self, course_id=None, discussion_id=None):
+        if discussion_id is not None:
+            discussion = Discussion.query.get(discussion_id)
+            if discussion:
+                return jsonify(discussion.to_dict())
+            return {'message': 'Discussion not found'}, 404
+        if course_id is not None:
+            discussions = Discussion.query.filter_by(course_id=course_id).all()
+            return jsonify([discussion.to_dict() for discussion in discussions])
+        discussions = Discussion.query.all()
+        return jsonify([discussion.to_dict() for discussion in discussions])
 
     @token_required
     def delete(self, discussion_id):
@@ -193,29 +196,8 @@ class DiscussionResource(Resource):
             return {'message': 'Discussion deleted successfully'}
         return {'message': 'Discussion not found'}, 404
 
-class LessonResource(Resource):
-    @token_required
-    def get(self, lesson_id=None):
-        if lesson_id is not None:
-            lesson = Lesson.query.get(lesson_id)
-            if lesson:
-                return jsonify(lesson.to_dict())
-            return {'message': 'Lesson not found'}, 404
-        lessons = Lesson.query.all()
-        return jsonify([lesson.to_dict() for lesson in lessons])
-
-    @token_required
-    def post(self):
-        data = request.get_json()
-        new_lesson = Lesson(
-            topic=data['topic'],
-            content=data['content'],
-            video_url=data.get('video_url'),
-            course_id=data['course_id']
-        )
-        db.session.add(new_lesson)
-        db.session.commit()
-        return {'message': 'Lesson created successfully'}, 201
+# Add resources to API
+api.add_resource(DiscussionResource, '/courses/<int:course_id>/discussions', '/discussions/<int:discussion_id>')
 
 class EnrollmentResource(Resource):
     @token_required
@@ -318,7 +300,6 @@ class PaymentResource(Resource):
 
 # Add resources to API
 api.add_resource(UserResource, '/users', '/users/<int:user_id>')
-api.add_resource(DiscussionResource, '/discussions', '/discussions/<int:discussion_id>')
 api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
 api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:user_id>/<int:course_id>')
 api.add_resource(CourseResource, '/courses', '/courses/<int:course_id>')
