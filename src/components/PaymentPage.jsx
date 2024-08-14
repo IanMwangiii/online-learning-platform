@@ -1,126 +1,108 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { TextField, Button, FormControl, InputLabel, Select, MenuItem, CircularProgress } from '@mui/material';
-import Notification from './Notification';
+import { useState } from 'react';
+import { makePayment } from '../api'; // Adjust path as needed
 
-const PaymentPage = ({ onPaymentSuccess, courseId }) => {
-  const [paymentMethod, setPaymentMethod] = useState('card');
-  const [loading, setLoading] = useState(false);
+function PaymentPage() {
+  const [paymentData, setPaymentData] = useState({
+    amount: '',
+    user_id: '',
+    course_id: '',
+    method_of_payment: '',
+    card_number: '',
+    expiry_date: '',
+    cvv: '',
+    phone_number: '',
+    mpesa_reference: ''
+  });
+
   const [error, setError] = useState(null);
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [cvv, setCvv] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [mpesaReference, setMpesaReference] = useState('');
-  const navigate = useNavigate();
 
-  const handlePayment = async () => {
-    setLoading(true);
-    setError(null);
+  const handleChange = (e) => {
+    setPaymentData({ ...paymentData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
     try {
-      // Validate payment details
-      if (paymentMethod === 'credit_card') {
-        if (!cardNumber || !expiryDate || !cvv) {
-          throw new Error('Credit card details are required.');
+      // Validate input
+      if (!paymentData.amount || !paymentData.user_id || !paymentData.course_id) {
+        throw new Error("Please fill in all required fields.");
+      }
+
+      if (paymentData.method_of_payment === 'Card') {
+        if (!paymentData.card_number || !paymentData.expiry_date || !paymentData.cvv) {
+          throw new Error("Please provide all card details.");
         }
-      } else if (paymentMethod === 'mpesa') {
-        if (!mpesaReference) {
-          throw new Error('M-Pesa reference is required.');
+      } else if (paymentData.method_of_payment === 'Mpesa') {
+        if (!paymentData.phone_number || !paymentData.mpesa_reference) {
+          throw new Error("Please provide all Mpesa details.");
         }
       }
 
-      const response = await axios.post('http://127.0.0.1:5555/payments', {
-        amount: 100, // Adjust the amount as necessary
-        user_id: 1,  // Replace with actual user ID
-        course_id: courseId,
-        method_of_payment: paymentMethod,
-        card_number: paymentMethod === 'credit_card' ? cardNumber : undefined,
-        expiry_date: paymentMethod === 'credit_card' ? expiryDate : undefined,
-        cvv: paymentMethod === 'credit_card' ? cvv : undefined,
-        phone_number: paymentMethod === 'mpesa' ? phoneNumber : undefined,
-        mpesa_reference: paymentMethod === 'mpesa' ? mpesaReference : undefined
-      });
-
-      if (response.status === 200) {
-        onPaymentSuccess(courseId);  // Notify success and pass course ID
-        navigate('/courses');  // Redirect to courses page or wherever needed
-      }
+      await makePayment(paymentData); // Use makePayment here
+      alert('Payment successful!');
     } catch (err) {
-      setError(err.response ? err.response.data.message : 'Payment failed. Please try again.');
-    } finally {
-      setLoading(false);
+      setError(err.message);
     }
   };
 
   return (
-    <div>
-      <h2>Payment Page</h2>
-      <FormControl fullWidth margin="normal">
-        <InputLabel>Payment Method</InputLabel>
-        <Select
-          value={paymentMethod}
-          onChange={(e) => setPaymentMethod(e.target.value)}
-        >
-          <MenuItem value="credit_card">Credit/Debit Card</MenuItem>
-          <MenuItem value="mpesa">M-Pesa</MenuItem>
-        </Select>
-      </FormControl>
-      {paymentMethod === 'credit_card' && (
-        <>
-          <TextField
-            label="Card Number"
-            value={cardNumber}
-            onChange={(e) => setCardNumber(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Expiry Date (MM/YYYY)"
-            value={expiryDate}
-            onChange={(e) => setExpiryDate(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="CVV"
-            value={cvv}
-            onChange={(e) => setCvv(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-        </>
-      )}
-      {paymentMethod === 'mpesa' && (
-        <>
-          <TextField
-            label="Phone Number"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="M-Pesa Reference"
-            value={mpesaReference}
-            onChange={(e) => setMpesaReference(e.target.value)}
-            fullWidth
-            margin="normal"
-          />
-        </>
-      )}
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={handlePayment}
-        disabled={loading}
-      >
-        {loading ? <CircularProgress size={24} /> : 'Pay'}
-      </Button>
-      {error && <Notification message={error} severity="error" />}
+    <div className="payment">
+      <h2>Make a Payment</h2>
+      {error && <div style={{ color: 'red' }}>{error}</div>}
+      <form onSubmit={handleSubmit}>
+        <label>
+          Amount:
+          <input type="text" name="amount" value={paymentData.amount} onChange={handleChange} required />
+        </label>
+        <label>
+          User ID:
+          <input type="text" name="user_id" value={paymentData.user_id} onChange={handleChange} required />
+        </label>
+        <label>
+          Course ID:
+          <input type="text" name="course_id" value={paymentData.course_id} onChange={handleChange} required />
+        </label>
+        <label>
+          Method of Payment:
+          <select name="method_of_payment" value={paymentData.method_of_payment} onChange={handleChange} required>
+            <option value="Card">Card</option>
+            <option value="Mpesa">Mpesa</option>
+            <option value="Cash">Cash</option>
+          </select>
+        </label>
+        {paymentData.method_of_payment === 'Card' && (
+          <>
+            <label>
+              Card Number:
+              <input type="text" name="card_number" value={paymentData.card_number} onChange={handleChange} required />
+            </label>
+            <label>
+              Expiry Date:
+              <input type="text" name="expiry_date" value={paymentData.expiry_date} onChange={handleChange} required />
+            </label>
+            <label>
+              CVV:
+              <input type="text" name="cvv" value={paymentData.cvv} onChange={handleChange} required />
+            </label>
+          </>
+        )}
+        {paymentData.method_of_payment === 'Mpesa' && (
+          <>
+            <label>
+              Phone Number:
+              <input type="text" name="phone_number" value={paymentData.phone_number} onChange={handleChange} required />
+            </label>
+            <label>
+              Mpesa Reference:
+              <input type="text" name="mpesa_reference" value={paymentData.mpesa_reference} onChange={handleChange} required />
+            </label>
+          </>
+        )}
+        <button type="submit">Pay</button>
+      </form>
     </div>
   );
-};
+}
 
 export default PaymentPage;

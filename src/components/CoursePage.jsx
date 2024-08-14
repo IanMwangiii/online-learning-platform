@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
-import { Typography, Button, Card, CardContent } from '@mui/material';
-import Notification from './Notification';
+import { Typography, Button } from '@mui/material';
+import PropTypes from 'prop-types';
 
-const CoursePage = ({ enrolledCourses }) => {
+
+const CoursePage = ({ enrolledCourses = [], onEnroll }) => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,17 +26,15 @@ const CoursePage = ({ enrolledCourses }) => {
     fetchCourse();
   }, [id]);
 
-  const handleEnroll = async () => {
-    try {
-      await axios.post(`/api/enrollments`, { courseId: id });
-      // Update the enrollment state or perform additional actions as needed
-    } catch (err) {
-      setError('Failed to enroll in the course.');
+  const handleEnroll = () => {
+    if (onEnroll) {
+      onEnroll(course.id);
     }
+    // You can also add a notification or redirect logic here.
   };
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <Notification message={error} severity="error" />;
+  if (error) return <div>{error}</div>;
 
   return (
     <div>
@@ -51,26 +50,16 @@ const CoursePage = ({ enrolledCourses }) => {
               Enroll Now
             </Button>
           )}
-          {/* Add progress tracking */}
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Progress:</Typography>
-              <Typography variant="body1">Track your progress here.</Typography>
-              {/* Include a progress bar or other progress tracking components */}
-            </CardContent>
-          </Card>
-          {/* Add discussion threads */}
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Discussion Threads:</Typography>
-              <Typography variant="body1">Join the discussion here.</Typography>
-              {/* Include discussion thread components */}
-            </CardContent>
-          </Card>
         </div>
       )}
     </div>
   );
+};
+
+// Define PropTypes for the component
+CoursePage.propTypes = {
+  enrolledCourses: PropTypes.arrayOf(PropTypes.number).isRequired,
+  onEnroll: PropTypes.func.isRequired,
 };
 
 export default CoursePage;
