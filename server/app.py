@@ -9,6 +9,7 @@ import jwt
 import datetime
 from functools import wraps
 
+
 app = Flask(__name__)
 app.config.from_object(get_config())
 

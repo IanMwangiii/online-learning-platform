@@ -10,10 +10,15 @@ import SignUp from './components/Signup';
 import UserProfile from './components/UserProfile';
 import PaymentPage from './components/PaymentPage';
 import DiscussionsPage from './components/DiscussionsPage';
+<<<<<<< HEAD
 import FeatureHighlights from './components/FeatureHighlights';
 import FAQ from './components/FAQ';
 
 
+=======
+import FAQ from './components/FAQ';
+import FeatureHighlights from './components/FeatureHighlights';
+>>>>>>> main
 function App() {
   const [enrolledCourses, setEnrolledCourses] = useState([]);
 
