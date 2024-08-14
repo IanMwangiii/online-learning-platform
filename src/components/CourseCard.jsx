@@ -1,9 +1,14 @@
-// src/components/CourseCard.jsx
-import React from 'react';
 import PropTypes from 'prop-types';
 import { Card, CardContent, Typography, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const CourseCard = ({ course }) => {
+  const navigate = useNavigate();
+
+  const handleEnrollClick = () => {
+    navigate(`/payment/${course.id}`);
+  };
+
   return (
     <Card>
       <CardContent>
@@ -22,7 +27,7 @@ const CourseCard = ({ course }) => {
           </Typography>
         )}
       </CardContent>
-      <Button size="small">Enroll</Button>
+      <Button size="small" onClick={handleEnrollClick}>Enroll</Button>
     </Card>
   );
 };
