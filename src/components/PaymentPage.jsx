@@ -1,12 +1,13 @@
-import { useState } from 'react';
-import { makePayment } from '../api'; // Adjust path as needed
-import EnrollmentForm from './EnrollmentForm'; // Adjust path as needed
+import { useState, useEffect } from 'react';
+import { Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { useParams } from 'react-router-dom';
+import { makePayment, getCourseDetails, getCurrentUser } from '../api'; // Adjust path as needed
 
-function PaymentPage() {
+const PaymentPage = ({ onPaymentSuccess }) => {
+  const { courseId } = useParams(); // Get courseId from URL
   const [paymentData, setPaymentData] = useState({
     amount: '',
-    user_id: '',
-    course_id: '',
+    username: '',
     method_of_payment: '',
     card_number: '',
     expiry_date: '',
@@ -16,15 +17,40 @@ function PaymentPage() {
   });
 
   const [error, setError] = useState(null);
-  const [paymentSuccessful, setPaymentSuccessful] = useState(false);
-  const [showEnrollmentForm, setShowEnrollmentForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Fetch course details and current user information
+    const fetchData = async () => {
+      try {
+        const [courseDetails, user] = await Promise.all([
+          getCourseDetails(courseId),
+          getCurrentUser()
+        ]);
+        setPaymentData(prevData => ({
+          ...prevData,
+          amount: courseDetails.price, // Set course price as amount
+          username: user.username // Set current username
+        }));
+      } catch (err) {
+        setError('Failed to load course details or user information.');
+      }
+    };
+
+    fetchData();
+  }, [courseId]);
+
+  const handleChange = (e) => {
+    setPaymentData({ ...paymentData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null); // Clear previous errors
+    setLoading(true); // Start loading
 
     try {
-      // Validate input
-      if (!paymentData.amount || !paymentData.user_id || !paymentData.course_id) {
+      if (!paymentData.amount || !paymentData.username) {
         throw new Error("Please fill in all required fields.");
       }
 
@@ -39,95 +65,119 @@ function PaymentPage() {
       }
 
       await makePayment(paymentData);
-      setPaymentSuccessful(true); // Set success state to enable "Proceed to Enrollment Page" button
+      onPaymentSuccess(); // Notify parent of success
       alert('Payment successful!');
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
-  const handleChange = (e) => {
-    setPaymentData({ ...paymentData, [e.target.name]: e.target.value });
-  };
-
-  const handleEnrollmentOpen = () => {
-    setShowEnrollmentForm(true);
-  };
-
-  const handleEnrollmentClose = () => {
-    setShowEnrollmentForm(false);
-  };
-
   return (
-    <div className="payment">
-      <h2>Make a Payment</h2>
-      {error && <div style={{ color: 'red' }}>{error}</div>}
+    <Box sx={{ padding: 4 }}>
+      <Typography variant="h4" gutterBottom>Payment Page</Typography>
+      {error && <Typography color="error">{error}</Typography>}
+      {loading && <Typography>Processing payment...</Typography>}
       <form onSubmit={handleSubmit}>
-        <label>
-          Amount:
-          <input type="text" name="amount" value={paymentData.amount} onChange={handleChange} required />
-        </label>
-        <label>
-          User ID:
-          <input type="text" name="user_id" value={paymentData.user_id} onChange={handleChange} required />
-        </label>
-        <label>
-          Course ID:
-          <input type="text" name="course_id" value={paymentData.course_id} onChange={handleChange} required />
-        </label>
-        <label>
-          Method of Payment:
-          <select name="method_of_payment" value={paymentData.method_of_payment} onChange={handleChange} required>
-            <option value="Card">Card</option>
-            <option value="Mpesa">Mpesa</option>
-            <option value="Cash">Cash</option>
-          </select>
-        </label>
-        {paymentData.method_of_payment === 'Card' && (
-          <>
-            <label>
-              Card Number:
-              <input type="text" name="card_number" value={paymentData.card_number} onChange={handleChange} required />
-            </label>
-            <label>
-              Expiry Date:
-              <input type="text" name="expiry_date" value={paymentData.expiry_date} onChange={handleChange} required />
-            </label>
-            <label>
-              CVV:
-              <input type="text" name="cvv" value={paymentData.cvv} onChange={handleChange} required />
-            </label>
-          </>
-        )}
-        {paymentData.method_of_payment === 'Mpesa' && (
-          <>
-            <label>
-              Phone Number:
-              <input type="text" name="phone_number" value={paymentData.phone_number} onChange={handleChange} required />
-            </label>
-            <label>
-              Mpesa Reference:
-              <input type="text" name="mpesa_reference" value={paymentData.mpesa_reference} onChange={handleChange} required />
-            </label>
-          </>
-        )}
-        <button type="submit">Pay</button>
-      </form>
-      {paymentSuccessful && (
-        <button onClick={handleEnrollmentOpen}>Proceed to Enrollment Page</button>
-      )}
-      {showEnrollmentForm && (
-        <EnrollmentForm
-          courseId={paymentData.course_id}
-          onClose={handleEnrollmentClose}
-          onEnroll={(courseId) => {
-            console.log(`Enrolled in course with ID: ${courseId}`);
-            handleEnrollmentClose();
-          }}
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Amount"
+          name="amount"
+          type="text"
+          value={paymentData.amount}
+          readOnly
         />
-      )}
-    </div>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Username"
+          name="username"
+          type="text"
+          value={paymentData.username}
+          readOnly
+        />
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Method of Payment</InputLabel>
+          <Select
+            name="method_of_payment"
+            value={paymentData.method_of_payment}
+            onChange={handleChange}
+            required
+          >
+            <MenuItem value="Card">Card</MenuItem>
+            <MenuItem value="Mpesa">Mpesa</MenuItem>
+            <MenuItem value="Cash">Cash</MenuItem>
+          </Select>
+        </FormControl>
+
+        {paymentData.method_of_payment === 'Card' && (
+          <Box sx={{ mt: 2 }}>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Card Number"
+              name="card_number"
+              type="text"
+              value={paymentData.card_number}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Expiry Date (MM/YY)"
+              name="expiry_date"
+              type="text"
+              value={paymentData.expiry_date}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="CVV"
+              name="cvv"
+              type="text"
+              value={paymentData.cvv}
+              onChange={handleChange}
+              required
+            />
+          </Box>
+        )}
+
+        {paymentData.method_of_payment === 'Mpesa' && (
+          <Box sx={{ mt: 2 }}>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Phone Number"
+              name="phone_number"
+              type="text"
+              value={paymentData.phone_number}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="M-Pesa Reference"
+              name="mpesa_reference"
+              type="text"
+              value={paymentData.mpesa_reference}
+              onChange={handleChange}
+              required
+            />
+          </Box>
+        )}
+
+        <Button variant="contained" color="primary" sx={{ marginTop: 2 }} type="submit">
+          Pay
+        </Button>
+      </form>
+    </Box>
   );
-}
+};
 
 export default PaymentPage;
