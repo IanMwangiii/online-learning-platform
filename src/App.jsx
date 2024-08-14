@@ -10,7 +10,7 @@ import SignUp from './components/Signup';
 import UserProfile from './components/UserProfile';
 import PaymentPage from './components/PaymentPage';
 import DiscussionsPage from './components/DiscussionsPage';
-
+import FAQ from './components/FAQ';
 function App() {
   const [enrolledCourses, setEnrolledCourses] = useState([]);
 

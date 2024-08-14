@@ -33,7 +33,7 @@ const CourseList = ({ enrolledCourses, onEnroll }) => {
           },
           params: {
             page,
-            per_page: 10 // Adjust the number of courses per page as needed
+            per_page: 3 // Adjust the number of courses per page as needed
           }
         });
 
@@ -58,31 +58,56 @@ const CourseList = ({ enrolledCourses, onEnroll }) => {
   }, [page]);
 
   return (
-    <div>
-      {loading && <CircularProgress />}
+    <Box sx={{ position: 'relative', minHeight: '200px' }}>
+      {loading && (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(255, 255, 255, 0.7)',
+            zIndex: 10
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
+
       {error && <Notification message={error} severity="error" />}
-      <div>
-        {courses.length > 0 ? (
-          courses.map(course => (
-            <CourseCard
-              key={course.id}
-              course={course}
-              enrolledCourses={enrolledCourses}
-              onEnroll={onEnroll}
-            />
-          ))
-        ) : (
-          !loading && <Typography variant="body1">No courses available.</Typography>
-        )}
-      </div>
-      <Box mt={2} display="flex" justifyContent="center">
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={(event, value) => setPage(value)}
-        />
+
+      {!loading && !error && courses.length === 0 && (
+        <Typography variant="body1" align="center">
+          No courses available. Please check back later or adjust your filters.
+        </Typography>
+      )}
+
+      <Box display="flex" flexWrap="wrap" justifyContent="center">
+        {courses.map(course => (
+          <CourseCard
+            key={course.id}
+            course={course}
+            enrolledCourses={enrolledCourses}
+            onEnroll={onEnroll}
+          />
+        ))}
       </Box>
-    </div>
+
+      {!loading && totalPages > 1 && (
+        <Box mt={2} display="flex" justifyContent="center">
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={(event, value) => setPage(value)}
+            color="primary"
+          />
+        </Box>
+      )}
+    </Box>
   );
 };
 

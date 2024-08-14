@@ -1,14 +1,21 @@
+from sqlalchemy.exc import IntegrityError
 from app import app, db
 from models import User, Course, Lesson, Enrollment, Payment
+
 
 def seed_db():
     with app.app_context():
         db.create_all()
         
         # Seed Users
-        user1 = User(username='john_doe', email='john@example.com', password='password123', phone='+254701234567')
-        user2 = User(username='jane_doe', email='jane@example.com', password='password123', phone='+254701234568')
-        db.session.add_all([user1, user2])
+        try:
+            user1 = User(username='john_doe', email='john@example.com', password='password123', phone='+254701234567')
+            user2 = User(username='jane_doe', email='jane@example.com', password='password123', phone='+254701234568')
+            db.session.add_all([user1, user2])
+            db.session.commit()
+        except IntegrityError:
+            db.session.rollback()
+            print("User with this username already exists.")
 
         # Seed Courses
         course1 = Course(name='Flask for Beginners', description='Learn Flask from scratch.', price=100.00, rating=4.5)
