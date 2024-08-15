@@ -1,3 +1,4 @@
+from sqlalchemy.exc import IntegrityError
 from app import app, db
 from models import User, Course, Lesson, Enrollment, Payment
 
