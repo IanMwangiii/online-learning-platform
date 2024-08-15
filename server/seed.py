@@ -15,12 +15,14 @@ def seed_db():
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            print("User with this username already exists.")
 
         # Seed Courses
         course1 = Course(name='Flask for Beginners', description='Learn Flask from scratch.', price=100.00, rating=4.5)
         course2 = Course(name='Advanced React', description='Deep dive into React.', price=150.00, rating=4.8)
-        db.session.add_all([course1, course2])
+        course3 = Course(name='Python Data Analysis', description='Master data analysis with Python.', price=120.00, rating=4.7)
+        course4 = Course(name='Django for Web Development', description='Build robust web applications with Django.', price=130.00, rating=4.6)
+
+        db.session.add_all([course1, course2, course3, course4])
 
         # Seed Lessons
         lesson1 = Lesson(topic='Introduction to Flask', content='This lesson covers the basics of Flask.', course_id=1)

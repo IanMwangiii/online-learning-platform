@@ -37,7 +37,7 @@ const Login = () => {
         setMessage('Login successful! Redirecting...');
         setSnackbarColor('#4CAF50'); // Set success color for Snackbar
         setTimeout(() => {
-          navigate('/userprofile', { replace: true });
+          navigate('/user-profile', { replace: true });
         }, 2000); // Delay the navigation to show the success message
       } else {
         const errorResult = await response.json();

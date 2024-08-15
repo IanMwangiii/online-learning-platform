@@ -12,7 +12,6 @@ class User(db.Model):
     phone = db.Column(db.String(20))
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.String(20), default='user')
-    address = db.Column(db.String(255))  # New address attribute
     
     # Relationships
     discussions = db.relationship('Discussion', backref='user', lazy=True)
@@ -26,7 +25,6 @@ class User(db.Model):
             'email': self.email,
             'phone': self.phone,
             'role': self.role,
-            'address': self.address  # Include the address in the to_dict method
         }
 
 
