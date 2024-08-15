@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -8,6 +7,7 @@ import Notification from './Notification';
 const CoursePage = ({ enrolledCourses }) => {
   const { id } = useParams();
   const [course, setCourse] = useState(null);
+  const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -18,12 +18,20 @@ const CoursePage = ({ enrolledCourses }) => {
         setCourse(response.data);
       } catch (err) {
         setError('Failed to load course details.');
-      } finally {
-        setLoading(false);
+      }
+    };
+
+    const fetchLessons = async () => {
+      try {
+        const response = await axios.get(`/api/courses/${id}/lessons`);
+        setLessons(response.data);
+      } catch (err) {
+        setError('Failed to load lessons.');
       }
     };
 
     fetchCourse();
+    fetchLessons();
   }, [id]);
 
   const handleEnroll = async () => {
@@ -52,6 +60,24 @@ const CoursePage = ({ enrolledCourses }) => {
               Enroll Now
             </Button>
           )}
+          {/* Display lessons */}
+          <Card>
+            <CardContent>
+              <Typography variant="h6">Lessons:</Typography>
+              {lessons.length > 0 ? (
+                lessons.map((lesson) => (
+                  <Card key={lesson.id}>
+                    <CardContent>
+                      <Typography variant="h6">{lesson.topic}</Typography>
+                      <Typography variant="body1">{lesson.content}</Typography>
+                    </CardContent>
+                  </Card>
+                ))
+              ) : (
+                <Typography variant="body1">No lessons available for this course.</Typography>
+              )}
+            </CardContent>
+          </Card>
           {/* Add progress tracking */}
           <Card>
             <CardContent>

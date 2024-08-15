@@ -10,9 +10,13 @@ const CourseList = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5555/api/courses');  // Ensure this URL matches your Flask API route
-      console.log('API response:', response);  // Debug line to check API response
-      setCourses(response.data);  // Update to handle the response as an array
+      const response = await axios.get('http://127.0.0.1:5555/api/courses'); // Ensure this URL matches your Flask API route
+      console.log('API response:', response.data); // Debug line to check API response
+      if (Array.isArray(response.data)) {
+        setCourses(response.data);
+      } else {
+        setError('Unexpected response format.');
+      }
       setLoading(false);
     } catch (err) {
       console.error('Error fetching courses:', err);

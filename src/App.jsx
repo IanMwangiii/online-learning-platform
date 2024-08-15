@@ -40,6 +40,7 @@ function App() {
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/contact-us" element={<ContactUs />} /> 
       </Routes>
+      <CoursePage/>
     </Router>
   );
 }
