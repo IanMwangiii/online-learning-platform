@@ -12,6 +12,11 @@ class User(db.Model):
     phone = db.Column(db.String(20))
     password = db.Column(db.String(120), nullable=False)
     role = db.Column(db.String(20), default='user')
+    
+    # Relationships
+    discussions = db.relationship('Discussion', backref='user', lazy=True)
+    enrollments = db.relationship('Enrollment', backref='user', lazy=True)
+    payments = db.relationship('Payment', backref='user', lazy=True)
 
     def to_dict(self):
         return {
@@ -19,8 +24,9 @@ class User(db.Model):
             'username': self.username,
             'email': self.email,
             'phone': self.phone,
-            'role': self.role
+            'role': self.role,
         }
+
 
     @staticmethod
     def validate_email(email):
@@ -46,7 +52,6 @@ class Discussion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     topic = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
-    comment = db.Column(db.String(200))
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
 
@@ -55,9 +60,9 @@ class Discussion(db.Model):
             'id': self.id,
             'topic': self.topic,
             'content': self.content,
-            'comment': self.comment,
             'user_id': self.user_id,
-            'course_id': self.course_id
+            'course_id': self.course_id,
+            'username': self.user.username  # Include the username for display
         }
 
 class Lesson(db.Model):
@@ -95,20 +100,25 @@ class Course(db.Model):
     price = db.Column(db.Float, nullable=False)
     rating = db.Column(db.Float)
 
+    # Relationships
+    lessons = db.relationship('Lesson', backref='course', lazy=True)
+    discussions = db.relationship('Discussion', backref='course', lazy=True)
+    enrollments = db.relationship('Enrollment', backref='course', lazy=True)
+
     def to_dict(self):
         return {
             'id': self.id,
             'name': self.name,
             'description': self.description,
             'price': self.price,
-            'rating': self.rating
+            'rating': self.rating,
+            'lessons': [lesson.to_dict() for lesson in self.lessons]
         }
 
 class Payment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    name = db.Column(db.String(200))
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     method_of_payment = db.Column(db.String(50), nullable=False)
     card_number = db.Column(db.String(20))
@@ -122,7 +132,6 @@ class Payment(db.Model):
             'id': self.id,
             'amount': self.amount,
             'user_id': self.user_id,
-            'name': self.name,
             'course_id': self.course_id,
             'method_of_payment': self.method_of_payment,
             'card_number': self.card_number,
