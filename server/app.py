@@ -239,22 +239,17 @@ class LessonResource(Resource):
         db.session.commit()
         return {'message': 'Lesson created successfully'}, 201
 
-@app.route('/api/payments', methods=['POST'])
-def create_payment():
-    data = request.json
-    new_payment = Payment(
-        amount=data['amount'],
-        username=data['username'],
-        method_of_payment=data['method_of_payment'],
-        card_number=data.get('card_number'),
-        expiry_date=data.get('expiry_date'),
-        cvv=data.get('cvv'),
-        phone_number=data.get('phone_number'),
-        mpesa_reference=data.get('mpesa_reference')
-    )
-    db.session.add(new_payment)
-    db.session.commit()
-    return jsonify({'message': 'Payment successful!'}), 201
+class PaymentResource(Resource):
+    def post(self):
+        data = request.get_json()
+        new_payment = Payment(
+            user_id=data['user_id'],
+            course_id=data['course_id'],
+            amount=data['amount']
+        )
+        db.session.add(new_payment)
+        db.session.commit()
+        return {'message': 'Payment processed successfully'}, 201
 
 api.add_resource(UserResource, '/users', '/users/<int:user_id>')
 api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')

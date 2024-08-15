@@ -1,13 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import PropTypes from 'prop-types'; // Import PropTypes
 import { Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
-import { useParams } from 'react-router-dom';
-import { makePayment, getCourseDetails, getCurrentUser } from '../api'; // Adjust path as needed
+import { useNavigate } from 'react-router-dom';
+import { makePayment } from '../api'; // Adjust path as needed
 
 const PaymentPage = ({ onPaymentSuccess }) => {
-  const { courseId } = useParams(); // Get courseId from URL
+  const navigate = useNavigate(); // Initialize useNavigate
   const [paymentData, setPaymentData] = useState({
+    user_id: '',
+    course_id: '',
     amount: '',
-    username: '',
     method_of_payment: '',
     card_number: '',
     expiry_date: '',
@@ -17,28 +19,6 @@ const PaymentPage = ({ onPaymentSuccess }) => {
   });
 
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // Fetch course details and current user information
-    const fetchData = async () => {
-      try {
-        const [courseDetails, user] = await Promise.all([
-          getCourseDetails(courseId),
-          getCurrentUser()
-        ]);
-        setPaymentData(prevData => ({
-          ...prevData,
-          amount: courseDetails.price, // Set course price as amount
-          username: user.username // Set current username
-        }));
-      } catch (err) {
-        setError('Failed to load course details or user information.');
-      }
-    };
-
-    fetchData();
-  }, [courseId]);
 
   const handleChange = (e) => {
     setPaymentData({ ...paymentData, [e.target.name]: e.target.value });
@@ -47,10 +27,9 @@ const PaymentPage = ({ onPaymentSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null); // Clear previous errors
-    setLoading(true); // Start loading
 
     try {
-      if (!paymentData.amount || !paymentData.username) {
+      if (!paymentData.user_id || !paymentData.course_id || !paymentData.amount) {
         throw new Error("Please fill in all required fields.");
       }
 
@@ -67,10 +46,9 @@ const PaymentPage = ({ onPaymentSuccess }) => {
       await makePayment(paymentData);
       onPaymentSuccess(); // Notify parent of success
       alert('Payment successful!');
+      navigate(`/course/${paymentData.course_id}`); // Navigate to the course page
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false); // End loading
     }
   };
 
@@ -78,8 +56,27 @@ const PaymentPage = ({ onPaymentSuccess }) => {
     <Box sx={{ padding: 4 }}>
       <Typography variant="h4" gutterBottom>Payment Page</Typography>
       {error && <Typography color="error">{error}</Typography>}
-      {loading && <Typography>Processing payment...</Typography>}
       <form onSubmit={handleSubmit}>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="User ID"
+          name="user_id"
+          type="text"
+          value={paymentData.user_id}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Course ID"
+          name="course_id"
+          type="text"
+          value={paymentData.course_id}
+          onChange={handleChange}
+          required
+        />
         <TextField
           fullWidth
           margin="normal"
@@ -87,16 +84,8 @@ const PaymentPage = ({ onPaymentSuccess }) => {
           name="amount"
           type="text"
           value={paymentData.amount}
-          readOnly
-        />
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Username"
-          name="username"
-          type="text"
-          value={paymentData.username}
-          readOnly
+          onChange={handleChange}
+          required
         />
         <FormControl fullWidth margin="normal">
           <InputLabel>Method of Payment</InputLabel>
@@ -178,6 +167,11 @@ const PaymentPage = ({ onPaymentSuccess }) => {
       </form>
     </Box>
   );
+};
+
+// Add prop validation
+PaymentPage.propTypes = {
+  onPaymentSuccess: PropTypes.func.isRequired
 };
 
 export default PaymentPage;
