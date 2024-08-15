@@ -68,7 +68,7 @@ function Navbar() {
             <MenuIcon sx={{ '&:hover': { color: '#f50057', transition: 'color 0.3s ease-in-out' } }} />
           </IconButton>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-          EduVerse Hub
+          LearnSphere
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <NavList>
