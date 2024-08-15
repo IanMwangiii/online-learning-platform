@@ -31,10 +31,10 @@ function Home({ onSearch }) {
       {/* Hero Section */}
       <Box
         sx={{
-          backgroundImage: 'url("/path/to/hero-image.jpg")',
+          backgroundImage: 'url("https://i.pinimg.com/564x/08/a6/e8/08a6e82373f618ecb1d43f175b129a2e.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          height: '60vh',
+          height: '70vh',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
@@ -43,48 +43,31 @@ function Home({ onSearch }) {
           textAlign: 'center',
           padding: 3,
           animation: `${fadeIn} 2s ease-in-out`,
+          position: 'relative',
         }}
       >
         <Typography variant="h2" component="h1" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
           Welcome to Our Learning Platform
         </Typography>
-        <Typography variant="h5" sx={{ marginBottom: 3 }}>
           Discover the best courses to enhance your skills
-        </Typography>
-        <SearchBar onSearch={onSearch} />
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{
-            marginTop: 3,
-            padding: '10px 20px',
-            backgroundColor: '#1976d2',
-            animation: `${slideUp} 2s ease-in-out`,
-            '&:hover': {
-              backgroundColor: '#1565c0',
-              transform: 'scale(1.05)',
-              transition: 'transform 0.3s ease-in-out',
-            },
-          }}
-        >
-          Browse Courses
-        </Button>
+        
       </Box>
 
       {/* Featured Courses Section */}
-      <Box sx={{ padding: 4, backgroundColor: '#f5f5f5' }}>
+      <Box sx={{ padding: 6, backgroundColor: '#f0f0f0' }}>
         <Typography
           variant="h4"
           sx={{
             textAlign: 'center',
             fontWeight: 'bold',
-            marginBottom: 4,
+            marginBottom: 6,
+            color: '#333',
             animation: `${fadeIn} 1.5s ease-in-out`,
           }}
         >
           Featured Courses
         </Typography>
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           {[1, 2, 3, 4].map((course) => (
             <Grid
               item
@@ -96,12 +79,20 @@ function Home({ onSearch }) {
                 animation: `${slideUp} 1.5s ease-in-out`,
               }}
             >
-              <Card sx={{ boxShadow: 3 }}>
+              <Card
+                sx={{
+                  boxShadow: 4,
+                  transition: 'transform 0.3s ease-in-out',
+                  '&:hover': {
+                    transform: 'translateY(-10px)',
+                  },
+                }}
+              >
                 <CardContent>
-                  <Typography variant="h5" component="h2" sx={{ marginBottom: 2 }}>
+                  <Typography variant="h5" component="h2" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
                     Course Title {course}
                   </Typography>
-                  <Typography variant="body2" sx={{ marginBottom: 2 }}>
+                  <Typography variant="body2" sx={{ marginBottom: 3, color: '#666' }}>
                     Course description goes here. It should be concise and informative.
                   </Typography>
                   <Button
@@ -110,6 +101,7 @@ function Home({ onSearch }) {
                     fullWidth
                     sx={{
                       textTransform: 'none',
+                      fontWeight: 'bold',
                       '&:hover': {
                         backgroundColor: '#1565c0',
                         transform: 'scale(1.05)',
@@ -127,19 +119,20 @@ function Home({ onSearch }) {
       </Box>
 
       {/* Testimonials Section */}
-      <Box sx={{ padding: 4, backgroundColor: '#fff' }}>
+      <Box sx={{ padding: 6, backgroundColor: '#ffffff' }}>
         <Typography
           variant="h4"
           sx={{
             textAlign: 'center',
             fontWeight: 'bold',
-            marginBottom: 4,
+            marginBottom: 6,
+            color: '#333',
             animation: `${fadeIn} 1.5s ease-in-out`,
           }}
         >
           What Our Students Say
         </Typography>
-        <Grid container spacing={3}>
+        <Grid container spacing={4}>
           {[1, 2, 3].map((testimonial) => (
             <Grid
               item
@@ -151,12 +144,20 @@ function Home({ onSearch }) {
                 animation: `${slideUp} 1.5s ease-in-out`,
               }}
             >
-              <Card sx={{ boxShadow: 3 }}>
+              <Card
+                sx={{
+                  boxShadow: 4,
+                  transition: 'transform 0.3s ease-in-out',
+                  '&:hover': {
+                    transform: 'translateY(-10px)',
+                  },
+                }}
+              >
                 <CardContent>
-                  <Typography variant="h6" component="h3" sx={{ marginBottom: 1 }}>
+                  <Typography variant="h6" component="h3" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
                     Student Name {testimonial}
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography variant="body2" sx={{ color: '#666' }}>
                     "This platform has transformed the way I learn. The courses are comprehensive and
                     the instructors are top-notch."
                   </Typography>

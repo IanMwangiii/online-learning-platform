@@ -239,22 +239,52 @@ class LessonResource(Resource):
         db.session.commit()
         return {'message': 'Lesson created successfully'}, 201
 
-class PaymentResource(Resource):
-    def post(self):
-        data = request.get_json()
-        new_payment = Payment(
-            user_id=data['user_id'],
-            course_id=data['course_id'],
-            amount=data['amount']
-        )
-        db.session.add(new_payment)
-        db.session.commit()
-        return {'message': 'Payment processed successfully'}, 201
+@app.route('/api/payments', methods=['POST'])
+def create_payment():
+    data = request.json
+    
+    # Validate required fields
+    required_fields = ['amount', 'username', 'method_of_payment']
+    missing_fields = [field for field in required_fields if field not in data]
+    
+    if missing_fields:
+        return jsonify({'message': f'Missing fields: {", ".join(missing_fields)}'}), 400
+
+    # Validate payment method
+    method_of_payment = data.get('method_of_payment')
+    if method_of_payment not in ['card', 'mpesa']:
+        return jsonify({'message': 'Invalid payment method. Choose either "card" or "mpesa".'}), 400
+
+    # Additional validation based on payment method
+    if method_of_payment == 'card':
+        if not all([data.get('card_number'), data.get('expiry_date'), data.get('cvv')]):
+            return jsonify({'message': 'Missing card details'}), 400
+
+    if method_of_payment == 'mpesa':
+        if not data.get('mpesa_reference'):
+            return jsonify({'message': 'Missing Mpesa reference'}), 400
+    
+    # Create the payment record
+    new_payment = Payment(
+        amount=data['amount'],
+        username=data['username'],
+        method_of_payment=method_of_payment,
+        card_number=data.get('card_number'),
+        expiry_date=data.get('expiry_date'),
+        cvv=data.get('cvv'),
+        phone_number=data.get('phone_number'),
+        mpesa_reference=data.get('mpesa_reference')
+    )
+    
+    db.session.add(new_payment)
+    db.session.commit()
+
+    return jsonify({'message': 'Payment successful!'}), 201
+
 
 api.add_resource(UserResource, '/users', '/users/<int:user_id>')
 api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
 api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:user_id>/<int:course_id>')
-api.add_resource(PaymentResource, '/payments')
 api.add_resource(DiscussionResource, '/courses/<int:course_id>/discussions', '/discussions/<int:discussion_id>')
 
 if __name__ == '__main__':
