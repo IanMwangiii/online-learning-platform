@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-
+import PropTypes from 'prop-types';
 
 const SearchBar = ({ onSearch }) => {
   const [query, setQuery] = useState('');
@@ -10,7 +10,11 @@ const SearchBar = ({ onSearch }) => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    onSearch(query);
+    if (typeof onSearch === 'function') {
+      onSearch(query);
+    } else {
+      console.error('onSearch is not a function');
+    }
   };
 
   return (
@@ -27,6 +31,10 @@ const SearchBar = ({ onSearch }) => {
       </button>
     </form>
   );
+};
+
+SearchBar.propTypes = {
+  onSearch: PropTypes.func.isRequired,
 };
 
 export default SearchBar;

@@ -1,82 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import LessonCard from './LessonCard';
-import { Box, Typography, Button } from '@mui/material';
-import { useParams } from 'react-router-dom';
 
-const CoursePage = () => {
-  const { courseId } = useParams();
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { Typography, Button, Card, CardContent } from '@mui/material';
+import Notification from './Notification';
+
+const CoursePage = ({ enrolledCourses }) => {
+  const { id } = useParams();
   const [course, setCourse] = useState(null);
-  const [lessons, setLessons] = useState([]);
-  const [isEnrolled, setIsEnrolled] = useState(false); // Ensure this state is correctly managed
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCourse = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}`);
+        const response = await axios.get(`/api/courses/${id}`);
         setCourse(response.data);
-      } catch (error) {
-        console.error('Error fetching course data:', error);
+      } catch (err) {
+        setError('Failed to load course details.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchCourse();
-  }, [courseId]);
+  }, [id]);
 
-  useEffect(() => {
-    const fetchLessons = async () => {
-      try {
-        const response = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}/lessons`);
-        const data = response.data;
-        if (Array.isArray(data)) {
-          setLessons(data);
-        } else {
-          console.error('Expected an array of lessons:', data);
-        }
-      } catch (error) {
-        console.error('Error fetching lessons:', error);
-      }
-    };
-
-    if (isEnrolled) fetchLessons();
-  }, [courseId, isEnrolled]);
-
-  const handleEnroll = () => {
-    // You might want to set `isEnrolled` to true after successful payment
-    setIsEnrolled(true);
+  const handleEnroll = async () => {
+    try {
+      await axios.post(`/api/enrollments`, { courseId: id });
+      // Update the enrollment state or perform additional actions as needed
+    } catch (err) {
+      setError('Failed to enroll in the course.');
+    }
   };
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <Notification message={error} severity="error" />;
+
   return (
-    <Box padding={3}>
-      {course ? (
-        <>
-          <Typography variant="h4">{course.title}</Typography>
+    <div>
+      {course && (
+        <div>
+          <Typography variant="h3">{course.title}</Typography>
           <Typography variant="body1">{course.description}</Typography>
-          {!isEnrolled ? (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleEnroll}
-            >
+          <Typography variant="body1">Instructor: {course.instructor}</Typography>
+          {enrolledCourses.includes(course.id) ? (
+            <Typography variant="body1">You are enrolled in this course.</Typography>
+          ) : (
+            <Button variant="contained" color="primary" onClick={handleEnroll}>
               Enroll Now
             </Button>
-          ) : (
-            <Box marginTop={3}>
-              <Typography variant="h6">Lessons</Typography>
-              {lessons.length > 0 ? (
-                lessons.map(lesson => (
-                  <LessonCard key={lesson.id} lesson={lesson} />
-                ))
-              ) : (
-                <Typography variant="body1">No lessons available.</Typography>
-              )}
-            </Box>
           )}
-        </>
-      ) : (
-        <Typography variant="body1">Loading course information...</Typography>
+          {/* Add progress tracking */}
+          <Card>
+            <CardContent>
+              <Typography variant="h6">Progress:</Typography>
+              <Typography variant="body1">Track your progress here.</Typography>
+              {/* Include a progress bar or other progress tracking components */}
+            </CardContent>
+          </Card>
+          {/* Add discussion threads */}
+          <Card>
+            <CardContent>
+              <Typography variant="h6">Discussion Threads:</Typography>
+              <Typography variant="body1">Join the discussion here.</Typography>
+              {/* Include discussion thread components */}
+            </CardContent>
+          </Card>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };
 

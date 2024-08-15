@@ -1,170 +1,176 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
+import PropTypes from 'prop-types';
+import { Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, FormControl, InputLabel, Select, MenuItem, CircularProgress, Typography } from '@mui/material';
-import Notification from './Notification';
+import { makePayment } from '../api';
 
-const PaymentPage = ({ onPaymentSuccess, courseId }) => {
-  const [paymentMethod, setPaymentMethod] = useState('card');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiryDate, setExpiryDate] = useState('');
-  const [cvv, setCvv] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [mpesaReference, setMpesaReference] = useState('');
-  const [course, setCourse] = useState(null);
+const PaymentPage = ({ onPaymentSuccess }) => {
   const navigate = useNavigate();
+  const [paymentData, setPaymentData] = useState({
+    user_id: '',
+    course_id: '',
+    amount: '',
+    method_of_payment: '',
+    card_number: '',
+    expiry_date: '',
+    cvv: '',
+    phone_number: '',
+    mpesa_reference: ''
+  });
 
-  // Fetch course details if courseId is provided
-  useEffect(() => {
-    if (!courseId) {
-      setError('Course ID is missing.');
-      return;
-    }
+  const [error, setError] = useState(null);
 
-    const fetchCourse = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}`);
-        setCourse(response.data);
-      } catch (err) {
-        setError('Error fetching course data. Please try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const handleChange = (e) => {
+    setPaymentData({ ...paymentData, [e.target.name]: e.target.value });
+  };
 
-    fetchCourse();
-  }, [courseId]);
-
-  const handlePayment = async () => {
-    setLoading(true);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setError(null);
 
     try {
-      // Validate payment details
-      if (paymentMethod === 'credit_card') {
-        if (!cardNumber || !expiryDate || !cvv) {
-          throw new Error('Credit card details are required.');
+      if (!paymentData.user_id || !paymentData.course_id || !paymentData.amount) {
+        throw new Error("Please fill in all required fields.");
+      }
+
+      if (paymentData.method_of_payment === 'credit_card') {
+        if (!paymentData.card_number || !paymentData.expiry_date || !paymentData.cvv) {
+          throw new Error("Please provide all card details.");
         }
-      } else if (paymentMethod === 'mpesa') {
-        if (!mpesaReference) {
-          throw new Error('M-Pesa reference is required.');
+      } else if (paymentData.method_of_payment === 'mpesa') {
+        if (!paymentData.phone_number || !paymentData.mpesa_reference) {
+          throw new Error("Please provide all Mpesa details.");
         }
       }
 
-      // Submit payment details
-      const response = await axios.post('http://127.0.0.1:5555/payments', {
-        amount: course?.price || 100, // Adjust the amount based on course data
-        user_id: 1,  // Replace with actual user ID
-        course_id: courseId,
-        method_of_payment: paymentMethod,
-        card_number: paymentMethod === 'credit_card' ? cardNumber : undefined,
-        expiry_date: paymentMethod === 'credit_card' ? expiryDate : undefined,
-        cvv: paymentMethod === 'credit_card' ? cvv : undefined,
-        phone_number: paymentMethod === 'mpesa' ? phoneNumber : undefined,
-        mpesa_reference: paymentMethod === 'mpesa' ? mpesaReference : undefined
-      });
-
-      if (response.status === 200) {
-        onPaymentSuccess(courseId);  // Notify success and pass course ID
-        navigate('/courses');  // Redirect to courses page or wherever needed
-      }
+      await makePayment(paymentData);
+      onPaymentSuccess();
+      alert('Payment successful!');
+      navigate(`/course/${paymentData.course_id}`);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Payment failed. Please try again.');
-    } finally {
-      setLoading(false);
+      console.error('Payment error:', err);
+      setError(err.message);
     }
   };
 
   return (
-    <div>
-      <Typography variant="h4" gutterBottom>
-        Payment Page
-      </Typography>
-
-      {loading ? (
-        <CircularProgress />
-      ) : (
-        <>
-          {error && <Notification severity="error" message={error} />}
-          {course && (
-            <Typography variant="h6" gutterBottom>
-              {course.name} - ${course.price}
-            </Typography>
-          )}
-
-          <FormControl fullWidth margin="normal">
-            <InputLabel>Payment Method</InputLabel>
-            <Select
-              value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
-            >
-              <MenuItem value="credit_card">Credit/Debit Card</MenuItem>
-              <MenuItem value="mpesa">M-Pesa</MenuItem>
-            </Select>
-          </FormControl>
-
-          {paymentMethod === 'credit_card' && (
-            <>
-              <TextField
-                label="Card Number"
-                value={cardNumber}
-                onChange={(e) => setCardNumber(e.target.value)}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="Expiry Date (MM/YYYY)"
-                value={expiryDate}
-                onChange={(e) => setExpiryDate(e.target.value)}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="CVV"
-                value={cvv}
-                onChange={(e) => setCvv(e.target.value)}
-                fullWidth
-                margin="normal"
-              />
-            </>
-          )}
-
-          {paymentMethod === 'mpesa' && (
-            <>
-              <TextField
-                label="Phone Number"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                fullWidth
-                margin="normal"
-              />
-              <TextField
-                label="M-Pesa Reference"
-                value={mpesaReference}
-                onChange={(e) => setMpesaReference(e.target.value)}
-                fullWidth
-                margin="normal"
-              />
-            </>
-          )}
-
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handlePayment}
-            disabled={loading}
-            fullWidth
-            sx={{ mt: 2 }}
+    <Box sx={{ padding: 4 }}>
+      <Typography variant="h4" gutterBottom>Payment Page</Typography>
+      {error && <Typography color="error">{error}</Typography>}
+      <form onSubmit={handleSubmit}>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="User ID"
+          name="user_id"
+          type="text"
+          value={paymentData.user_id}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Course ID"
+          name="course_id"
+          type="text"
+          value={paymentData.course_id}
+          onChange={handleChange}
+          required
+        />
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Amount"
+          name="amount"
+          type="text"
+          value={paymentData.amount}
+          onChange={handleChange}
+          required
+        />
+        <FormControl fullWidth margin="normal">
+          <InputLabel>Method of Payment</InputLabel>
+          <Select
+            name="method_of_payment"
+            value={paymentData.method_of_payment}
+            onChange={handleChange}
+            required
           >
-            {loading ? <CircularProgress size={24} /> : 'Make Payment'}
-          </Button>
-        </>
-      )}
-    </div>
+            <MenuItem value="credit_card">Card</MenuItem>
+            <MenuItem value="mpesa">Mpesa</MenuItem>
+          </Select>
+        </FormControl>
+
+        {paymentData.method_of_payment === 'credit_card' && (
+          <Box sx={{ mt: 2 }}>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Card Number"
+              name="card_number"
+              type="text"
+              value={paymentData.card_number}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Expiry Date (MM/YY)"
+              name="expiry_date"
+              type="text"
+              value={paymentData.expiry_date}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="CVV"
+              name="cvv"
+              type="text"
+              value={paymentData.cvv}
+              onChange={handleChange}
+              required
+            />
+          </Box>
+        )}
+
+        {paymentData.method_of_payment === 'mpesa' && (
+          <Box sx={{ mt: 2 }}>
+            <TextField
+              fullWidth
+              margin="normal"
+              label="Phone Number"
+              name="phone_number"
+              type="text"
+              value={paymentData.phone_number}
+              onChange={handleChange}
+              required
+            />
+            <TextField
+              fullWidth
+              margin="normal"
+              label="M-Pesa Reference"
+              name="mpesa_reference"
+              type="text"
+              value={paymentData.mpesa_reference}
+              onChange={handleChange}
+              required
+            />
+          </Box>
+        )}
+
+        <Button variant="contained" color="primary" sx={{ marginTop: 2 }} type="submit">
+          Pay
+        </Button>
+      </form>
+    </Box>
   );
+};
+
+PaymentPage.propTypes = {
+  onPaymentSuccess: PropTypes.func.isRequired
 };
 
 export default PaymentPage;
