@@ -1,286 +1,135 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import CourseCard from './CourseCard';
-import { Grid, CircularProgress, Typography, Button, TextField, Select, MenuItem } from '@mui/material';
 
 const AdminPanel = () => {
-  const [role, setRole] = useState(null);
-  const [selectedAction, setSelectedAction] = useState('');
   const [courses, setCourses] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [courseData, setCourseData] = useState({ title: '', description: '' });
-  const [updateData, setUpdateData] = useState({ title: '', description: '' });
-  const [selectedCourseId, setSelectedCourseId] = useState(null);
-  const [userData, setUserData] = useState({ username: '', email: '' });
-  const [selectedUserId, setSelectedUserId] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [newCourseName, setNewCourseName] = useState('');
+  const [newLesson, setNewLesson] = useState({ topic: '', content: '', video_url: '', course_id: '' });
 
+  // Fetch courses and lessons
   useEffect(() => {
-    fetchUserRole();
     fetchCourses();
-    fetchUsers();
   }, []);
-
-  const fetchUserRole = async () => {
-    try {
-      const token = localStorage.getItem('access_token');
-      if (!token) return;
-
-      const response = await axios.get('http://127.0.0.1:5555/api/users/me', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setRole(response.data.role);
-    } catch (error) {
-      console.error('Error fetching user role:', error);
-    }
-  };
 
   const fetchCourses = async () => {
     try {
-      const token = localStorage.getItem('access_token');
-      const response = await axios.get('http://127.0.0.1:5555/api/courses', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const response = await axios.get('http://127.0.0.1:5555/api/courses');
       setCourses(response.data);
-      setLoading(false);
     } catch (error) {
       console.error('Error fetching courses:', error);
-      setError('Failed to load courses. Please try again.');
-      setLoading(false);
     }
   };
 
-  const fetchUsers = async () => {
+  const handleAddCourse = async () => {
     try {
-      const token = localStorage.getItem('access_token');
-      const response = await axios.get('http://127.0.0.1:5555/api/users', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setUsers(response.data);
+      const response = await axios.post('http://127.0.0.1:5555/api/courses', { name: newCourseName });
+      setCourses([...courses, response.data]);
+      setNewCourseName('');
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error adding course:', error);
     }
   };
 
-  const handleCreateCourse = async () => {
+  const handleDeleteCourse = async (courseId) => {
     try {
-      const token = localStorage.getItem('access_token');
-      await axios.post('http://127.0.0.1:5555/api/courses', courseData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchCourses();
-      setCourseData({ title: '', description: '' });
-      alert('Course created successfully!');
-    } catch (error) {
-      console.error('Error creating course:', error);
-    }
-  };
-
-  const handleUpdateCourse = async () => {
-    try {
-      const token = localStorage.getItem('access_token');
-      await axios.put(`http://127.0.0.1:5555/api/courses/${selectedCourseId}`, updateData, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchCourses();
-      setUpdateData({ title: '', description: '' });
-      setSelectedCourseId(null);
-      alert('Course updated successfully!');
-    } catch (error) {
-      console.error('Error updating course:', error);
-    }
-  };
-
-  const handleDeleteCourse = async (id) => {
-    try {
-      const token = localStorage.getItem('access_token');
-      await axios.delete(`http://127.0.0.1:5555/api/courses/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchCourses();
-      alert('Course deleted successfully!');
+      await axios.delete(`http://127.0.0.1:5555/api/courses/${courseId}`);
+      setCourses(courses.filter(course => course.id !== courseId));
     } catch (error) {
       console.error('Error deleting course:', error);
     }
   };
 
-  const handleCreateUser = async () => {
+  const handleAddLesson = async () => {
     try {
-      const token = localStorage.getItem('access_token');
-      await axios.post('http://127.0.0.1:5555/api/users', userData, {
-        headers: { Authorization: `Bearer ${token}` }
+      const response = await axios.post('http://127.0.0.1:5555/lessons', newLesson);
+      const updatedCourses = courses.map(course => {
+        if (course.id === newLesson.course_id) {
+          course.lessons.push(response.data);
+        }
+        return course;
       });
-      fetchUsers();
-      setUserData({ username: '', email: '' });
-      alert('User created successfully!');
+      setCourses(updatedCourses);
+      setNewLesson({ topic: '', content: '', video_url: '', course_id: '' });
     } catch (error) {
-      console.error('Error creating user:', error);
+      console.error('Error adding lesson:', error);
     }
   };
 
-  const handleUpdateUser = async () => {
+  const handleDeleteLesson = async (lessonId, courseId) => {
     try {
-      const token = localStorage.getItem('access_token');
-      await axios.put(`http://127.0.0.1:5555/api/users/${selectedUserId}`, updateData, {
-        headers: { Authorization: `Bearer ${token}` }
+      await axios.delete(`http://127.0.0.1:5555/lessons/${lessonId}`);
+      const updatedCourses = courses.map(course => {
+        if (course.id === courseId) {
+          course.lessons = course.lessons.filter(lesson => lesson.id !== lessonId);
+        }
+        return course;
       });
-      fetchUsers();
-      setUpdateData({ username: '', email: '' });
-      setSelectedUserId(null);
-      alert('User updated successfully!');
+      setCourses(updatedCourses);
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error('Error deleting lesson:', error);
     }
   };
-
-  const handleDeleteUser = async (id) => {
-    try {
-      const token = localStorage.getItem('access_token');
-      await axios.delete(`http://127.0.0.1:5555/api/users/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      fetchUsers();
-      alert('User deleted successfully!');
-    } catch (error) {
-      console.error('Error deleting user:', error);
-    }
-  };
-
-  if (loading) return <CircularProgress />;
-  if (error) return (
-    <div>
-      <Typography variant="h6" color="error">{error}</Typography>
-      <Button variant="contained" color="primary" onClick={fetchCourses}>Retry</Button>
-    </div>
-  );
-
-  if (role !== 'admin') return null;
 
   return (
-    <div className="admin-panel">
+    <div>
       <h1>Admin Panel</h1>
-      <p>Welcome, Admin! You have access to manage courses and users.</p>
-      <div className="admin-actions">
-        <Button onClick={() => setSelectedAction('manageCourses')}>Manage Courses</Button>
-        <Button onClick={() => setSelectedAction('manageUsers')}>Manage Users</Button>
-      </div>
 
-      {selectedAction === 'manageCourses' && (
-        <div className="manage-courses">
-          <h2>Manage Courses</h2>
-          <h3>Create New Course</h3>
-          <TextField
-            label="Course Title"
-            name="title"
-            value={courseData.title}
-            onChange={(e) => setCourseData({ ...courseData, title: e.target.value })}
-          />
-          <TextField
-            label="Course Description"
-            name="description"
-            value={courseData.description}
-            onChange={(e) => setCourseData({ ...courseData, description: e.target.value })}
-          />
-          <Button onClick={handleCreateCourse}>Create Course</Button>
+      <h2>Courses</h2>
+      <ul>
+        {courses.map(course => (
+          <li key={course.id}>
+            <h3>{course.name}</h3>
+            <button onClick={() => handleDeleteCourse(course.id)}>Delete Course</button>
+            <ul>
+              {course.lessons && course.lessons.map(lesson => (
+                <li key={lesson.id}>
+                  <p>{lesson.topic}</p>
+                  <button onClick={() => handleDeleteLesson(lesson.id, course.id)}>Delete Lesson</button>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
 
-          <h3>Update Existing Course</h3>
-          <Select
-            value={selectedCourseId || ''}
-            onChange={(e) => setSelectedCourseId(e.target.value)}
-          >
-            <MenuItem value="">Select a Course</MenuItem>
-            {courses.map(course => (
-              <MenuItem key={course.id} value={course.id}>{course.title}</MenuItem>
-            ))}
-          </Select>
-          {selectedCourseId && (
-            <>
-              <TextField
-                label="Update Title"
-                name="title"
-                value={updateData.title}
-                onChange={(e) => setUpdateData({ ...updateData, title: e.target.value })}
-              />
-              <TextField
-                label="Update Description"
-                name="description"
-                value={updateData.description}
-                onChange={(e) => setUpdateData({ ...updateData, description: e.target.value })}
-              />
-              <Button onClick={handleUpdateCourse}>Update Course</Button>
-            </>
-          )}
+      <h2>Add Course</h2>
+      <input 
+        type="text" 
+        value={newCourseName} 
+        onChange={(e) => setNewCourseName(e.target.value)} 
+        placeholder="Course Name"
+      />
+      <button onClick={handleAddCourse}>Add Course</button>
 
-          <h3>Existing Courses</h3>
-          <Grid container spacing={2}>
-            {courses.map(course => (
-              <Grid item xs={12} sm={6} md={4} key={course.id}>
-                <CourseCard course={course} />
-                <Button onClick={() => handleDeleteCourse(course.id)}>Delete</Button>
-              </Grid>
-            ))}
-          </Grid>
-        </div>
-      )}
-
-      {selectedAction === 'manageUsers' && (
-        <div className="manage-users">
-          <h2>Manage Users</h2>
-          <h3>Create New User</h3>
-          <TextField
-            label="Username"
-            name="username"
-            value={userData.username}
-            onChange={(e) => setUserData({ ...userData, username: e.target.value })}
-          />
-          <TextField
-            label="Email"
-            name="email"
-            value={userData.email}
-            onChange={(e) => setUserData({ ...userData, email: e.target.value })}
-          />
-          <Button onClick={handleCreateUser}>Create User</Button>
-
-          <h3>Update Existing User</h3>
-          <Select
-            value={selectedUserId || ''}
-            onChange={(e) => setSelectedUserId(e.target.value)}
-          >
-            <MenuItem value="">Select a User</MenuItem>
-            {users.map(user => (
-              <MenuItem key={user.id} value={user.id}>{user.username}</MenuItem>
-            ))}
-          </Select>
-          {selectedUserId && (
-            <>
-              <TextField
-                label="Update Username"
-                name="username"
-                value={updateData.username}
-                onChange={(e) => setUpdateData({ ...updateData, username: e.target.value })}
-              />
-              <TextField
-                label="Update Email"
-                name="email"
-                value={updateData.email}
-                onChange={(e) => setUpdateData({ ...updateData, email: e.target.value })}
-              />
-              <Button onClick={handleUpdateUser}>Update User</Button>
-            </>
-          )}
-
-          <h3>Existing Users</h3>
-          <Grid container spacing={2}>
-            {users.map(user => (
-              <Grid item xs={12} sm={6} md={4} key={user.id}>
-                <Typography variant="h6">{user.username}</Typography>
-                <Button onClick={() => handleDeleteUser(user.id)}>Delete</Button>
-              </Grid>
-            ))}
-          </Grid>
-        </div>
-      )}
+      <h2>Add Lesson</h2>
+      <input 
+        type="text" 
+        value={newLesson.topic} 
+        onChange={(e) => setNewLesson({ ...newLesson, topic: e.target.value })} 
+        placeholder="Lesson Topic"
+      />
+      <textarea 
+        value={newLesson.content} 
+        onChange={(e) => setNewLesson({ ...newLesson, content: e.target.value })} 
+        placeholder="Lesson Content"
+      />
+      <input 
+        type="text" 
+        value={newLesson.video_url} 
+        onChange={(e) => setNewLesson({ ...newLesson, video_url: e.target.value })} 
+        placeholder="Video URL"
+      />
+      <select 
+        value={newLesson.course_id} 
+        onChange={(e) => setNewLesson({ ...newLesson, course_id: e.target.value })}
+      >
+        <option value="">Select Course</option>
+        {courses.map(course => (
+          <option key={course.id} value={course.id}>{course.name}</option>
+        ))}
+      </select>
+      <button onClick={handleAddLesson}>Add Lesson</button>
     </div>
   );
 };

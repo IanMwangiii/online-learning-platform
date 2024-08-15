@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
+import { Box, CircularProgress, Typography, List, ListItem, Paper, Divider } from '@mui/material';
 
 const CoursePage = () => {
     const { courseId } = useParams(); // Retrieve courseId from route parameters
@@ -18,15 +19,12 @@ const CoursePage = () => {
 
             // Fetch course details
             const courseResponse = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}`);
-            console.log('Course data:', courseResponse.data);
             setCourse(courseResponse.data);
 
             // Fetch lessons for the course
             const lessonsResponse = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}/lessons`);
-            console.log('Lessons data:', lessonsResponse.data);
             setLessons(Array.isArray(lessonsResponse.data) ? lessonsResponse.data : []);
         } catch (err) {
-            console.error('Fetch error:', err);
             setError(err.message || 'An error occurred');
         } finally {
             setLoading(false);
@@ -35,26 +33,65 @@ const CoursePage = () => {
 
     useEffect(() => {
         fetchCourseDetails();
-    }, [courseId]); // Re-run when courseId changes
+    }, [courseId]);
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>{error}</div>;
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress size={60} />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', textAlign: 'center' }}>
+                <Typography variant="h6" color="error">
+                    {error}
+                </Typography>
+            </Box>
+        );
+    }
 
     return (
-        <div>
-            <h1>{course?.title || 'Course Title'}</h1>
-            <p>{course?.description || 'Course Description'}</p>
-            <h2>Lessons</h2>
+        <Box sx={{ maxWidth: '800px', margin: 'auto', padding: 3 }}>
+            <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', marginBottom: 3, textAlign: 'center' }}>
+                {course?.title || 'Course Title'}
+            </Typography>
+            <Typography variant="body1" component="p" sx={{ marginBottom: 3 }}>
+                {course?.description || 'Course Description'}
+            </Typography>
+            <Divider sx={{ marginBottom: 3 }} />
+            <Typography variant="h5" component="h2" sx={{ marginBottom: 2 }}>
+                Lessons
+            </Typography>
             {lessons.length > 0 ? (
-                <ul>
+                <List>
                     {lessons.map((lesson) => (
-                        <li key={lesson.id}>{lesson.title}</li>
+                        <ListItem key={lesson.id} sx={{ marginBottom: 3, padding: 2, borderRadius: 2, boxShadow: 3 }} component={Paper}>
+                            <Box sx={{ width: '100%' }}>
+                                <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold' }}>
+                                    {lesson.topic}
+                                </Typography>
+                                <Typography variant="body2" component="p" sx={{ marginBottom: 2 }}>
+                                    {lesson.content}
+                                </Typography>
+                                {lesson.video_url && (
+                                    <Box sx={{ marginBottom: 2 }}>
+                                        <video width="100%" controls>
+                                            <source src={lesson.video_url} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </Box>
+                                )}
+                            </Box>
+                        </ListItem>
                     ))}
-                </ul>
+                </List>
             ) : (
-                <p>No lessons available.</p>
+                <Typography variant="body1">No lessons available.</Typography>
             )}
-        </div>
+        </Box>
     );
 };
 

@@ -14,7 +14,7 @@ import FeatureHighlights from './components/FeatureHighlights';
 import FAQ from './components/FAQ';
 import AboutUs from './components/AboutUs'; 
 import ContactUs from './components/ContactUs'; 
-
+import AdminPanel from './components/AdminPanel'; // Import the AdminPanel component
 
 function App() {
   const [enrolledCourses, setEnrolledCourses] = useState([]);
@@ -38,9 +38,9 @@ function App() {
         <Route path="/discussions" element={<DiscussionsPage />} />
         <Route path="/faq" element={<FAQ />} />  
         <Route path="/about-us" element={<AboutUs />} />
-        <Route path="/contact-us" element={<ContactUs />} /> 
+        <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/admin-panel" element={<AdminPanel />} />
       </Routes>
-
     </Router>
   );
 }
