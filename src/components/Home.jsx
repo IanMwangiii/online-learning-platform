@@ -31,10 +31,10 @@ function Home({ onSearch }) {
       {/* Hero Section */}
       <Box
         sx={{
-          backgroundImage: 'url("https://i.pinimg.com/564x/08/a6/e8/08a6e82373f618ecb1d43f175b129a2e.jpg")',
+          backgroundImage: 'url("https://images.hdqwalls.com/wallpapers/blue-macaw-4k-kb.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          height: '70vh',
+          height: '80vh',
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
