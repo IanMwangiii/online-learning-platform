@@ -3,20 +3,12 @@ import { Box, Typography, Toolbar, AppBar, IconButton, Drawer, Button, Grid, Car
 import MenuIcon from '@mui/icons-material/Menu';
 import { deepOrange, deepPurple } from '@mui/material/colors';
 import CourseList from './CourseList';
-import DiscussionThread from './DiscussionThread';
 import Notification from './Notification';
 import Sidebar from './Sidebar';
-import DiscussionForm from './DiscussionForm';
 import FeatureHighlights from './FeatureHighlights';
-
-const dummyDiscussions = [
-  { user: 'Alice', comment: 'Great course!', date: '2024-08-01 10:30 AM' },
-  { user: 'Bob', comment: 'I found the lessons very useful.', date: '2024-08-02 1:45 PM' },
-];
 
 const Dashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [discussions, setDiscussions] = useState(dummyDiscussions);
   const [notification, setNotification] = useState({ open: false, message: '', severity: '' });
 
   const role = localStorage.getItem('role'); // Get the role from localStorage
@@ -31,15 +23,6 @@ const Dashboard = () => {
 
   const showNotification = (message, severity) => {
     setNotification({ open: true, message, severity });
-  };
-
-  const handleAddDiscussion = (newComment) => {
-    const newDiscussion = {
-      user: 'Current User', // Replace with actual user
-      comment: newComment,
-      date: new Date().toLocaleString(),
-    };
-    setDiscussions([...discussions, newDiscussion]);
   };
 
   const handleSidebarClick = (path) => {
@@ -96,15 +79,6 @@ const Dashboard = () => {
           <Grid item xs={12} sm={6} md={3}>
             <Card sx={{ backgroundColor: '#43a047', color: 'white' }}>
               <CardContent>
-                <Typography variant="h5">Discussions</Typography>
-                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>30</Typography>
-                <Typography variant="body2">Active Discussions</Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ backgroundColor: '#1e88e5', color: 'white' }}>
-              <CardContent>
                 <Typography variant="h5">Instructors</Typography>
                 <Typography variant="h4" sx={{ fontWeight: 'bold' }}>8</Typography>
                 <Typography variant="body2">Active Instructors</Typography>
@@ -155,15 +129,6 @@ const Dashboard = () => {
             My Courses
           </Typography>
           <CourseList />
-        </Box>
-
-        {/* Recent Activities Section */}
-        <Box sx={{ marginTop: 4 }}>
-          <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
-            Recent Activities
-          </Typography>
-          <DiscussionForm onAddDiscussion={handleAddDiscussion} />
-          <DiscussionThread discussions={discussions} />
         </Box>
 
         {/* Feature Highlights Section */}

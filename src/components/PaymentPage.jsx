@@ -6,6 +6,7 @@ import { makePayment } from '../api'; // Adjust path as needed
 const PaymentPage = ({ onPaymentSuccess }) => {
   const navigate = useNavigate(); // Initialize useNavigate
   const [paymentData, setPaymentData] = useState({
+    name: '',
     user_id: '',
     course_id: '',
     amount: '',
