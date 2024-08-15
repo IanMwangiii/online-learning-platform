@@ -284,13 +284,11 @@ api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
 api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:user_id>/<int:course_id>')
 api.add_resource(DiscussionResource, '/courses/<int:course_id>/discussions', '/discussions/<int:discussion_id>')
 
-<<<<<<< HEAD
 if __name__ == 'main':
     app.run(debug=True, port=5555)
 
 if __name__ == '__main__':
     app.run(debug=True)
-=======
+
 if __name__ == '_main_':
     app.run(debug=True, port=5555)
->>>>>>> origin/main
