@@ -235,7 +235,7 @@ const UserProfile = () => {
       >
         <Box
           sx={{
-            bgcolor: "green",  
+            bgcolor: message.includes("Error") ? "red" : "green", // Use color based on message type
             color: "white",
             p: 2,
             borderRadius: "4px",
