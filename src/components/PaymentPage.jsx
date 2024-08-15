@@ -46,7 +46,7 @@ const PaymentPage = ({ onPaymentSuccess }) => {
       await makePayment(paymentData);
       onPaymentSuccess();
       alert('Payment successful!');
-      navigate(`/videos/${paymentData.course_id}`); // Navigate to the VideoPlayer page for the course
+      navigate(`/courses/${paymentData.course_id}`); // Navigate to the CoursePage for the course
     } catch (err) {
       console.error('Payment error:', err);
       setError(err.message);

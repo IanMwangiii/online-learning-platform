@@ -31,7 +31,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} /> 
         <Route path="/courses" element={<CourseList enrolledCourses={enrolledCourses} onEnroll={handlePaymentSuccess} />} />
-        <Route path="/course/:id" element={<CoursePage enrolledCourses={enrolledCourses} />} />
+        <Route path="/courses/:courseId" element={<CoursePage />} />
         <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/payment/:courseId" element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
@@ -40,7 +40,7 @@ function App() {
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/contact-us" element={<ContactUs />} /> 
       </Routes>
-      <CoursePage/>
+
     </Router>
   );
 }

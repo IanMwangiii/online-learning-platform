@@ -209,7 +209,12 @@ class EnrollmentResource(Resource):
             db.session.commit()
             return {'message': 'Enrollment deleted successfully'}
         return {'message': 'Enrollment not found'}, 404
-
+@app.route('/api/courses/<int:course_id>', methods=['GET'])
+def get_course_by_id(course_id):
+    course = Course.query.get(course_id)
+    if course:
+        return jsonify(course.to_dict())
+    return jsonify({'message': 'Course not found'}), 404
 @app.route('/api/courses', methods=['GET'])
 def get_courses():
     print("Received request for /api/courses")
@@ -265,6 +270,7 @@ def get_lessons_by_course(course_id):
     if not lessons:
         return jsonify({'message': 'No lessons found for this course'}), 404
     return jsonify([lesson.to_dict() for lesson in lessons])
+
 @app.route('/api/payment', methods=['POST'])
 def process_payment():
     data = request.get_json()
