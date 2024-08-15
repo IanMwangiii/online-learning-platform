@@ -1,18 +1,12 @@
 import React from 'react';
-import { Box, Typography, Card, CardContent } from '@mui/material';
-import VideoPlayer from './VideoPlayer';
+import { Box, Card, CardContent, Typography } from '@mui/material';
 
-const LessonCard = ({ title, description, videoUrl }) => {
+const LessonCard = ({ lesson }) => {
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card variant="outlined" sx={{ marginBottom: 2 }}>
       <CardContent>
-        <Typography variant="h6" component="div" gutterBottom>
-          {title}
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {description}
-        </Typography>
-        <VideoPlayer videoUrl={videoUrl} title={title} />
+        <Typography variant="h6">{lesson.title}</Typography>
+        <Typography variant="body2">{lesson.content}</Typography>
       </CardContent>
     </Card>
   );

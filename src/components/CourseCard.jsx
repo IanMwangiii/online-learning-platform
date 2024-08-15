@@ -13,7 +13,7 @@ const CourseCard = ({ course }) => {
     <Card>
       <CardContent>
         <Typography gutterBottom variant="h5" component="div">
-          {course.title}  {/* Assuming 'title' is the correct field */}
+          {course.title}
         </Typography>
         <Typography variant="body2" color="text.secondary">
           {course.description}
