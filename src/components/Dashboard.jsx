@@ -1,23 +1,17 @@
 import { useState } from 'react';
-import { Box, Typography, Toolbar, AppBar, IconButton, Drawer, Button } from '@mui/material';
+import { Box, Typography, Toolbar, AppBar, IconButton, Drawer, Button, Grid, Card, CardContent } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import { deepOrange, deepPurple } from '@mui/material/colors';
 import CourseList from './CourseList';
-import DiscussionThread from './DiscussionThread';
 import Notification from './Notification';
 import Sidebar from './Sidebar';
-import DiscussionForm from './DiscussionForm';
-
-const dummyDiscussions = [
-  { user: 'Alice', comment: 'Great course!', date: '2024-08-01 10:30 AM' },
-  { user: 'Bob', comment: 'I found the lessons very useful.', date: '2024-08-02 1:45 PM' },
-];
+import FeatureHighlights from './FeatureHighlights';
 
 const Dashboard = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [discussions, setDiscussions] = useState(dummyDiscussions);
   const [notification, setNotification] = useState({ open: false, message: '', severity: '' });
 
-  const role = localStorage.getItem('role'); 
+  const role = localStorage.getItem('role'); // Get the role from localStorage
 
   const toggleDrawer = () => {
     setDrawerOpen(!drawerOpen);
@@ -29,15 +23,6 @@ const Dashboard = () => {
 
   const showNotification = (message, severity) => {
     setNotification({ open: true, message, severity });
-  };
-
-  const handleAddDiscussion = (newComment) => {
-    const newDiscussion = {
-      user: 'Current User', // Replace with actual user
-      comment: newComment,
-      date: new Date().toLocaleString(),
-    };
-    setDiscussions([...discussions, newDiscussion]);
   };
 
   const handleSidebarClick = (path) => {
@@ -70,8 +55,41 @@ const Dashboard = () => {
         <Typography variant="h4" gutterBottom sx={{ fontWeight: 'bold', color: '#333' }}>
           Welcome to the Dashboard
         </Typography>
+
+        {/* Statistics Overview Section */}
+        <Grid container spacing={3} sx={{ marginBottom: 4 }}>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ backgroundColor: deepOrange[500], color: 'white' }}>
+              <CardContent>
+                <Typography variant="h5">Courses</Typography>
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>15</Typography>
+                <Typography variant="body2">Active Courses</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ backgroundColor: deepPurple[500], color: 'white' }}>
+              <CardContent>
+                <Typography variant="h5">Students</Typography>
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>150</Typography>
+                <Typography variant="body2">Enrolled Students</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card sx={{ backgroundColor: '#43a047', color: 'white' }}>
+              <CardContent>
+                <Typography variant="h5">Instructors</Typography>
+                <Typography variant="h4" sx={{ fontWeight: 'bold' }}>8</Typography>
+                <Typography variant="body2">Active Instructors</Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+
+        {/* Admin Functions Section */}
         {role === 'admin' && (
-          <Box sx={{ marginBottom: 3 }}>
+          <Box sx={{ marginBottom: 4 }}>
             <Typography variant="h6" sx={{ marginBottom: 2 }}>Admin Functions</Typography>
             <Button
               variant="contained"
@@ -104,12 +122,18 @@ const Dashboard = () => {
             </Button>
           </Box>
         )}
+
+        {/* Course List Section */}
         <Box sx={{ backgroundColor: 'white', padding: 3, borderRadius: 2, boxShadow: 3 }}>
+          <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
+            My Courses
+          </Typography>
           <CourseList />
         </Box>
+
+        {/* Feature Highlights Section */}
         <Box sx={{ marginTop: 4 }}>
-          <DiscussionForm onAddDiscussion={handleAddDiscussion} />
-          <DiscussionThread discussions={discussions} />
+          <FeatureHighlights />
         </Box>
       </Box>
     </Box>

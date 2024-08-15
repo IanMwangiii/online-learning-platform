@@ -1,85 +1,242 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
-import SearchBar from './SearchBar';
-import { MenuItem, Select, Typography, CircularProgress, Box } from '@mui/material';
+import { Box, Typography, Grid, Card, CardContent, Button } from '@mui/material';
+import { keyframes } from '@mui/system';
 
-const coursesList = [
-  "Introduction to Computer Science",
-  "Data Structures and Algorithms",
-  "Database Management Systems",
-  "Web Development",
-  "Software Engineering",
-  "Operating Systems",
-  "Computer Networks",
-  "Cybersecurity",
-  "Artificial Intelligence and Machine Learning",
-  "Cloud Computing",
-  "Mobile App Development",
-  "Game Development",
-  "Human-Computer Interaction",
-  "Big Data and Analytics",
-  "Blockchain and Cryptocurrencies",
-  "Internet of Things (IoT)",
-  // <a href="./internet of things">Internet of Things</a>
-];
+// Keyframes for animations
+const fadeIn = keyframes`
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+`;
 
-function Home() {
-  const [selectedCourse, setSelectedCourse] = useState('');
-  const [courseInfo, setCourseInfo] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+const slideUp = keyframes`
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+`;
 
-  useEffect(() => {
-    if (selectedCourse) {
-      const fetchCourseInfo = async () => {
-        setLoading(true);
-        setError(null);
+function Home({ onSearch }) {
+  const navigate = useNavigate();
 
-        try {
-          // Assuming the API endpoint for course details is `/api/courses/:name`
-          const response = await axios.get(`/api/courses/${selectedCourse}`);
-          setCourseInfo(response.data);
-        } catch (err) {
-          setError('Failed to load course details.');
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchCourseInfo();
-    }
-  }, [selectedCourse]);
+  const handleGetStartedClick = () => {
+    navigate('/courses'); // Redirect to the courses page
+  };
 
   return (
     <div>
-      <div className='home-page'>
-        <div>
-          <SearchBar />
-          <Box mt={2}>
-            <Select
-              value={selectedCourse}
-              onChange={(e) => setSelectedCourse(e.target.value)}
-              displayEmpty
-              fullWidth
+      {/* Hero Section */}
+      <Box
+        sx={{
+          backgroundImage: 'url("https://i.pinimg.com/564x/08/a6/e8/08a6e82373f618ecb1d43f175b129a2e.jpg")',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          height: '70vh',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          color: 'white',
+          textAlign: 'center',
+          padding: 3,
+          animation: `${fadeIn} 2s ease-in-out`,
+          position: 'relative',
+        }}
+      >
+        <Typography variant="h2" component="h1" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+          Welcome to Our Learning Platform
+        </Typography>
+        <Typography variant="h5" sx={{ marginBottom: 4 }}>
+          Discover the best courses to enhance your skills
+        </Typography>
+        <Button
+          variant="contained"
+          color="secondary"
+          sx={{ padding: '10px 20px', fontSize: '1.2rem', borderRadius: '50px' }}
+          onClick={handleGetStartedClick}
+        >
+          Get Started
+        </Button>
+      </Box>
+
+      {/* Platform Benefits Section */}
+      <Box sx={{ padding: 6, backgroundColor: '#f0f0f0' }}>
+        <Typography
+          variant="h4"
+          sx={{
+            textAlign: 'center',
+            fontWeight: 'bold',
+            marginBottom: 6,
+            color: '#333',
+            animation: `${fadeIn} 1.5s ease-in-out`,
+          }}
+        >
+          Why Choose Our Platform?
+        </Typography>
+        <Grid container spacing={4}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            sx={{
+              animation: `${slideUp} 1.5s ease-in-out`,
+            }}
+          >
+            <Card
+              sx={{
+                height: '250px',
+                boxShadow: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'transform 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-10px)',
+                },
+                textAlign: 'center',
+              }}
             >
-              <MenuItem value="" disabled>Select a Course</MenuItem>
-              {coursesList.map((course) => (
-                <MenuItem key={course} value={course}>{course}</MenuItem>
-              ))}
-            </Select>
-          </Box>
-          {loading && <CircularProgress />}
-          {error && <Typography color="error">{error}</Typography>}
-          {courseInfo && (
-            <Box mt={2}>
-              <Typography variant="h4">{courseInfo.title}</Typography>
-              <Typography variant="body1">{courseInfo.description}</Typography>
-              {/* Add more course details here */}
-            </Box>
-          )}
-        </div>
-      </div>
+              <CardContent>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                  Expert Instructors
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  Learn from industry experts with years of experience in their respective fields.
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            sx={{
+              animation: `${slideUp} 1.5s ease-in-out`,
+            }}
+          >
+            <Card
+              sx={{
+                height: '250px',
+                boxShadow: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'transform 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-10px)',
+                },
+                textAlign: 'center',
+              }}
+            >
+              <CardContent>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                  Flexible Learning
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  Access courses anytime, anywhere, on any device. Learn at your own pace.
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            sx={{
+              animation: `${slideUp} 1.5s ease-in-out`,
+            }}
+          >
+            <Card
+              sx={{
+                height: '250px',
+                boxShadow: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'transform 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-10px)',
+                },
+                textAlign: 'center',
+              }}
+            >
+              <CardContent>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                  Community Support
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  Join a vibrant community of learners and get support from peers and mentors.
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Box>
+
+      {/* Testimonials Section */}
+      <Box sx={{ padding: 6, backgroundColor: '#ffffff' }}>
+        <Typography
+          variant="h4"
+          sx={{
+            textAlign: 'center',
+            fontWeight: 'bold',
+            marginBottom: 6,
+            color: '#333',
+            animation: `${fadeIn} 1.5s ease-in-out`,
+          }}
+        >
+          What Our Students Say
+        </Typography>
+        <Grid container spacing={4}>
+          {[1, 2, 3].map((testimonial) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={testimonial}
+              sx={{
+                animation: `${slideUp} 1.5s ease-in-out`,
+              }}
+            >
+              <Card
+                sx={{
+                  boxShadow: 4,
+                  transition: 'transform 0.3s ease-in-out',
+                  '&:hover': {
+                    transform: 'translateY(-10px)',
+                  },
+                }}
+              >
+                <CardContent>
+                  <Typography variant="h6" component="h3" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
+                    Student {testimonial}
+                  </Typography>
+                  <Typography variant="body2" sx={{ color: '#666' }}>
+                    "This platform has transformed the way I learn. The courses are comprehensive and
+                    the instructors are top-notch."
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))}
+        </Grid>
+      </Box>
+
+      {/* Footer */}
       <Footer />
     </div>
   );
