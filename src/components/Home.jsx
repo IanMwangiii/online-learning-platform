@@ -1,6 +1,6 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import Footer from './Footer';
-import SearchBar from './SearchBar';
 import { Box, Typography, Grid, Card, CardContent, Button } from '@mui/material';
 import { keyframes } from '@mui/system';
 
@@ -26,6 +26,12 @@ const slideUp = keyframes`
 `;
 
 function Home({ onSearch }) {
+  const navigate = useNavigate();
+
+  const handleGetStartedClick = () => {
+    navigate('/courses'); // Redirect to the courses page
+  };
+
   return (
     <div>
       {/* Hero Section */}
@@ -49,11 +55,20 @@ function Home({ onSearch }) {
         <Typography variant="h2" component="h1" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
           Welcome to Our Learning Platform
         </Typography>
+        <Typography variant="h5" sx={{ marginBottom: 4 }}>
           Discover the best courses to enhance your skills
-        
+        </Typography>
+        <Button
+          variant="contained"
+          color="secondary"
+          sx={{ padding: '10px 20px', fontSize: '1.2rem', borderRadius: '50px' }}
+          onClick={handleGetStartedClick}
+        >
+          Get Started
+        </Button>
       </Box>
 
-      {/* Featured Courses Section */}
+      {/* Platform Benefits Section */}
       <Box sx={{ padding: 6, backgroundColor: '#f0f0f0' }}>
         <Typography
           variant="h4"
@@ -65,56 +80,110 @@ function Home({ onSearch }) {
             animation: `${fadeIn} 1.5s ease-in-out`,
           }}
         >
-          Featured Courses
+          Why Choose Our Platform?
         </Typography>
         <Grid container spacing={4}>
-          {[1, 2, 3, 4].map((course) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={3}
-              key={course}
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            sx={{
+              animation: `${slideUp} 1.5s ease-in-out`,
+            }}
+          >
+            <Card
               sx={{
-                animation: `${slideUp} 1.5s ease-in-out`,
+                height: '250px',
+                boxShadow: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'transform 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-10px)',
+                },
+                textAlign: 'center',
               }}
             >
-              <Card
-                sx={{
-                  boxShadow: 4,
-                  transition: 'transform 0.3s ease-in-out',
-                  '&:hover': {
-                    transform: 'translateY(-10px)',
-                  },
-                }}
-              >
-                <CardContent>
-                  <Typography variant="h5" component="h2" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
-                    Course Title {course}
-                  </Typography>
-                  <Typography variant="body2" sx={{ marginBottom: 3, color: '#666' }}>
-                    Course description goes here. It should be concise and informative.
-                  </Typography>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    fullWidth
-                    sx={{
-                      textTransform: 'none',
-                      fontWeight: 'bold',
-                      '&:hover': {
-                        backgroundColor: '#1565c0',
-                        transform: 'scale(1.05)',
-                        transition: 'transform 0.3s ease-in-out',
-                      },
-                    }}
-                  >
-                    Enroll Now
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
+              <CardContent>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                  Expert Instructors
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  Learn from industry experts with years of experience in their respective fields.
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            sx={{
+              animation: `${slideUp} 1.5s ease-in-out`,
+            }}
+          >
+            <Card
+              sx={{
+                height: '250px',
+                boxShadow: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'transform 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-10px)',
+                },
+                textAlign: 'center',
+              }}
+            >
+              <CardContent>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                  Flexible Learning
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  Access courses anytime, anywhere, on any device. Learn at your own pace.
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            md={4}
+            sx={{
+              animation: `${slideUp} 1.5s ease-in-out`,
+            }}
+          >
+            <Card
+              sx={{
+                height: '250px',
+                boxShadow: 4,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'transform 0.3s ease-in-out',
+                '&:hover': {
+                  transform: 'translateY(-10px)',
+                },
+                textAlign: 'center',
+              }}
+            >
+              <CardContent>
+                <Typography variant="h5" component="h2" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
+                  Community Support
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#666' }}>
+                  Join a vibrant community of learners and get support from peers and mentors.
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
         </Grid>
       </Box>
 
@@ -155,7 +224,7 @@ function Home({ onSearch }) {
               >
                 <CardContent>
                   <Typography variant="h6" component="h3" sx={{ marginBottom: 2, fontWeight: 'bold' }}>
-                    Student Name {testimonial}
+                    Student {testimonial}
                   </Typography>
                   <Typography variant="body2" sx={{ color: '#666' }}>
                     "This platform has transformed the way I learn. The courses are comprehensive and

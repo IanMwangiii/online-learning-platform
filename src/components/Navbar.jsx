@@ -82,6 +82,12 @@ function Navbar() {
                 <Link to="/FAQ" style={{ textDecoration: 'none', color: 'inherit' }}>FAQ</Link>
               </NavItem>
               <NavItem>
+                <Link to="/about-us" style={{ textDecoration: 'none', color: 'inherit' }}>About Us</Link>
+              </NavItem>
+              <NavItem>
+                <Link to="/contact-us" style={{ textDecoration: 'none', color: 'inherit' }}>Contact Us</Link>
+              </NavItem>
+              <NavItem>
                 <IconButton color="inherit" onClick={handleNotificationClick}>
                   <IoMdNotificationsOutline />
                 </IconButton>
