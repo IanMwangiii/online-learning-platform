@@ -1,12 +1,12 @@
 import { useState } from 'react';
+import PropTypes from 'prop-types';
 import { Box, Typography, TextField, Button, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { makePayment } from '../api'; // Adjust path as needed
+import { makePayment } from '../api';
 
 const PaymentPage = ({ onPaymentSuccess }) => {
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   const [paymentData, setPaymentData] = useState({
-    name: '',
     user_id: '',
     course_id: '',
     amount: '',
@@ -26,28 +26,29 @@ const PaymentPage = ({ onPaymentSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null); // Clear previous errors
+    setError(null);
 
     try {
       if (!paymentData.user_id || !paymentData.course_id || !paymentData.amount) {
         throw new Error("Please fill in all required fields.");
       }
 
-      if (paymentData.method_of_payment === 'Card') {
+      if (paymentData.method_of_payment === 'credit_card') {
         if (!paymentData.card_number || !paymentData.expiry_date || !paymentData.cvv) {
           throw new Error("Please provide all card details.");
         }
-      } else if (paymentData.method_of_payment === 'Mpesa') {
+      } else if (paymentData.method_of_payment === 'mpesa') {
         if (!paymentData.phone_number || !paymentData.mpesa_reference) {
           throw new Error("Please provide all Mpesa details.");
         }
       }
 
       await makePayment(paymentData);
-      onPaymentSuccess(); // Notify parent of success
+      onPaymentSuccess();
       alert('Payment successful!');
-      navigate(`/course/${paymentData.course_id}```); // Navigate to the course page
+      navigate(`/course/${paymentData.course_id}`);
     } catch (err) {
+      console.error('Payment error:', err);
       setError(err.message);
     }
   };
@@ -95,13 +96,12 @@ const PaymentPage = ({ onPaymentSuccess }) => {
             onChange={handleChange}
             required
           >
-            <MenuItem value="Card">Card</MenuItem>
-            <MenuItem value="Mpesa">Mpesa</MenuItem>
-            <MenuItem value="Cash">Cash</MenuItem>
+            <MenuItem value="credit_card">Card</MenuItem>
+            <MenuItem value="mpesa">Mpesa</MenuItem>
           </Select>
         </FormControl>
 
-        {paymentData.method_of_payment === 'Card' && (
+        {paymentData.method_of_payment === 'credit_card' && (
           <Box sx={{ mt: 2 }}>
             <TextField
               fullWidth
@@ -136,7 +136,7 @@ const PaymentPage = ({ onPaymentSuccess }) => {
           </Box>
         )}
 
-        {paymentData.method_of_payment === 'Mpesa' && (
+        {paymentData.method_of_payment === 'mpesa' && (
           <Box sx={{ mt: 2 }}>
             <TextField
               fullWidth
@@ -167,6 +167,10 @@ const PaymentPage = ({ onPaymentSuccess }) => {
       </form>
     </Box>
   );
+};
+
+PaymentPage.propTypes = {
+  onPaymentSuccess: PropTypes.func.isRequired
 };
 
 export default PaymentPage;

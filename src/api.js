@@ -1,32 +1,15 @@
-const BASE_URL = 'http://localhost:5555'; // Adjust this according to your backend server
-
+// api.js
 export const makePayment = async (paymentData) => {
-  if (!paymentData.username || !paymentData.amount || !paymentData.method_of_payment) {
-    throw new Error('Missing required payment data fields');
-  }
+  const response = await fetch('http://127.0.0.1:5555/payments', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(paymentData),
+  });
 
-  try {
-    const response = await fetch(`${BASE_URL}/api/payments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(paymentData),
-    });
-
-    if (!response.ok) {
-      const errorMessage = await response.text();
-      throw new Error(`Payment failed: ${response.status} ${response.statusText} - ${errorMessage}`);
-    }
-
-    return await response.json();
-  } catch (error) {
-    if (error.name === 'TypeError') {
-      console.error('Network error or CORS issue:', error.message);
-      throw new Error('Network error. Please check your connection and try again.');
-    } else {
-      console.error('Error making payment:', error.message);
-      throw error;
-    }
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.error || 'Failed to process payment.');
   }
 };
