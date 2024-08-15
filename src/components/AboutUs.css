@@ -1,0 +1,74 @@
+.about-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+  
+  .about-title {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: bold;
+  }
+  
+  .about-description {
+    font-size: 1.2rem;
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+  
+  .about-values {
+    text-align: left;
+    margin-bottom: 2rem;
+  }
+  
+  .about-values h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  .about-values ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .about-values li {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 0.5rem;
+    padding-left: 1.2rem;
+    text-align: left;
+    position: relative;
+  }
+  
+  .about-values li::before {
+    content: "✔";
+    position: absolute;
+    left: 0;
+    color: #4CAF50;
+    font-weight: bold;
+  }
+  
+  .about-vision {
+    text-align: left;
+    margin-bottom: 2rem;
+  }
+  
+  .about-vision h2 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  .about-vision p {
+    font-size: 1.1rem;
+    color: #555;
+    line-height: 1.6;
+  }
+  

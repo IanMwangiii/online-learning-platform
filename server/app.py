@@ -19,7 +19,7 @@ api = Api(app)
 bcrypt = Bcrypt(app)
 
 # Initialize CORS with specific origin
-CORS(app, resources={r"/*": {"origins": "*"}})  # Adjust the origin as needed
+CORS(app, resources={r"/": {"origins": ""}})  # Adjust the origin as needed
 
 # JWT Secret Key
 SECRET_KEY = app.config['SECRET_KEY']
@@ -239,47 +239,43 @@ class LessonResource(Resource):
         db.session.commit()
         return {'message': 'Lesson created successfully'}, 201
 
-@app.route('/api/payments', methods=['POST'])
-def create_payment():
-    data = request.json
-    
-    # Validate required fields
-    required_fields = ['amount', 'username', 'method_of_payment']
-    missing_fields = [field for field in required_fields if field not in data]
-    
-    if missing_fields:
-        return jsonify({'message': f'Missing fields: {", ".join(missing_fields)}'}), 400
+@app.route('/payments', methods=['POST'])
+def process_payment():
+    data = request.get_json()
 
-    # Validate payment method
-    method_of_payment = data.get('method_of_payment')
-    if method_of_payment not in ['card', 'mpesa']:
-        return jsonify({'message': 'Invalid payment method. Choose either "card" or "mpesa".'}), 400
+    try:
+        # Validate the payment method and required fields
+        Payment.validate_payment_method(
+            method_of_payment=data['method_of_payment'],
+            card_number=data.get('card_number'),
+            expiry_date=data.get('expiry_date'),
+            cvv=data.get('cvv'),
+            phone_number=data.get('phone_number'),
+            mpesa_reference=data.get('mpesa_reference')
+        )
 
-    # Additional validation based on payment method
-    if method_of_payment == 'card':
-        if not all([data.get('card_number'), data.get('expiry_date'), data.get('cvv')]):
-            return jsonify({'message': 'Missing card details'}), 400
+        new_payment = Payment(
+            user_id=data['user_id'],
+            name=data.get('name'),
+            course_id=data['course_id'],
+            amount=data['amount'],
+            method_of_payment=data['method_of_payment'],
+            card_number=data.get('card_number'),
+            expiry_date=data.get('expiry_date'),
+            cvv=data.get('cvv'),
+            phone_number=data.get('phone_number'),
+            mpesa_reference=data.get('mpesa_reference')
+        )
 
-    if method_of_payment == 'mpesa':
-        if not data.get('mpesa_reference'):
-            return jsonify({'message': 'Missing Mpesa reference'}), 400
-    
-    # Create the payment record
-    new_payment = Payment(
-        amount=data['amount'],
-        username=data['username'],
-        method_of_payment=method_of_payment,
-        card_number=data.get('card_number'),
-        expiry_date=data.get('expiry_date'),
-        cvv=data.get('cvv'),
-        phone_number=data.get('phone_number'),
-        mpesa_reference=data.get('mpesa_reference')
-    )
-    
-    db.session.add(new_payment)
-    db.session.commit()
+        db.session.add(new_payment)
+        db.session.commit()
+        return jsonify({'message': 'Payment processed successfully'}), 200
 
-    return jsonify({'message': 'Payment successful!'}), 201
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+
+    except Exception as e:
+        return jsonify({'error': 'An error occurred while processing the payment.'}), 500
 
 
 api.add_resource(UserResource, '/users', '/users/<int:user_id>')
@@ -287,5 +283,5 @@ api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
 api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:user_id>/<int:course_id>')
 api.add_resource(DiscussionResource, '/courses/<int:course_id>/discussions', '/discussions/<int:discussion_id>')
 
-if __name__ == '__main__':
+if __name__ == '_main_':
     app.run(debug=True, port=5555)

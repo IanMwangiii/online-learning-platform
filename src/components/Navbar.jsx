@@ -68,7 +68,7 @@ function Navbar() {
             <MenuIcon sx={{ '&:hover': { color: '#f50057', transition: 'color 0.3s ease-in-out' } }} />
           </IconButton>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }}>
-          EduVerse Hub
+          LearnSphere
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <NavList>
@@ -80,6 +80,12 @@ function Navbar() {
               </NavItem>
               <NavItem>
                 <Link to="/FAQ" style={{ textDecoration: 'none', color: 'inherit' }}>FAQ</Link>
+              </NavItem>
+              <NavItem>
+                <Link to="/about-us" style={{ textDecoration: 'none', color: 'inherit' }}>About Us</Link>
+              </NavItem>
+              <NavItem>
+                <Link to="/contact-us" style={{ textDecoration: 'none', color: 'inherit' }}>Contact Us</Link>
               </NavItem>
               <NavItem>
                 <IconButton color="inherit" onClick={handleNotificationClick}>
