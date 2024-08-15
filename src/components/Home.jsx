@@ -31,7 +31,7 @@ function Home({ onSearch }) {
       {/* Hero Section */}
       <Box
         sx={{
-          backgroundImage: 'url("https://images.hdqwalls.com/wallpapers/blue-macaw-4k-kb.jpg")',
+          backgroundImage: 'url("https://images.hdqwalls.com/wallpapers/red-arrows-shapes-art.jpg")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           height: '80vh',
