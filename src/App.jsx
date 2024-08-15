@@ -14,6 +14,7 @@ import FeatureHighlights from './components/FeatureHighlights';
 import FAQ from './components/FAQ';
 import AboutUs from './components/AboutUs'; 
 import ContactUs from './components/ContactUs'; 
+import AdminPanel from './components/AdminPanel';
 
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} /> 
         <Route path="/courses" element={<CourseList enrolledCourses={enrolledCourses} onEnroll={handlePaymentSuccess} />} />
-        <Route path="/course/:id" element={<CoursePage enrolledCourses={enrolledCourses} />} />
+        <Route path="/courses/:courseId" element={<CoursePage />} />
         <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/payment/:courseId" element={<PaymentPage onPaymentSuccess={handlePaymentSuccess} />} />
@@ -39,7 +40,11 @@ function App() {
         <Route path="/faq" element={<FAQ />} />  
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/contact-us" element={<ContactUs />} /> 
+        <Route path="/courses" element={<CourseList enrolledCourses={enrolledCourses} onEnroll={handlePaymentSuccess} />} />
+        <Route path="/courses/:courseId" element={<CoursePage />} />
+        <Route path="/admin-panel" element={<AdminPanel />} />
       </Routes>
+
     </Router>
   );
 }

@@ -1,45 +1,98 @@
-import React from 'react';
-import { Box, Typography } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import { Box, CircularProgress, Typography, List, ListItem, Paper, Divider } from '@mui/material';
 
-// VideoPlayer component
-const VideoPlayer = ({ videoUrl, title }) => {
-  return (
-    <Box sx={{ mt: 2 }}>
-      <Typography variant="h6" gutterBottom>{title}</Typography>
-      <Box sx={{ position: 'relative', paddingBottom: '56.25%', height: 0, overflow: 'hidden' }}>
-        <iframe
-          src={videoUrl}
-          title={title}
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
-        ></iframe>
-      </Box>
-    </Box>
-  );
+const CoursePage = () => {
+    const { courseId } = useParams(); // Retrieve courseId from route parameters
+    const [course, setCourse] = useState(null);
+    const [lessons, setLessons] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const fetchCourseDetails = async () => {
+        try {
+            if (!courseId) {
+                throw new Error('Course ID is not defined');
+            }
+            setLoading(true);
+
+            // Fetch course details
+            const courseResponse = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}`);
+            setCourse(courseResponse.data);
+
+            // Fetch lessons for the course
+            const lessonsResponse = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}/lessons`);
+            setLessons(Array.isArray(lessonsResponse.data) ? lessonsResponse.data : []);
+        } catch (err) {
+            setError(err.message || 'An error occurred');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchCourseDetails();
+    }, [courseId]);
+
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress size={60} />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', textAlign: 'center' }}>
+                <Typography variant="h6" color="error">
+                    {error}
+                </Typography>
+            </Box>
+        );
+    }
+
+    return (
+        <Box sx={{ maxWidth: '800px', margin: 'auto', padding: 3 }}>
+            <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', marginBottom: 3, textAlign: 'center' }}>
+                {course?.title || 'Course Title'}
+            </Typography>
+            <Typography variant="body1" component="p" sx={{ marginBottom: 3 }}>
+                {course?.description || 'Course Description'}
+            </Typography>
+            <Divider sx={{ marginBottom: 3 }} />
+            <Typography variant="h5" component="h2" sx={{ marginBottom: 2 }}>
+                Lessons
+            </Typography>
+            {lessons.length > 0 ? (
+                <List>
+                    {lessons.map((lesson) => (
+                        <ListItem key={lesson.id} sx={{ marginBottom: 3, padding: 2, borderRadius: 2, boxShadow: 3 }} component={Paper}>
+                            <Box sx={{ width: '100%' }}>
+                                <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold' }}>
+                                    {lesson.topic}
+                                </Typography>
+                                <Typography variant="body2" component="p" sx={{ marginBottom: 2 }}>
+                                    {lesson.content}
+                                </Typography>
+                                {lesson.video_url && (
+                                    <Box sx={{ marginBottom: 2 }}>
+                                        <video width="100%" controls>
+                                            <source src={lesson.video_url} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </Box>
+                                )}
+                            </Box>
+                        </ListItem>
+                    ))}
+                </List>
+            ) : (
+                <Typography variant="body1">No lessons available.</Typography>
+            )}
+        </Box>
+    );
 };
 
-// VideoList component
-const VideoList = () => {
-  const videoData = [
-    { title: 'Introduction to Programming', url: 'https://youtu.be/zOjov-2OZ0E?si=h7f3QXK3QvEOx9l3' },
-    { title: 'Using GitHub', url: 'https://youtu.be/RGOj5yH7evk?si=0At9RSHBE9sQX1Bn' },
-    { title: 'HTML & CSS Full Lesson', url: 'https://youtu.be/G3e-cpL7ofc?si=s2UGVvVuAOpRFsmi' },
-    { title: 'Introduction to React', url: 'https://youtu.be/SqcY0GlETPk?si=L98xIdzgRk_K6sjo' },
-    { title: 'More About React', url: 'https://youtu.be/DLX62G4lc44?si=Rw5rJBC89Pt6MvQU' },
-    { title: 'Python Introduction', url: 'https://youtu.be/XKHEtdqhLK8?si=cXmc5dmwlFgf5shm' },
-    { title: 'Full Python Video', url: 'https://youtu.be/nLRL_NcnK-4?si=z1lCkH3ZHmvMcqmb' },
-    { title: 'JavaScript Introduction Video', url: 'https://youtu.be/lkIFF4maKMU?si=65dUnBaAStUKfrB' },
-  ];
-
-  return (
-    <Box>
-      {videoData.map((video, index) => (
-        <VideoPlayer key={index} videoUrl={video.url} title={video.title} />
-      ))}
-    </Box>
-  );
-};
-
-export default VideoList;
+export default CoursePage;
