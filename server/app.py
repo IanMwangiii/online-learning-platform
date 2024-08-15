@@ -239,22 +239,48 @@ class LessonResource(Resource):
         db.session.commit()
         return {'message': 'Lesson created successfully'}, 201
 
-class PaymentResource(Resource):
-    def post(self):
-        data = request.get_json()
+@app.route('/payments', methods=['POST'])
+def process_payment():
+    data = request.get_json()
+
+    try:
+        # Validate the payment method and required fields
+        Payment.validate_payment_method(
+            method_of_payment=data['method_of_payment'],
+            card_number=data.get('card_number'),
+            expiry_date=data.get('expiry_date'),
+            cvv=data.get('cvv'),
+            phone_number=data.get('phone_number'),
+            mpesa_reference=data.get('mpesa_reference')
+        )
+
         new_payment = Payment(
             user_id=data['user_id'],
+            name=data.get('name'),
             course_id=data['course_id'],
-            amount=data['amount']
+            amount=data['amount'],
+            method_of_payment=data['method_of_payment'],
+            card_number=data.get('card_number'),
+            expiry_date=data.get('expiry_date'),
+            cvv=data.get('cvv'),
+            phone_number=data.get('phone_number'),
+            mpesa_reference=data.get('mpesa_reference')
         )
+
         db.session.add(new_payment)
         db.session.commit()
-        return {'message': 'Payment processed successfully'}, 201
+        return jsonify({'message': 'Payment processed successfully'}), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 400
+
+    except Exception as e:
+        return jsonify({'error': 'An error occurred while processing the payment.'}), 500
+
 
 api.add_resource(UserResource, '/users', '/users/<int:user_id>')
 api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
 api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:user_id>/<int:course_id>')
-api.add_resource(PaymentResource, '/payments')
 api.add_resource(DiscussionResource, '/courses/<int:course_id>/discussions', '/discussions/<int:discussion_id>')
 
 if __name__ == '__main__':
