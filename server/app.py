@@ -222,29 +222,6 @@ def get_courses():
     if not courses:
         return jsonify({'message': 'No courses found'}), 404
     return jsonify([course.to_dict() for course in courses])
-@app.route('/api/courses', methods=['POST'])
-def create_course():
-    data = request.get_json()
-    name = data.get('name')
-    
-    if not name:
-        return jsonify({'message': 'Course name is required'}), 400
-
-    new_course = Course(name=name)
-    db.session.add(new_course)
-    db.session.commit()
-
-    return jsonify(new_course.to_dict()), 201
-
-@app.route('/api/courses/<int:course_id>', methods=['DELETE'])
-def delete_course(course_id):
-    course = Course.query.get(course_id)
-    if course:
-        db.session.delete(course)
-        db.session.commit()
-        return jsonify({'message': 'Course deleted successfully'})
-    return jsonify({'message': 'Course not found'}), 404
-
 class LessonResource(Resource):
     def get(self, lesson_id=None):
         if lesson_id is not None:
@@ -286,7 +263,6 @@ class LessonResource(Resource):
             db.session.commit()
             return {'message': 'Lesson deleted successfully'}
         return {'message': 'Lesson not found'}, 404
-    
 
 @app.route('/api/courses/<int:course_id>/lessons', methods=['GET'])
 def get_lessons_by_course(course_id):
@@ -294,26 +270,6 @@ def get_lessons_by_course(course_id):
     if not lessons:
         return jsonify({'message': 'No lessons found for this course'}), 404
     return jsonify([lesson.to_dict() for lesson in lessons])
-@app.route('/api/courses/<int:course_id>', methods=['GET', 'DELETE'])
-def manage_course(course_id):
-    try:
-        if request.method == 'GET':
-            course = Course.query.get(course_id)
-            if course:
-                return jsonify(course.to_dict())
-            return jsonify({'message': 'Course not found'}), 404
-        
-        elif request.method == 'DELETE':
-            course = Course.query.get(course_id)
-            if course:
-                db.session.delete(course)
-                db.session.commit()
-                return jsonify({'message': 'Course deleted successfully'}), 200
-            return jsonify({'message': 'Course not found'}), 404
-    except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({'message': 'Internal server error'}), 500
-
 
 @app.route('/api/payment', methods=['POST'])
 def process_payment():
