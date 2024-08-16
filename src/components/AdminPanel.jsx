@@ -3,8 +3,12 @@ import axios from 'axios';
 
 const AdminPanel = () => {
   const [courses, setCourses] = useState([]);
-  const [selectedCourse, setSelectedCourse] = useState(null);
-  const [newCourseName, setNewCourseName] = useState('');
+  const [newCourse, setNewCourse] = useState({
+    name: '',
+    description: '',
+    price: '',
+    rating: ''
+  });
   const [newLesson, setNewLesson] = useState({ topic: '', content: '', video_url: '', course_id: '' });
 
   // Fetch courses and lessons
@@ -23,9 +27,19 @@ const AdminPanel = () => {
 
   const handleAddCourse = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:5555/api/courses', { name: newCourseName });
+      const response = await axios.post('http://127.0.0.1:5555/api/courses', {
+        name: newCourse.name,
+        description: newCourse.description,
+        price: parseFloat(newCourse.price),
+        rating: parseFloat(newCourse.rating) || 0.0  // Use 0.0 if rating is not provided
+      });
       setCourses([...courses, response.data]);
-      setNewCourseName('');
+      setNewCourse({
+        name: '',
+        description: '',
+        price: '',
+        rating: ''
+      });
     } catch (error) {
       console.error('Error adding course:', error);
     }
@@ -96,9 +110,27 @@ const AdminPanel = () => {
       <h2>Add Course</h2>
       <input 
         type="text" 
-        value={newCourseName} 
-        onChange={(e) => setNewCourseName(e.target.value)} 
+        value={newCourse.name} 
+        onChange={(e) => setNewCourse({ ...newCourse, name: e.target.value })} 
         placeholder="Course Name"
+      />
+      <input 
+        type="text" 
+        value={newCourse.description} 
+        onChange={(e) => setNewCourse({ ...newCourse, description: e.target.value })} 
+        placeholder="Course Description"
+      />
+      <input 
+        type="number" 
+        value={newCourse.price} 
+        onChange={(e) => setNewCourse({ ...newCourse, price: e.target.value })} 
+        placeholder="Course Price"
+      />
+      <input 
+        type="number" 
+        value={newCourse.rating} 
+        onChange={(e) => setNewCourse({ ...newCourse, rating: e.target.value })} 
+        placeholder="Course Rating"
       />
       <button onClick={handleAddCourse}>Add Course</button>
 

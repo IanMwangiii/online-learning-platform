@@ -222,6 +222,24 @@ def get_courses():
     if not courses:
         return jsonify({'message': 'No courses found'}), 404
     return jsonify([course.to_dict() for course in courses])
+@app.route('/api/courses', methods=['POST'])
+def create_course():
+    data = request.get_json()
+    try:
+        new_course = Course(
+            name=data['name'],
+            description=data['description'],
+            price=data['price'],
+            rating=data.get('rating', 0.0)  # Default rating to 0.0 if not provided
+        )
+        db.session.add(new_course)
+        db.session.commit()
+        return jsonify(new_course.to_dict()), 201
+    except KeyError as e:
+        return jsonify({'error': f'Missing field: {str(e)}'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 class LessonResource(Resource):
     def get(self, lesson_id=None):
         if lesson_id is not None:

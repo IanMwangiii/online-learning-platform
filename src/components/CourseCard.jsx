@@ -8,7 +8,7 @@ const CourseCard = ({ course }) => {
   // Handle case where course might be undefined or have missing properties
   const {
     id = 0,
-    title = 'No title available',
+    name = 'No title available',  // Changed from title to name
     description = 'No description available',
     price = 0,
     rating = null,
@@ -40,7 +40,7 @@ const CourseCard = ({ course }) => {
             color: '#333',
           }}
         >
-          {title}
+          {name} {/* Changed from title to name */}
         </Typography>
         <Typography
           variant="body2"
@@ -104,7 +104,7 @@ const CourseCard = ({ course }) => {
 CourseCard.propTypes = {
   course: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    title: PropTypes.string,
+    name: PropTypes.string, // Changed from title to name
     description: PropTypes.string,
     price: PropTypes.number.isRequired,
     rating: PropTypes.number,
