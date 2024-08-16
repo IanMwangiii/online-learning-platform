@@ -56,7 +56,7 @@ const CoursePage = () => {
     return (
         <Box sx={{ maxWidth: '800px', margin: 'auto', padding: 3 }}>
             <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', marginBottom: 3, textAlign: 'center' }}>
-                {course?.title || 'Course Title'}
+                {course?.name || 'Course Name'}
             </Typography>
             <Typography variant="body1" component="p" sx={{ marginBottom: 3 }}>
                 {course?.description || 'Course Description'}
