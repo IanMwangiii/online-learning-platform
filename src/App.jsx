@@ -18,7 +18,7 @@ import AdminPanel from './components/AdminPanel'; // Import the AdminPanel compo
 
 function App() {
   const [enrolledCourses, setEnrolledCourses] = useState([]);
-
+  
   const handlePaymentSuccess = (courseId) => {
     setEnrolledCourses((prevEnrolledCourses) => [...prevEnrolledCourses, courseId]);
   };
@@ -41,6 +41,7 @@ function App() {
         <Route path="/contact-us" element={<ContactUs />} />
         <Route path="/admin-panel" element={<AdminPanel />} />
       </Routes>
+
     </Router>
   );
 }

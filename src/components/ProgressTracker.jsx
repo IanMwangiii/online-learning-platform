@@ -1,41 +1,21 @@
+// ProgressTracker.js
 import React from 'react';
-import { Box, Typography, LinearProgress, List, ListItem, ListItemText } from '@mui/material';
+import { Box, Typography, LinearProgress, Paper } from '@mui/material';
 
-const ProgressTracker = ({ lessons, completedLessons }) => {
-  // Calculate progress
-  const totalLessons = lessons.length;
-  const completedCount = completedLessons.length;
-  const completionPercentage = (completedCount / totalLessons) * 100;
+const ProgressTracker = ({ currentLesson, totalLessons }) => {
+  const progress = totalLessons > 0 ? (currentLesson / totalLessons) * 100 : 0;
 
   return (
-    <Box sx={{ padding: 2 }}>
-      <Typography variant="h6" gutterBottom>Course Progress</Typography>
-      <Box sx={{ marginBottom: 2 }}>
-        <Typography variant="body1">
-          {completedCount} of {totalLessons} lessons completed
+    <Box sx={{ marginBottom: 3 }}>
+      <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold', marginBottom: 1 }}>
+        Progress
+      </Typography>
+      <Paper sx={{ padding: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Typography variant="body1" sx={{ marginBottom: 2 }}>
+          {`Lesson ${currentLesson} of ${totalLessons}`}
         </Typography>
-        <LinearProgress
-          variant="determinate"
-          value={completionPercentage}
-          sx={{ marginTop: 1 }}
-        />
-        <Typography variant="body2" sx={{ marginTop: 1 }}>
-          {completionPercentage.toFixed(2)}% completed
-        </Typography>
-      </Box>
-      <Typography variant="h6" gutterBottom>Completed Lessons</Typography>
-      <List>
-        {completedLessons.map((lesson, index) => (
-          <ListItem key={index}>
-            <ListItemText primary={lesson.title} />
-          </ListItem>
-        ))}
-        {completedLessons.length === 0 && (
-          <ListItem>
-            <ListItemText primary="No lessons completed yet." />
-          </ListItem>
-        )}
-      </List>
+        <LinearProgress variant="determinate" value={progress} sx={{ width: '100%' }} />
+      </Paper>
     </Box>
   );
 };

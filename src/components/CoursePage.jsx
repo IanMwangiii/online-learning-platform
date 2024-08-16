@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Box, CircularProgress, Typography, List, ListItem, Paper, Divider } from '@mui/material';
+import ProgressTracker from './ProgressTracker'; // Import the ProgressTracker component
 
 const CoursePage = () => {
     const { courseId } = useParams(); // Retrieve courseId from route parameters
@@ -9,6 +10,7 @@ const CoursePage = () => {
     const [lessons, setLessons] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [currentLesson, setCurrentLesson] = useState(0); // State to track current lesson progress
 
     const fetchCourseDetails = async () => {
         try {
@@ -24,6 +26,9 @@ const CoursePage = () => {
             // Fetch lessons for the course
             const lessonsResponse = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}/lessons`);
             setLessons(Array.isArray(lessonsResponse.data) ? lessonsResponse.data : []);
+
+            // For demonstration, setting currentLesson to a random number (replace with real progress logic)
+            setCurrentLesson(Math.floor(Math.random() * lessonsResponse.data.length) + 1);
         } catch (err) {
             setError(err.message || 'An error occurred');
         } finally {
@@ -62,6 +67,7 @@ const CoursePage = () => {
                 {course?.description || 'Course Description'}
             </Typography>
             <Divider sx={{ marginBottom: 3 }} />
+            <ProgressTracker currentLesson={currentLesson} totalLessons={lessons.length} /> {/* Add ProgressTracker component */}
             <Typography variant="h5" component="h2" sx={{ marginBottom: 2 }}>
                 Lessons
             </Typography>

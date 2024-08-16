@@ -16,7 +16,7 @@ function ContactUs() {
         If you have any questions or need assistance, please reach out to us:
       </p>
       <p className="contact-info">
-        <strong>Email:</strong> <a href="mailto:adidabarackpilly@gmail.com" onClick={handleContactClick}>adidabarackpilly@gmail.com</a>
+        <strong>Email:</strong> <a href="mailto:eric.mongare@moringaschool.com" onClick={handleContactClick}>LearnSphere@gmail.com</a>
       </p>
       <p className="contact-info">
         <strong>Phone:</strong> +254 726 532 298
@@ -27,16 +27,16 @@ function ContactUs() {
 
       <h2 className="social-title">Follow Us</h2>
       <div className="social-icons">
-        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.facebook.com/ian.mwangi.585112?mibextid=LQQJ4d" target="_blank" rel="noopener noreferrer">
           <img src="https://img.icons8.com/fluent/48/000000/facebook-new.png" alt="Facebook" />
         </a>
-        <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
+        <a href="https://x.com/Ianoh2554" target="_blank" rel="noopener noreferrer">
           <img src="https://img.icons8.com/fluent/48/000000/twitter.png" alt="Twitter" />
         </a>
-        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.instagram.com/i.a_m.ian?igsh=bm9yNmx0dm9pNmQ3&utm_source=qrcom" target="_blank" rel="noopener noreferrer">
           <img src="https://img.icons8.com/fluent/48/000000/instagram-new.png" alt="Instagram" />
         </a>
-        <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.linkedin.com/in/ian-mwangi-7a4394306/?lipi=urn%3Ali%3Apage%3Ad_flagship3_feed%3BpzlT1lHtSPmO554INJGldw%3D%3D" target="_blank" rel="noopener noreferrer">
           <img src="https://img.icons8.com/fluent/48/000000/linkedin.png" alt="LinkedIn" />
         </a>
       </div>
