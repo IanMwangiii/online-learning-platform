@@ -1,76 +1,98 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Typography, Button, Card, CardContent } from '@mui/material';
-import Notification from './Notification';
+import axios from 'axios';
+import { Box, CircularProgress, Typography, List, ListItem, Paper, Divider } from '@mui/material';
 
-const CoursePage = ({ enrolledCourses }) => {
-  const { id } = useParams();
-  const [course, setCourse] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const CoursePage = () => {
+    const { courseId } = useParams(); // Retrieve courseId from route parameters
+    const [course, setCourse] = useState(null);
+    const [lessons, setLessons] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchCourse = async () => {
-      try {
-        const response = await axios.get(`/api/courses/${id}`);
-        setCourse(response.data);
-      } catch (err) {
-        setError('Failed to load course details.');
-      } finally {
-        setLoading(false);
-      }
+    const fetchCourseDetails = async () => {
+        try {
+            if (!courseId) {
+                throw new Error('Course ID is not defined');
+            }
+            setLoading(true);
+
+            // Fetch course details
+            const courseResponse = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}`);
+            setCourse(courseResponse.data);
+
+            // Fetch lessons for the course
+            const lessonsResponse = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}/lessons`);
+            setLessons(Array.isArray(lessonsResponse.data) ? lessonsResponse.data : []);
+        } catch (err) {
+            setError(err.message || 'An error occurred');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    fetchCourse();
-  }, [id]);
+    useEffect(() => {
+        fetchCourseDetails();
+    }, [courseId]);
 
-  const handleEnroll = async () => {
-    try {
-      await axios.post(`/api/enrollments`, { courseId: id });
-      // Update the enrollment state or perform additional actions as needed
-    } catch (err) {
-      setError('Failed to enroll in the course.');
+    if (loading) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+                <CircularProgress size={60} />
+            </Box>
+        );
     }
-  };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <Notification message={error} severity="error" />;
+    if (error) {
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', textAlign: 'center' }}>
+                <Typography variant="h6" color="error">
+                    {error}
+                </Typography>
+            </Box>
+        );
+    }
 
-  return (
-    <div>
-      {course && (
-        <div>
-          <Typography variant="h3">{course.title}</Typography>
-          <Typography variant="body1">{course.description}</Typography>
-          <Typography variant="body1">Instructor: {course.instructor}</Typography>
-          {enrolledCourses.includes(course.id) ? (
-            <Typography variant="body1">You are enrolled in this course.</Typography>
-          ) : (
-            <Button variant="contained" color="primary" onClick={handleEnroll}>
-              Enroll Now
-            </Button>
-          )}
-          {/* Add progress tracking */}
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Progress:</Typography>
-              <Typography variant="body1">Track your progress here.</Typography>
-              {/* Include a progress bar or other progress tracking components */}
-            </CardContent>
-          </Card>
-          {/* Add discussion threads */}
-          <Card>
-            <CardContent>
-              <Typography variant="h6">Discussion Threads:</Typography>
-              <Typography variant="body1">Join the discussion here.</Typography>
-              {/* Include discussion thread components */}
-            </CardContent>
-          </Card>
-        </div>
-      )}
-    </div>
-  );
+    return (
+        <Box sx={{ maxWidth: '800px', margin: 'auto', padding: 3 }}>
+            <Typography variant="h4" component="h1" sx={{ fontWeight: 'bold', marginBottom: 3, textAlign: 'center' }}>
+                {course?.title || 'Course Title'}
+            </Typography>
+            <Typography variant="body1" component="p" sx={{ marginBottom: 3 }}>
+                {course?.description || 'Course Description'}
+            </Typography>
+            <Divider sx={{ marginBottom: 3 }} />
+            <Typography variant="h5" component="h2" sx={{ marginBottom: 2 }}>
+                Lessons
+            </Typography>
+            {lessons.length > 0 ? (
+                <List>
+                    {lessons.map((lesson) => (
+                        <ListItem key={lesson.id} sx={{ marginBottom: 3, padding: 2, borderRadius: 2, boxShadow: 3 }} component={Paper}>
+                            <Box sx={{ width: '100%' }}>
+                                <Typography variant="h6" component="h3" sx={{ fontWeight: 'bold' }}>
+                                    {lesson.topic}
+                                </Typography>
+                                <Typography variant="body2" component="p" sx={{ marginBottom: 2 }}>
+                                    {lesson.content}
+                                </Typography>
+                                {lesson.video_url && (
+                                    <Box sx={{ marginBottom: 2 }}>
+                                        <video width="100%" controls>
+                                            <source src={lesson.video_url} type="video/mp4" />
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    </Box>
+                                )}
+                            </Box>
+                        </ListItem>
+                    ))}
+                </List>
+            ) : (
+                <Typography variant="body1">No lessons available.</Typography>
+            )}
+        </Box>
+    );
 };
 
 export default CoursePage;

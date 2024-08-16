@@ -5,19 +5,28 @@ import { useNavigate } from 'react-router-dom';
 const CourseCard = ({ course }) => {
   const navigate = useNavigate();
 
+  // Handle case where course might be undefined or have missing properties
+  const {
+    id = 0,
+    name = 'No title available',  // Changed from title to name
+    description = 'No description available',
+    price = 0,
+    rating = null,
+  } = course || {};
+
   const handleEnrollClick = () => {
-    navigate(`/payment/${course.id}`);
+    navigate(`/payment/${id}`);
   };
 
   return (
     <Card
       sx={{
-        maxWidth: 345, // Card width
-        margin: 'auto', // Center the card horizontally
-        boxShadow: 3, // Add shadow
+        maxWidth: 345,
+        margin: 'auto',
+        boxShadow: 3,
         transition: 'transform 0.3s ease-in-out',
         '&:hover': {
-          transform: 'translateY(-5px)', // Slight lift on hover
+          transform: 'translateY(-5px)',
         },
       }}
     >
@@ -31,7 +40,7 @@ const CourseCard = ({ course }) => {
             color: '#333',
           }}
         >
-          {course.title}
+          {name} {/* Changed from title to name */}
         </Typography>
         <Typography
           variant="body2"
@@ -40,7 +49,7 @@ const CourseCard = ({ course }) => {
             marginBottom: 2,
           }}
         >
-          {course.description}
+          {description}
         </Typography>
         <Typography
           variant="body2"
@@ -50,9 +59,9 @@ const CourseCard = ({ course }) => {
             fontWeight: 'medium',
           }}
         >
-          Price: ${course.price}
+          Price: ${price}
         </Typography>
-        {course.rating && (
+        {rating !== null && (
           <Typography
             variant="body2"
             color="text.secondary"
@@ -60,13 +69,13 @@ const CourseCard = ({ course }) => {
               marginBottom: 2,
             }}
           >
-            Rating: {course.rating} / 5
+            Rating: {rating} / 5
           </Typography>
         )}
       </CardContent>
       <CardActions
         sx={{
-          justifyContent: 'center', // Center the button
+          justifyContent: 'center',
           paddingBottom: 2,
         }}
       >
@@ -74,14 +83,14 @@ const CourseCard = ({ course }) => {
           variant="contained"
           onClick={handleEnrollClick}
           sx={{
-            textTransform: 'none', // Prevent all caps in the button text
+            textTransform: 'none',
             fontWeight: 'bold',
             padding: '8px 16px',
             borderRadius: '20px',
-            backgroundColor: '#1976d2', // Initial color (Material-UI default primary color)
-            transition: 'background-color 0.3s ease-in-out', // Smooth transition
+            backgroundColor: '#1976d2',
+            transition: 'background-color 0.3s ease-in-out',
             '&:hover': {
-              backgroundColor: 'green', // Color change on hover
+              backgroundColor: 'green',
             },
           }}
         >
@@ -95,8 +104,8 @@ const CourseCard = ({ course }) => {
 CourseCard.propTypes = {
   course: PropTypes.shape({
     id: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
+    name: PropTypes.string, // Changed from title to name
+    description: PropTypes.string,
     price: PropTypes.number.isRequired,
     rating: PropTypes.number,
   }).isRequired,

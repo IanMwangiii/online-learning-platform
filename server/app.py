@@ -19,7 +19,7 @@ api = Api(app)
 bcrypt = Bcrypt(app)
 
 # Initialize CORS with specific origin
-CORS(app, resources={r"/": {"origins": ""}})  # Adjust the origin as needed
+CORS(app, resources={r"/*": {"origins": "*"}})  # Adjust the origin as needed
 
 # JWT Secret Key
 SECRET_KEY = app.config['SECRET_KEY']
@@ -209,7 +209,12 @@ class EnrollmentResource(Resource):
             db.session.commit()
             return {'message': 'Enrollment deleted successfully'}
         return {'message': 'Enrollment not found'}, 404
-
+@app.route('/api/courses/<int:course_id>', methods=['GET'])
+def get_course_by_id(course_id):
+    course = Course.query.get(course_id)
+    if course:
+        return jsonify(course.to_dict())
+    return jsonify({'message': 'Course not found'}), 404
 @app.route('/api/courses', methods=['GET'])
 def get_courses():
     print("Received request for /api/courses")
@@ -217,6 +222,24 @@ def get_courses():
     if not courses:
         return jsonify({'message': 'No courses found'}), 404
     return jsonify([course.to_dict() for course in courses])
+@app.route('/api/courses', methods=['POST'])
+def create_course():
+    data = request.get_json()
+    try:
+        new_course = Course(
+            name=data['name'],
+            description=data['description'],
+            price=data['price'],
+            rating=data.get('rating', 0.0)  # Default rating to 0.0 if not provided
+        )
+        db.session.add(new_course)
+        db.session.commit()
+        return jsonify(new_course.to_dict()), 201
+    except KeyError as e:
+        return jsonify({'error': f'Missing field: {str(e)}'}), 400
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 class LessonResource(Resource):
     def get(self, lesson_id=None):
         if lesson_id is not None:
@@ -239,49 +262,91 @@ class LessonResource(Resource):
         db.session.commit()
         return {'message': 'Lesson created successfully'}, 201
 
-@app.route('/payments', methods=['POST'])
+    def patch(self, lesson_id):
+        lesson = Lesson.query.get(lesson_id)
+        if lesson:
+            data = request.get_json()
+            lesson.topic = data.get('topic', lesson.topic)
+            lesson.content = data.get('content', lesson.content)
+            lesson.video_url = data.get('video_url', lesson.video_url)
+            lesson.course_id = data.get('course_id', lesson.course_id)
+            db.session.commit()
+            return {'message': 'Lesson updated successfully'}
+        return {'message': 'Lesson not found'}, 404
+
+    def delete(self, lesson_id):
+        lesson = Lesson.query.get(lesson_id)
+        if lesson:
+            db.session.delete(lesson)
+            db.session.commit()
+            return {'message': 'Lesson deleted successfully'}
+        return {'message': 'Lesson not found'}, 404
+
+@app.route('/api/courses/<int:course_id>/lessons', methods=['GET'])
+def get_lessons_by_course(course_id):
+    lessons = Lesson.query.filter_by(course_id=course_id).all()
+    if not lessons:
+        return jsonify({'message': 'No lessons found for this course'}), 404
+    return jsonify([lesson.to_dict() for lesson in lessons])
+
+@app.route('/api/payment', methods=['POST'])
 def process_payment():
     data = request.get_json()
+    print(f"Received data: {data}")
+
+    user_id = data.get('user_id')
+    course_id = data.get('course_id')
+    amount = data.get('amount')
+    method_of_payment = data.get('method_of_payment')
+    card_number = data.get('card_number')
+    expiry_date = data.get('expiry_date')
+    cvv = data.get('cvv')
+    phone_number = data.get('phone_number')
+    mpesa_reference = data.get('mpesa_reference')
+
+    if not user_id or not course_id or not amount or not method_of_payment:
+        return jsonify({'message': 'User ID, course ID, amount, and payment method are required'}), 400
 
     try:
-        # Validate the payment method and required fields
-        Payment.validate_payment_method(
-            method_of_payment=data['method_of_payment'],
-            card_number=data.get('card_number'),
-            expiry_date=data.get('expiry_date'),
-            cvv=data.get('cvv'),
-            phone_number=data.get('phone_number'),
-            mpesa_reference=data.get('mpesa_reference')
-        )
-
         new_payment = Payment(
-            user_id=data['user_id'],
-            name=data.get('name'),
-            course_id=data['course_id'],
-            amount=data['amount'],
-            method_of_payment=data['method_of_payment'],
-            card_number=data.get('card_number'),
-            expiry_date=data.get('expiry_date'),
-            cvv=data.get('cvv'),
-            phone_number=data.get('phone_number'),
-            mpesa_reference=data.get('mpesa_reference')
+            user_id=user_id,
+            course_id=course_id,
+            amount=amount,
+            method_of_payment=method_of_payment,
+            card_number=card_number,
+            expiry_date=expiry_date,
+            cvv=cvv,
+            phone_number=phone_number,
+            mpesa_reference=mpesa_reference
         )
-
         db.session.add(new_payment)
         db.session.commit()
+
         return jsonify({'message': 'Payment processed successfully'}), 200
-
-    except ValueError as e:
-        return jsonify({'error': str(e)}), 400
-
     except Exception as e:
-        return jsonify({'error': 'An error occurred while processing the payment.'}), 500
+        print(f"Error processing payment: {e}")
+        db.session.rollback()
+        return jsonify({'message': 'Failed to process payment'}), 500
 
+
+@app.route('/api/enrollments/update_status', methods=['POST'])
+def update_enrollment_status():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    course_id = data.get('course_id')
+    enrollment_status = data.get('enrollment_status')
+
+    enrollment = Enrollment.query.filter_by(user_id=user_id, course_id=course_id).first()
+    if enrollment:
+        enrollment.enrollment_status = enrollment_status
+        db.session.commit()
+        return jsonify({'message': 'Enrollment status updated successfully'}), 200
+    return jsonify({'message': 'Enrollment not found'}), 404
 
 api.add_resource(UserResource, '/users', '/users/<int:user_id>')
 api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
 api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:user_id>/<int:course_id>')
 api.add_resource(DiscussionResource, '/courses/<int:course_id>/discussions', '/discussions/<int:discussion_id>')
 
-if __name__ == '_main_':
+if __name__ == '__main__':
     app.run(debug=True, port=5555)
