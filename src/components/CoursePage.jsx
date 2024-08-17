@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { Box, CircularProgress, Typography, List, ListItem, Paper, Divider } from '@mui/material';
-import ProgressTracker from './ProgressTracker'; // Import the ProgressTracker component
+// import ProgressTracker from './ProgressTracker'; // Import the ProgressTracker component
 
 const CoursePage = () => {
     const { courseId } = useParams(); // Retrieve courseId from route parameters
@@ -67,7 +67,7 @@ const CoursePage = () => {
                 {course?.description || 'Course Description'}
             </Typography>
             <Divider sx={{ marginBottom: 3 }} />
-            <ProgressTracker currentLesson={currentLesson} totalLessons={lessons.length} /> {/* Add ProgressTracker component */}
+            {/* <ProgressTracker currentLesson={currentLesson} totalLessons={lessons.length} />  */}
             <Typography variant="h5" component="h2" sx={{ marginBottom: 2 }}>
                 Lessons
             </Typography>

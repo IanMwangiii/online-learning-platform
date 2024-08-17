@@ -61,7 +61,7 @@ const PaymentPage = ({ onPaymentSuccess }) => {
         <TextField
           fullWidth
           margin="normal"
-          label="User ID"
+          label="Username"
           name="user_id"
           type="text"
           value={paymentData.user_id}
@@ -71,7 +71,7 @@ const PaymentPage = ({ onPaymentSuccess }) => {
         <TextField
           fullWidth
           margin="normal"
-          label="Course ID"
+          label="Course number"
           name="course_id"
           type="text"
           value={paymentData.course_id}
