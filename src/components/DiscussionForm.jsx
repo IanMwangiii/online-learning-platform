@@ -10,7 +10,6 @@ const DiscussionForm = ({ courseId, onAddDiscussion }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log('courseId:', courseId); // Debugging courseId
 
     if (!courseId) {
       setSnackbarMessage('Course ID is missing.');
@@ -21,8 +20,8 @@ const DiscussionForm = ({ courseId, onAddDiscussion }) => {
 
     if (comment.trim()) {
       try {
-        const response = await axios.post(`/courses/${courseId}/discussions`, { comment });
-        onAddDiscussion(response.data); // Assume the response includes the new discussion
+        const response = await axios.post(`/api/courses/${courseId}/discussions`, { comment });
+        onAddDiscussion(response.data);
         setComment('');
         setSnackbarMessage('Comment posted successfully!');
         setSnackbarSeverity('success');

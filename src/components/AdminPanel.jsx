@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
 const AdminPanel = () => {
   const [courses, setCourses] = useState([]);
   const [newCourse, setNewCourse] = useState({
@@ -86,7 +87,7 @@ const AdminPanel = () => {
   };
 
   return (
-    <div>
+    <div className="admin-panel">
       <h1>Admin Panel</h1>
 
       <h2>Courses</h2>

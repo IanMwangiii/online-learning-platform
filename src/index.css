@@ -437,3 +437,62 @@
 .search-button:hover {
   background-color: #0056b3;
 }
+/* AdminPanel.css */
+
+.admin-panel {
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.admin-panel h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.admin-panel h2 {
+  font-size: 1.5em;
+  margin: 20px 0 10px;
+}
+
+.admin-panel ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.admin-panel li {
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  background-color: #f9f9f9;
+}
+
+.admin-panel button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 8px 16px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.admin-panel button:hover {
+  background-color: #0056b3;
+}
+
+.admin-panel input,
+.admin-panel textarea,
+.admin-panel select {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.admin-panel textarea {
+  height: 100px;
+  resize: vertical;
+}

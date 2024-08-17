@@ -8,15 +8,19 @@ import { useParams } from 'react-router-dom';
 const DiscussionsPage = () => {
   const { id } = useParams();
   const [discussions, setDiscussions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch discussions for the specific course
     const fetchDiscussions = async () => {
       try {
-        const response = await axios.get(`/courses/${id}/discussions`);
+        const response = await axios.get(`/api/courses/${id}/discussions`);
         setDiscussions(response.data);
       } catch (error) {
         console.error('Error fetching discussions:', error);
+        setError('Failed to fetch discussions');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -26,6 +30,9 @@ const DiscussionsPage = () => {
   const handleAddDiscussion = (newDiscussion) => {
     setDiscussions([...discussions, newDiscussion]);
   };
+
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <Box sx={{ padding: 2 }}>

@@ -56,18 +56,7 @@ const Dashboard = () => {
           onClose={handleNotificationClose}
         />
 
-        {/* User Profile Section */}
-        <Box sx={{ marginBottom: 4, display: 'flex', alignItems: 'center', backgroundColor: 'white', padding: 3, borderRadius: 2, boxShadow: 3 }}>
-          <Avatar sx={{ bgcolor: deepPurple[500], width: 56, height: 56, marginRight: 2 }}>EM</Avatar>
-          <Box>
-            <Typography variant="h5" sx={{ fontWeight: 'bold', color: '#333' }}>
-              Welcome, Erick Mongare
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Role: {role === 'admin' ? 'Administrator' : 'User'}
-            </Typography>
-          </Box>
-        </Box>
+
 
         {/* Dashboard Overview and Course List */}
         <Grid container spacing={3} sx={{ marginBottom: 4 }}>

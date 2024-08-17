@@ -74,7 +74,7 @@ const Login = () => {
           </Typography>
           <form onSubmit={handleSubmit}>
             <TextField
-              label="Email"
+              label="username"
               variant="outlined"
               fullWidth
               margin="normal"

@@ -137,6 +137,7 @@ class UserResource(Resource):
             db.session.commit()
             return {'message': 'User deleted successfully'}
         return {'message': 'User not found'}, 404
+        
 
 class DiscussionResource(Resource):
     def post(self, course_id):
