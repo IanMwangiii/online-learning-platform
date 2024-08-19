@@ -1,1 +1,1 @@
-gunicorn subdirectory.app:app
+gunicorn app:app
