@@ -3,14 +3,13 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from flask_bcrypt import Bcrypt
-from config import get_config
 from models import db, User, Discussion, Lesson, Enrollment, Course, Payment
 from config import get_config
 import jwt
 import datetime
 from functools import wraps
 
-app = Flask(__name__)
+app = Flask(_name_)
 app.config.from_object(get_config())
 
 # Initialize extensions
@@ -284,11 +283,5 @@ api.add_resource(LessonResource, '/lessons', '/lessons/<int:lesson_id>')
 api.add_resource(EnrollmentResource, '/enrollments', '/enrollments/<int:user_id>/<int:course_id>')
 api.add_resource(DiscussionResource, '/courses/<int:course_id>/discussions', '/discussions/<int:discussion_id>')
 
-if __name__ == 'main':
-    app.run(debug=True, port=5555)
-
-if __name__ == '__main__':
-    app.run(debug=True)
-
-if __name__ == '_main_':
+if _name_ == '_main_':
     app.run(debug=True, port=5555)

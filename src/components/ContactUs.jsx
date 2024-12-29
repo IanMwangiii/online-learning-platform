@@ -27,13 +27,13 @@ function ContactUs() {
 
       <h2 className="social-title">Follow Us</h2>
       <div className="social-icons">
-        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.facebook.com/Ian" target="_blank" rel="noopener noreferrer">
           <img src="https://img.icons8.com/fluent/48/000000/facebook-new.png" alt="Facebook" />
         </a>
         <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer">
           <img src="https://img.icons8.com/fluent/48/000000/twitter.png" alt="Twitter" />
         </a>
-        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer">
+        <a href="https://www.instagram.com/njugun.aaa" target="_blank" rel="noopener noreferrer">
           <img src="https://img.icons8.com/fluent/48/000000/instagram-new.png" alt="Instagram" />
         </a>
         <a href="https://www.linkedin.com" target="_blank" rel="noopener noreferrer">
