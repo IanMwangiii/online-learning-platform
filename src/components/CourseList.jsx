@@ -10,7 +10,7 @@ const CourseList = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5555/api/courses'); // Ensure this URL matches your Flask API route
+      const response = await axios.get('https://online-learning-platform-22.onrender.com/api/courses'); // Ensure this URL matches your Flask API route
       console.log('API response:', response.data); // Debug line to check API response
       if (Array.isArray(response.data)) {
         setCourses(response.data);

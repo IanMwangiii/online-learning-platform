@@ -26,7 +26,7 @@ const UserProfile = () => {
       }
 
       try {
-        const response = await fetch(`http://localhost:5555/users/${id}`, {
+        const response = await fetch(`https://online-learning-platform-22.onrender.com/users/${id}`, {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,7 +69,7 @@ const UserProfile = () => {
     const id = localStorage.getItem("id");
 
     try {
-      const response = await fetch(`http://localhost:5555/users/${id}`, {
+      const response = await fetch(`https://online-learning-platform-22.onrender.com/users/${id}`, {
         method: "PATCH", // Using PATCH instead of PUT
         headers: {
           Authorization: `Bearer ${token}`,

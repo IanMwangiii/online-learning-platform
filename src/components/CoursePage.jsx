@@ -20,11 +20,11 @@ const CoursePage = () => {
             setLoading(true);
 
             // Fetch course details
-            const courseResponse = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}`);
+            const courseResponse = await axios.get(`https://online-learning-platform-22.onrender.com/api/courses/${courseId}`);
             setCourse(courseResponse.data);
 
             // Fetch lessons for the course
-            const lessonsResponse = await axios.get(`http://127.0.0.1:5555/api/courses/${courseId}/lessons`);
+            const lessonsResponse = await axios.get(`https://online-learning-platform-22.onrender.com/api/courses/${courseId}/lessons`);
             setLessons(Array.isArray(lessonsResponse.data) ? lessonsResponse.data : []);
 
             // For demonstration, setting currentLesson to a random number (replace with real progress logic)

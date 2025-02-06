@@ -16,7 +16,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = 'http://127.0.0.1:5555/auth/login'; // Adjusted to match Flask route
+    const endpoint = 'https://online-learning-platform-22.onrender.com/auth/login'; // Adjusted to match Flask route
     const body = JSON.stringify({
       username: formData.email, // Ensure this matches the field expected by the backend
       password: formData.password,

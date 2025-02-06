@@ -19,7 +19,7 @@ const AdminPanel = () => {
 
   const fetchCourses = async () => {
     try {
-      const response = await axios.get('http://127.0.0.1:5555/api/courses');
+      const response = await axios.get('https://online-learning-platform-22.onrender.com/api/courses');
       setCourses(response.data);
     } catch (error) {
       console.error('Error fetching courses:', error);
@@ -28,7 +28,7 @@ const AdminPanel = () => {
 
   const handleAddCourse = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:5555/api/courses', {
+      const response = await axios.post('https://online-learning-platform-22.onrender.com/api/courses', {
         name: newCourse.name,
         description: newCourse.description,
         price: parseFloat(newCourse.price),
@@ -48,7 +48,7 @@ const AdminPanel = () => {
 
   const handleDeleteCourse = async (courseId) => {
     try {
-      await axios.delete(`http://127.0.0.1:5555/api/courses/${courseId}`);
+      await axios.delete(`https://online-learning-platform-22.onrender.com/api/courses/${courseId}`);
       setCourses(courses.filter(course => course.id !== courseId));
     } catch (error) {
       console.error('Error deleting course:', error);
@@ -57,7 +57,7 @@ const AdminPanel = () => {
 
   const handleAddLesson = async () => {
     try {
-      const response = await axios.post('http://127.0.0.1:5555/lessons', newLesson);
+      const response = await axios.post('https://online-learning-platform-22.onrender.com/lessons', newLesson);
       const updatedCourses = courses.map(course => {
         if (course.id === newLesson.course_id) {
           course.lessons.push(response.data);
@@ -73,7 +73,7 @@ const AdminPanel = () => {
 
   const handleDeleteLesson = async (lessonId, courseId) => {
     try {
-      await axios.delete(`http://127.0.0.1:5555/lessons/${lessonId}`);
+      await axios.delete(`https://online-learning-platform-22.onrender.com/lessons/${lessonId}`);
       const updatedCourses = courses.map(course => {
         if (course.id === courseId) {
           course.lessons = course.lessons.filter(lesson => lesson.id !== lessonId);

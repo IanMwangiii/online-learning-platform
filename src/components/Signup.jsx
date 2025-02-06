@@ -13,7 +13,7 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = 'http://localhost:5555/auth/signup';  // Adjusted to match Flask route
+    const endpoint = 'https://online-learning-platform-22.onrender.com/auth/signup';  // Adjusted to match Flask route
     const body = JSON.stringify(formData);
 
     try {

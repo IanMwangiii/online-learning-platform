@@ -21,7 +21,7 @@ const LessonList = () => {
 
   const fetchLessons = async (id) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:5555/api/courses/${id}/lessons`);
+      const response = await axios.get(`https://online-learning-platform-22.onrender.com/api/courses/${id}/lessons`);
       if (Array.isArray(response.data)) {
         setLessons(response.data);
       } else {
